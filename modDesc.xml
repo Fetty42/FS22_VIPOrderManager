@@ -1,0 +1,34 @@
+<modDesc descVersion="61">
+	<author>Fetty</author>
+	<version>1.0.0.0</version>
+	<title>VIP Order Manager</title>
+	<description>
+		<en>Manager for VIP Orders</en>
+		<de>Manager für VIP Aufträge</de>
+	</description>
+	<iconFilename>icon.dds</iconFilename>
+	<multiplayer supported="false" />
+	<extraSourceFiles>
+		<sourceFile filename="VIPOrderManager.lua" />
+	</extraSourceFiles>    
+  <actions>
+      <!-- <action name="CreateAndShowNewVIPOrder" category="PLAYER VEHICLE" /> -->
+      <action name="ShowCurrentVIPOrder" category="PLAYER VEHICLE" />
+  </actions>	
+  <inputBinding>
+      <!-- <actionBinding action="CreateAndShowNewVIPOrder">
+          <binding device="KB_MOUSE_DEFAULT" input="KEY_rshift KEY_c" />
+      </actionBinding> -->
+      <actionBinding action="ShowCurrentVIPOrder">
+          <binding device="KB_MOUSE_DEFAULT" input="KEY_rshift KEY_s" />
+      </actionBinding>
+  </inputBinding>	
+	<l10n>
+		<!-- <text name="input_CreateAndShowNewVIPOrder">
+			<en>VIP: Create and show new VIP order</en>
+		</text>		 -->
+		<text name="input_ShowCurrentVIPOrder">
+			<en>VIP: Show current VIP order (on/off)</en>
+		</text>		
+	</l10n>
+</modDesc>

@@ -1,34 +1,124 @@
-<modDesc descVersion="61">
+<modDesc descVersion="63">
 	<author>Fetty</author>
-	<version>1.0.0.0</version>
+	<version>1.5.0.0</version>
+		 <title>
+        <en>VIP Order Manager</en>
+		<de>VIP Auftrags Manager</de>
+    </title>
+    <description>
+        <de><![CDATA[Der VIP Order Manager bietet dem Landwirte VIP Aufträge an, Diese bestehen aus mehreren zu liefernden Produkten mit expliziter Vorgabe der Menge und des Zielortes. Es wird der aktuelle Auftrag und der nächste Auftrag angezeigt.]]></de>
+		<en><![CDATA[The VIP Order Manager offers the farmer VIP orders, which consist of several products to be delivered with explicit specification of the quantity and destination. The current order and the next order are displayed.]]></en>
+		<fr><![CDATA[Le VIP Order Manager propose à l'agriculteur des commandes VIP, composées de plusieurs produits à livrer avec une indication explicite de la quantité et de la destination. La commande actuelle et la prochaine commande sont affichées.]]></fr>
+    </description>
+	
 	<title>VIP Order Manager</title>
 	<description>
 		<en>Manager for VIP Orders</en>
 		<de>Manager für VIP Aufträge</de>
 	</description>
 	<iconFilename>icon.dds</iconFilename>
-	<multiplayer supported="false" />
+	<multiplayer supported="true" />
 	<extraSourceFiles>
 		<sourceFile filename="VIPOrderManager.lua" />
 	</extraSourceFiles>    
-  <actions>
-      <!-- <action name="CreateAndShowNewVIPOrder" category="PLAYER VEHICLE" /> -->
-      <action name="ShowCurrentVIPOrder" category="PLAYER VEHICLE" />
-  </actions>	
-  <inputBinding>
-      <!-- <actionBinding action="CreateAndShowNewVIPOrder">
-          <binding device="KB_MOUSE_DEFAULT" input="KEY_rshift KEY_c" />
-      </actionBinding> -->
-      <actionBinding action="ShowCurrentVIPOrder">
-          <binding device="KB_MOUSE_DEFAULT" input="KEY_rshift KEY_s" />
-      </actionBinding>
-  </inputBinding>	
+	<actions>
+    	<action name="ShowCurrentVIPOrder" category="PLAYER VEHICLE" />
+      	<action name="AbortCurrentVIPOrder" category="PLAYER VEHICLE" />
+      	<action name="ShowVIPOrderDlg" category="PLAYER VEHICLE" />
+  	</actions>	
+  	<inputBinding>
+      	<actionBinding action="ShowCurrentVIPOrder">
+        	<binding device="KB_MOUSE_DEFAULT" input="KEY_rctrl KEY_o" />
+      	</actionBinding>
+      	<actionBinding action="AbortCurrentVIPOrder">
+          	<binding device="KB_MOUSE_DEFAULT" input="KEY_ralt KEY_rctrl KEY_o" />
+      	</actionBinding>
+      	<actionBinding action="ShowVIPOrderDlg">
+        	<binding device="KB_MOUSE_DEFAULT" input="KEY_ralt KEY_o" />
+      	</actionBinding>
+  	</inputBinding>	
 	<l10n>
-		<!-- <text name="input_CreateAndShowNewVIPOrder">
-			<en>VIP: Create and show new VIP order</en>
-		</text>		 -->
 		<text name="input_ShowCurrentVIPOrder">
-			<en>VIP: Show current VIP order (on/off)</en>
+			<de>Durchblättern VIP Aufträge</de>
+			<en>Flip VIP Orders</en>
+		</text>		
+		<text name="input_AbortCurrentVIPOrder">
+			<de>Abbruch VIP Auftrag</de>
+			<en>Aborting VIP Orders</en>
+		</text>
+		<text name="input_ShowVIPOrderDlg">
+			<de>Anzeige des VIP Auftragsdialogs</de>
+			<en>Shows VIP Orders Dialog</en>
+		</text>
+
+	<!-- Abort Dlg -->
+		<text name="VIPOrderManager_DlgTitel_AbortCurrentVIPOrder">
+			<de>Abbruch aktuellen VIP Auftrag</de>
+			<en>Aborting current VIP Orders</en>
+		</text>
+		<text name="VIPOrderManager_DlgMsg_AbortCurrentVIPOrder">
+			<de>Du musst eine Abbruchgebühr von %s bezahlen. Für die bereits abgeschlossenen Teilaufträge erhältst du %s.</de>
+			<en>You have to pay a aborting fee of %s. For the already completed partial orders you will receive %s.</en>
+		</text>
+
+	<!-- HUD -->
+		<text name="VIPOrderManager_CurrentVIPOrder">
+			<de>Aktueller VIP Auftrag</de>
+			<en>Current VIP Order</en>
+		</text>
+		<text name="VIPOrderManager_NextVIPOrder">
+			<de>Nächster VIP Auftrag</de>
+			<en>Next VIP Order</en>
+		</text>
+		<text name="VIPOrderManager_Payout">
+			<de>Auszahlung: %s</de>
+			<en>Payout: %s</en>
+		</text>
+		<text name="VIPOrderManager_OrderCompleted">
+			<de>Der aktuelle VIP-Auftrag wurde abgeschlossen.</de>
+			<en>Current VIP order was completed.</en>
+		</text>
+
+	<!-- Neuer Dlg -->
+        <text name="ui_orderDlg_title">
+			<de>Übersicht der VIP-Aufträge</de>
+			<en>Overview VIP Orders</en>
+		</text>		
+        <text name="ui_orderDlg_header_product">
+			<de>Produkt</de>	
+			<en>Product</en>
+        </text>		
+        <text name="ui_orderDlg_header_requested">
+			<de>Angefordert</de>	
+			<en>Requested</en>
+        </text>		
+        <text name="ui_orderDlg_header_delivered">
+			<de>Geliefert</de>
+			<en>Delivered</en>
+        </text>		
+        <text name="ui_orderDlg_header_payout">
+			<de>Auszahlung</de>	
+			<en>Payout</en>
+        </text>		
+        <text name="ui_orderDlg_header_station">
+			<de>Lieferstation</de>	
+			<en>Delivery station</en>
+        </text>		
+        <text name="ui_orderDlg_btnClose">
+			<de>Schließen</de>	
+			<en>Close</en>
+		</text>		
+        <text name="ui_orderDlg_btnAbort">
+			<de>Abbruch des aktuellen VIP Auftrags</de>	
+			<en>Abort current VIP Order</en>
+		</text>		
+        <text name="ui_orderDlg_section_active">
+			<de>Level %s - Auszahlung: %s (Aktiv)</de>	
+			<en>Level %s - Payout: %s (Active)</en>
+		</text>		
+        <text name="ui_orderDlg_section_notactive">
+			<de>Level %s - Auszahlung: %s</de>	
+			<en>Level %s - Payout: %s</en>
 		</text>		
 	</l10n>
 </modDesc>

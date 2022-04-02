@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<GUI onOpen="onOpen" onClose="onClose" onCreate="onCreate">
+    <!-- <GuiElement type="empty" profile="newLayer" /> -->
+    <GuiElement type="bitmap" profile="dialogFullscreenBg" />
+    <GuiElement type="bitmap" profile="bgVignette"/>
+    <GuiElement type="bitmap" profile="bgGlowDialog" />
+    <!-- <GuiElement type="bitmap" profile="orderFrame" id="dialogElement">         -->
+    
+    <GuiElement type="bitmap" profile="dialogBg" id="dialogElement" size="1350px 800px" imageColor="0.118 0.116 0.115 0.20">        
+        <GuiElement type="text" profile="dialogTitle" text="$l10n_ui_orderDlg_title" id="dialogTitleElement" position="0px -30px" />
+
+        <GuiElement type="bitmap" profile="ingameMenuFieldCalculatorHeaderBox" id="tableHeaderBox" position="50px 650px" size="1250px 50px" imageColor="$preset_colorBlack2">
+            <GuiElement type="text" profile="ingameMenuFieldCalculatorHeaderCellLeft" position="10px -0px" size="390px 40.77px" text="$l10n_ui_orderDlg_header_product"/>
+            <GuiElement type="text" profile="ingameMenuFieldCalculatorHeaderCellRight" position="400px -0px" size="150px 40.77px" text="$l10n_ui_orderDlg_header_requested"/>
+            <GuiElement type="text" profile="ingameMenuFieldCalculatorHeaderCellRight" position="550px -0px" size="150px 40.77px" text="$l10n_ui_orderDlg_header_delivered"/>
+            <GuiElement type="text" profile="ingameMenuFieldCalculatorHeaderCellRight" position="700px -0px" size="150px 40.77px" text="$l10n_ui_orderDlg_header_payout"/>
+            <GuiElement type="text" profile="ingameMenuFieldCalculatorHeaderCellLeft" position="890px -0px" size="360px 40.77px" text="$l10n_ui_orderDlg_header_station"/>
+
+        </GuiElement>
+
+        <GuiElement type="smoothList" profile="ingameMenuFieldCalculatorOrderList" id="fieldCalculatorOrderTable" focusInit="onOpen" listSectionHeader="section" position="50px -150px" size="1250px 600px">
+            <GuiElement type="listItem" profile="ingameMenuFieldCalculatorListItem" name="fieldCalculatorOrderRowTemplate" >
+                <GuiElement type="bitmap" profile="ingameMenuFieldCalculatorRowBackground">
+                    <GuiElement type="text" profile="ingameMenuFieldCalculatorRowCellLeft" position="10px 0px" size="90px 40.77px" name="ftTitle" />
+                    <GuiElement type="text" profile="ingameMenuFieldCalculatorRowCellRight" position="400px 0px" size="150px 40.77px" name="quantity" textAlignment="right"/>
+                    <GuiElement type="text" profile="ingameMenuFieldCalculatorRowCellRight" position="550px 0px" size="150px 40.77px" name="fillLevel" textAlignment="right"/>
+                    <GuiElement type="text" profile="ingameMenuFieldCalculatorRowCellRight" position="700px 0px" size="150px 40.77px" name="payout" textAlignment="right"/>
+                    <GuiElement type="text" profile="ingameMenuFieldCalculatorRowCellLeft" position="890px 0px" size="360px 40.77px" name="targetStation"/>
+                </GuiElement>
+            </GuiElement>
+            <GuiElement type="listItem" profile="ingameMenuContractsListCategory" name="section">
+                <GuiElement type="text" profile="ingameMenuContractsListCategoryTitle" name="title" textSize="18px"/>/>
+            </GuiElement>
+        </GuiElement>
+        <GuiElement type="threePartBitmap" profile="verticalListSliderRightDockedOrder" size="12px 600px">
+            <GuiElement type="slider" profile="verticalListSliderBar" size="6px 592px" dataElementId="fieldCalculatorOrderTable" id="tableSlider" handleFocus="false" focusInit="onOpen"/>
+        </GuiElement>  
+
+        <GuiElement type="flowLayout" profile="buttonBoxDialog">
+            <GuiElement type="button" profile="buttonBack" text="$l10n_ui_orderDlg_btnClose" onClick="onClickBack" />
+            <GuiElement type="button" profile="buttonBack" text="$l10n_ui_orderDlg_btnAbort" onClick="onClickAbort" id="buttonAbort" />
+        </GuiElement>
+    </GuiElement>
+</GUI>

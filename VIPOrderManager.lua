@@ -2,6 +2,16 @@
 -- Date: 02.01.2022
 -- Version: 1.1.0.0
 
+dbPrintfOn = false
+
+function dbPrintf(...)
+	if dbPrintfOn then
+    	print(string.format(...))
+	end
+end
+
+
+
 VIPOrderManager = {}; -- Class
 
 -- isAllowed (true, false) - whether the fill type is offered 
@@ -19,6 +29,7 @@ VIPOrderManager.ftConfigs =
 	ROUNDBALE 		= {isAllowed=false, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Rundballen
 	ROUNDBALE_WOOD 	= {isAllowed=false, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- RundballenHolz
 	SQUAREBALE 		= {isAllowed=false, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Quaderballen
+	WATER	 		= {isAllowed=false, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Wasser
 
 	-- Basic crops
 	BARLEY 			= {isAllowed=true, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Gerste
@@ -37,11 +48,12 @@ VIPOrderManager.ftConfigs =
 	COTTON 			= {isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=1.0, isLimited=false},		-- Baumwolle
 	SUGARCANE 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=1.0, isLimited=false},		-- Zuckerrohr
 
-	-- Straw and grass
-	STRAW 				= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.6, isLimited=false},		-- Stroh
-	GRASS_WINDROW 		= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.6, isLimited=false},		-- Gras
-	DRYGRASS_WINDROW 	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.6, isLimited=false},		-- Heu
-	SILAGE 				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.6, isLimited=false},		-- Silage
+	-- Straw, grass and chaff
+	STRAW 				= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.4, isLimited=false},		-- Stroh
+	GRASS_WINDROW 		= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.4, isLimited=false},		-- Gras
+	DRYGRASS_WINDROW 	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},		-- Heu
+	SILAGE 				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.5, isLimited=false},		-- Silage
+	CHAFF 				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.5, isLimited=false},		-- Häckselgut
 
 	-- Tree products
 	WOOD 		= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false},		-- Holz
@@ -82,16 +94,16 @@ VIPOrderManager.ftConfigs =
 }
 
 -- orders definition for order level 1 and own field area of 1 ha
-VIPOrderManager.countOrderItemsRange = {min=2, max=3}
+VIPOrderManager.countOrderItemsRange = {min=2, max=4}
 VIPOrderManager.quantityFactor = {min=8, max=10}
-VIPOrderManager.payoutFactor = {min=6, max=7}
+VIPOrderManager.payoutFactor = {min=3, max=5}
 VIPOrderManager.isLimitedPercentage = 20 -- percentage from current order level round off
 
 -- Depending on the OrderLeven, special correction factors for count, quantity and payout
 VIPOrderManager.orderLevelCorrectionFactors = {}
 VIPOrderManager.orderLevelCorrectionFactors[1] = {0.50, 0.50, 1.00}
-VIPOrderManager.orderLevelCorrectionFactors[2] = {0.75, 0.65, 1.00}
-VIPOrderManager.orderLevelCorrectionFactors[3] = {1.00, 0.75, 1.00}
+-- VIPOrderManager.orderLevelCorrectionFactors[2] = {0.75, 0.65, 1.00}
+-- VIPOrderManager.orderLevelCorrectionFactors[3] = {1.00, 0.75, 1.00}
 
 
 -- Constants for filltype selection
@@ -133,10 +145,13 @@ VIPOrderManager.colors[10] = {'col_brown', {0.1912, 0.1119, 0.0529, 1}}
 VIPOrderManager.dir = g_currentModDirectory
 VIPOrderManager.modName = g_currentModName
 
-VIPOrderManager.currentVIPOrder 	= {}	-- [Name] = {fillTypeName, quantity, fillLevel, payout, targetStation}
-VIPOrderManager.nextVIPOrder 		= {}	-- [Name] = {fillTypeName, quantity, fillLevel, payout, targetStation}
+VIPOrderManager.maxVIPOrdersCount	= 4		-- Count of already calculated orders (preview)
+VIPOrderManager.VIPOrders 			= {}	-- List of orders {level, entries{[Name] = {fillTypeName, quantity, fillLevel, payout, targetStation}}}
+
+-- VIPOrderManager.currentVIPOrder 	= {}	-- [Name] = {fillTypeName, quantity, fillLevel, payout, targetStation}
+-- VIPOrderManager.nextVIPOrder 		= {}	-- [Name] = {fillTypeName, quantity, fillLevel, payout, targetStation}
+-- VIPOrderManager.currentOrderLevel 	= 0		-- will be increased by 1 with each orders generation
 VIPOrderManager.outputLines 		= {}	-- Output lines for the draw() function (text, size, bold, colorId, x, y)
-VIPOrderManager.currentOrderLevel 	= 0		-- will be increased by 1 with each orders generation
 VIPOrderManager.infoHud 			= nil	-- VID Order Info HUD
 VIPOrderManager.OrderDlg			= nil
 
@@ -145,7 +160,7 @@ source(Utils.getFilename("InfoHUD.lua", VIPOrderManager.dir))
 source(VIPOrderManager.dir .. "gui/OrderFrame.lua")
 
 function VIPOrderManager:loadMap(name)
---   print("call VIPOrderManager:loadMap()");
+    dbPrintf("call VIPOrderManager:loadMap()");
 
 	Player.registerActionEvents = Utils.appendedFunction(Player.registerActionEvents, VIPOrderManager.registerActionEvents);
 	Drivable.onRegisterActionEvents = Utils.appendedFunction(Drivable.onRegisterActionEvents, VIPOrderManager.registerActionEvents);
@@ -160,18 +175,13 @@ end;
 
 
 function VIPOrderManager:registerActionEvents()
-	-- print("call VIPOrderManager:registerActionEvents()");
+	dbPrintf("call VIPOrderManager:registerActionEvents()");
 
 	local result, eventName = InputBinding.registerActionEvent(g_inputBinding, 'ShowCurrentVIPOrder',self, VIPOrderManager.ShowCurrentVIPOrder ,false ,true ,false ,true)
 	if result then
         table.insert(VIPOrderManager.eventName, eventName);
 		g_inputBinding.events[eventName].displayIsVisible = true;
     end
-	-- result, eventName = InputBinding.registerActionEvent(g_inputBinding, 'AbortCurrentVIPOrder',self, VIPOrderManager.AbortCurrentVIPOrder ,false ,true ,false ,true)
-	-- if result then
-    --     table.insert(VIPOrderManager.eventName, eventName);
-	-- 	g_inputBinding.events[eventName].displayIsVisible = true;
-    -- end
 	result, eventName = InputBinding.registerActionEvent(g_inputBinding, 'ShowVIPOrderDlg',self, VIPOrderManager.ShowVIPOrderDlg ,false ,true ,false ,true)
 	if result then
         table.insert(VIPOrderManager.eventName, eventName);
@@ -188,7 +198,7 @@ end;
 
 --  
 function VIPOrderManager:ShowVIPOrderDlg(actionName, keyStatus, arg3, arg4, arg5)
-	-- print("call VIPOrderManager:ShowVIPOrderDlg()");
+	dbPrintf("call VIPOrderManager:ShowVIPOrderDlg()");
 
 	VIPOrderManager.OrderDlg = nil
 	g_gui:loadProfiles(VIPOrderManager.dir .. "gui/guiProfiles.xml")
@@ -197,15 +207,15 @@ function VIPOrderManager:ShowVIPOrderDlg(actionName, keyStatus, arg3, arg4, arg5
 	VIPOrderManager.OrderDlg = g_gui:showDialog("OrderFrame")
 
 	if VIPOrderManager.OrderDlg ~= nil then
-        VIPOrderManager.OrderDlg.target:setVIPOrders(VIPOrderManager.currentOrderLevel, VIPOrderManager.currentVIPOrder, VIPOrderManager.nextVIPOrder)
+		VIPOrderManager.OrderDlg.target:setVIPOrders(VIPOrderManager.VIPOrders)
+		
     end
 end
 
 
 -- Payout complete orders less a abort fee for incomplete orders. 
---function VIPOrderManager:AbortCurrentVIPOrder(actionName, keyStatus, arg3, arg4, arg5)
 function VIPOrderManager:AbortCurrentVIPOrder()
-	print("call VIPOrderManager:AbortCurrentVIPOrder()");
+	dbPrintf("call VIPOrderManager:AbortCurrentVIPOrder()");
 
 	local sumAbortFee, sumPayout = VIPOrderManager:GetSumAbortFeeAndSumPayout()
 
@@ -216,30 +226,30 @@ end
 
 
 function VIPOrderManager:reactToDialog_AbortCurrentVIPOrder(yes)
-	-- print("call VIPOrderManager:reactToDialog_AbortCurrentVIPOrder()");
+	dbPrintf("call VIPOrderManager:reactToDialog_AbortCurrentVIPOrder()");
     if yes then
 		local sumAbortFee, sumPayout = VIPOrderManager:GetSumAbortFeeAndSumPayout()
 	
 		-- show message and payout
-		-- print(string.format("  sumAbortFee=%s | sumPayout=%s", g_i18n:formatMoney(sumAbortFee, 0, true), g_i18n:formatMoney(sumPayout, 0, true)))
+		-- dbPrintf("  sumAbortFee=%s | sumPayout=%s", g_i18n:formatMoney(sumAbortFee, 0, true), g_i18n:formatMoney(sumPayout, 0, true))
 		g_currentMission:addMoney(sumPayout, g_currentMission.player.farmId, MoneyType.MISSIONS, true, true);
 		g_currentMission:addMoney(sumAbortFee, g_currentMission.player.farmId, MoneyType.MISSIONS, true, true);
 
-		VIPOrderManager.currentVIPOrder = {}
+		table.remove(VIPOrderManager.VIPOrders, 1)
 		VIPOrderManager:RestockVIPOrders()
 		if VIPOrderManager.OrderDlg ~= nil then
-			VIPOrderManager.OrderDlg.target:setVIPOrders(VIPOrderManager.currentOrderLevel, VIPOrderManager.currentVIPOrder, VIPOrderManager.nextVIPOrder)
+			VIPOrderManager.OrderDlg.target:setVIPOrders(VIPOrderManager.VIPOrders)
 		end
     end
 end
 
 
 function VIPOrderManager:GetSumAbortFeeAndSumPayout()
-	-- print("call VIPOrderManager:GetSumAbortFeeAndSumPayout()");
+	dbPrintf("call VIPOrderManager:GetSumAbortFeeAndSumPayout()");
 	local sumPayout = 0
 	local sumAbortFee = 0
 
-	for _, vipOrderEntry in pairs(VIPOrderManager.currentVIPOrder) do
+	for _, vipOrderEntry in pairs(VIPOrderManager.VIPOrders[1].entries) do
 		local requiredQuantity = vipOrderEntry.quantity - math.ceil(vipOrderEntry.fillLevel)
 
 		if requiredQuantity > 0 then
@@ -255,31 +265,110 @@ end
 
 
 function VIPOrderManager:RestockVIPOrders()
-	-- print("call VIPOrderManager:RestockVIPOrders()");
+	dbPrintf("call VIPOrderManager:RestockVIPOrders()");
 
 	VIPOrderManager.ownFieldArea = VIPOrderManager:CalculateOwnFieldArea()
+	VIPOrderManager:GetExistingProductionOrAnimalOutputs()
 
-	if self.currentVIPOrder == nil or VIPOrderManager:getCountElements(self.currentVIPOrder) == 0 then
-		VIPOrderManager.currentOrderLevel  = VIPOrderManager.currentOrderLevel + 1
-		if self.nextVIPOrder ~= nil and VIPOrderManager:getCountElements(self.nextVIPOrder) > 0 then
-			self.currentVIPOrder = self.nextVIPOrder
-			self.nextVIPOrder = {}
-		else
-			VIPOrderManager:calculateAndFillOrder(self.currentVIPOrder, VIPOrderManager.currentOrderLevel)
+	-- new VIPOrder	
+	local orderLevel = 0
+	if #VIPOrderManager.VIPOrders > 0 then
+		orderLevel = VIPOrderManager.VIPOrders[#VIPOrderManager.VIPOrders].level
+	end
+	while (#VIPOrderManager.VIPOrders < VIPOrderManager.maxVIPOrdersCount) do
+		local newEntries = {}
+		orderLevel = orderLevel + 1
+		dbPrintf("  - Create new VIPOrder with level " .. orderLevel)
+		VIPOrderManager:calculateAndFillOrder(newEntries, orderLevel)
+		table.insert(VIPOrderManager.VIPOrders, {level = orderLevel, entries = newEntries})
+	end
+	self.showVIPOrder = 1
+	self.infoDisplayPastTime = 0
+	VIPOrderManager:UpdateOutputLines()
+
+	-- print("** Start DebugUtil.printTableRecursively() ************************************************************")
+	-- DebugUtil.printTableRecursively(VIPOrderManager.VIPOrders, ".", 0, 3)
+	-- print("** End DebugUtil.printTableRecursively() **************************************************************\n")
+end
+
+function VIPOrderManager:GetExistingProductionOrAnimalOutputs()
+	dbPrintf("call VIPOrderManager:GetHusbandryPlaceableTypes()");
+	local outputFillTypes = {}
+	local farmId = g_currentMission.player.farmId;
+	local isPig = false
+	local isCow = false
+	local isChicken = false
+	local isSheep = false
+	local isHorse = false
+
+	for _,husbandry in pairs(g_currentMission.husbandrySystem.clusterHusbandries) do
+		local placeable = husbandry:getPlaceable()
+		if placeable.ownerFarmId == farmId then
+			local name = placeable:getName()
+			local specHusbandryLiquidManure = placeable.spec_husbandryLiquidManure
+			local specHusbandryMilk = placeable.spec_husbandryMilk
+			local specHusbandryStraw = placeable.spec_husbandryStraw
+			local isManureActive = nil
+			if specHusbandryStraw ~= nil then
+				isManureActive = specHusbandryStraw.isManureActive
+			end
+
+			dbPrintf("  - husbandry placeables:  Name=%s | AnimalType=%s | specMilk=%s | specLiquidManure=%s | specStraw=%s | isManureActive=%s", name, husbandry.animalTypeName, tostring(specHusbandryMilk), tostring(specHusbandryLiquidManure), tostring(specHusbandryStraw), isManureActive)
+			isCow = husbandry.animalTypeName == "COW" or isCow
+			isPig = husbandry.animalTypeName == "PIG" or isPig
+			isChicken = husbandry.animalTypeName == "CHICKEN" or isChicken
+			isSheep = husbandry.animalTypeName == "SHEEP" or isSheep
+			isHorse = husbandry.animalTypeName == "HORSE" or isHorse
 		end
-		self.showVIPOrder = 1
-		self.infoDisplayPastTime = 0
-		VIPOrderManager:UpdateOutputLines()
 	end
 
-	if self.nextVIPOrder == nil or VIPOrderManager:getCountElements(self.nextVIPOrder) == 0 then
-		VIPOrderManager:calculateAndFillOrder(self.nextVIPOrder, VIPOrderManager.currentOrderLevel + 1)
+	-- if isPig then
+	-- 	outputFillTypes[WOOL]=true
+	-- 	outputFillTypes[MILK]=true
+	-- 	outputFillTypes[EGG]=true
+	-- 	outputFillTypes[MANURE]=true
+	-- 	outputFillTypes[LIQUIDMANURE]=true
+	-- end
+	local isCow = false
+	local isChicken = false
+	local isSheep = false
+	local isHorse = false
+
+
+	if g_currentMission.productionChainManager.farmIds[farmId] ~= nil and g_currentMission.productionChainManager.farmIds[farmId].productionPoints ~= nil then
+		for _, productionPoint in pairs(g_currentMission.productionChainManager.farmIds[farmId].productionPoints) do
+			
+			for fillTypeId, fillLevel in pairs(productionPoint.storage.fillLevels) do
+				local productionItem = {}
+				productionItem.name = productionPoint.owningPlaceable:getName();
+				productionItem.fillTypeId = fillTypeId
+				productionItem.isInput = false;
+				
+				-- prüfen ob input type
+				if productionPoint.inputFillTypeIds[fillTypeId] ~= nil then
+					productionItem.isInput = productionPoint.inputFillTypeIds[fillTypeId];
+				end
+				
+				productionItem.fillTypeTitle = g_currentMission.fillTypeManager.fillTypes[fillTypeId].title;
+				
+				for _, production in pairs(productionPoint.activeProductions) do
+					for _, input in pairs(production.inputs) do
+						-- status 3 = läuft nicht weil ausgang voll
+						if input.type == fillTypeId then
+							productionItem.isInput = true;
+						end
+					end
+				end
+
+				dbPrintf("  - Production: Name=%s  | fillTypeTitle=%s | isInput=%s", productionItem.name, productionItem.fillTypeTitle, productionItem.isInput)
+			end
+		end
 	end
 end
 
 
 function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
-	print("\ncall VIPOrderManager:calculateAndFillOrder()");
+	dbPrintf("call VIPOrderManager:calculateAndFillOrder()");
 
 	local usableFillTypes = {};
 	VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
@@ -289,26 +378,26 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 	-- 	local factorCount =     ((1 + level*0.04)-0.04)
 	-- 	local factorQuantity =  ((1 + level*level*0.005) - 0.005)
 	-- 	local factorPayout =   1/ ((1 + level*0.05) - 0.05)
-	-- 	print(string.format("Level %2i: factorCount=%f | factorQuantity=%f | factorPayout=%f",
-	-- 		level, factorCount, factorQuantity, factorPayout))
+	-- 	dbPrintf("Level %2i: factorCount=%f | factorQuantity=%f | factorPayout=%f",
+	-- 		level, factorCount, factorQuantity, factorPayout)
 	-- end
 
 	
 	local specCorFactorCount = ((1 + orderLevel * 0.04) - 0.04)
 	local specCorFactorQuantity = ((1 + orderLevel*orderLevel*0.005) - 0.005)
 	local specCorFactorPayout = 1.0 / ((1 + orderLevel*0.05) - 0.05)
-	print(string.format("\nCreate new VIP Order: Level %s", orderLevel))
-	print(string.format("  Initial basic correction factors:"))
-	print(string.format("    - Count factor    = %.2f", specCorFactorCount))
-	print(string.format("    - Quantity factor = %.2f", specCorFactorQuantity))
-	print(string.format("    - Payout factor   = %.2f", specCorFactorPayout))
+	dbPrintf("\nCreate new VIP Order: Level %s", orderLevel)
+	dbPrintf("  Initial basic correction factors:")
+	dbPrintf("    - Count factor    = %.2f", specCorFactorCount)
+	dbPrintf("    - Quantity factor = %.2f", specCorFactorQuantity)
+	dbPrintf("    - Payout factor   = %.2f", specCorFactorPayout)
 
 	local ownFieldSizeFactor = ((1 + VIPOrderManager.ownFieldArea*0.3)-0.3)
-	print("  Basic correction factors adjusted by the size of the own fields:")
-	print("    - own field size        = " .. VIPOrderManager.ownFieldArea)
-	print("    - own field size factor = " .. ownFieldSizeFactor)
-	print(string.format("    - adjusted quantity factor from %.2f to %.2f", specCorFactorQuantity, specCorFactorQuantity * ownFieldSizeFactor))
-	print(string.format("    - adjusted payout factor from   %.2f to %.2f", specCorFactorPayout, specCorFactorPayout / ownFieldSizeFactor))
+	dbPrintf("  Basic correction factors adjusted by the size of the own fields:")
+	dbPrintf("    - own field size        = " .. VIPOrderManager.ownFieldArea)
+	dbPrintf("    - own field size factor = " .. ownFieldSizeFactor)
+	dbPrintf("    - adjusted quantity factor from %.2f to %.2f", specCorFactorQuantity, specCorFactorQuantity * ownFieldSizeFactor)
+	dbPrintf("    - adjusted payout factor from   %.2f to %.2f", specCorFactorPayout, specCorFactorPayout / ownFieldSizeFactor)
 	local specCorFactorQuantity = specCorFactorQuantity * ownFieldSizeFactor
 	local specCorFactorPayout = specCorFactorPayout / ownFieldSizeFactor
 
@@ -317,28 +406,28 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 		specCorFactorCount = VIPOrderManager.orderLevelCorrectionFactors[orderLevel][1]
 		specCorFactorQuantity = VIPOrderManager.orderLevelCorrectionFactors[orderLevel][2]
 		specCorFactorPayout = VIPOrderManager.orderLevelCorrectionFactors[orderLevel][3]
-		print(string.format("  If necessary overright by Correction factors for easier beginning:"))
-		print(string.format("    - Count factor    = %.2f", specCorFactorCount))
-		print(string.format("    - Quantity factor = %.2f", specCorFactorQuantity))
-		print(string.format("    - Payout factor   = %.2f", specCorFactorPayout))
+		dbPrintf("  If necessary overright by Correction factors for easier beginning:")
+		dbPrintf("    - Count factor    = %.2f", specCorFactorCount)
+		dbPrintf("    - Quantity factor = %.2f", specCorFactorQuantity)
+		dbPrintf("    - Payout factor   = %.2f", specCorFactorPayout)
 	end
 
 	-- create random order items
 	local countFillTypes = #usableFillTypes
 	local countOrderItems = math.floor(math.random(VIPOrderManager.countOrderItemsRange.min, VIPOrderManager.countOrderItemsRange.max) * specCorFactorCount + 0.5)
-	print("  Calculate order item count:")
-	print("    - min count      = " .. VIPOrderManager.countOrderItemsRange.min)
-	print("    - max count      = " .. VIPOrderManager.countOrderItemsRange.max)
-	print("    - Count factor   = " .. specCorFactorCount)
-	print("    ==> Count order items = " .. countOrderItems)
+	dbPrintf("  Calculate order item count:")
+	dbPrintf("    - min count      = " .. VIPOrderManager.countOrderItemsRange.min)
+	dbPrintf("    - max count      = " .. VIPOrderManager.countOrderItemsRange.max)
+	dbPrintf("    - Count factor   = " .. specCorFactorCount)
+	dbPrintf("    ==> Count order items = " .. countOrderItems)
 
 	local maxLimitedOrderItems = math.floor(orderLevel / 100 * VIPOrderManager.isLimitedPercentage)
-	print(string.format("  Max allowed limited order items: %s percent from %s = %s", VIPOrderManager.isLimitedPercentage, orderLevel, maxLimitedOrderItems))
+	dbPrintf("  Max allowed limited order items: %s percent from %s = %s", VIPOrderManager.isLimitedPercentage, orderLevel, maxLimitedOrderItems)
 	
 	local i = 0
 	while (i < countOrderItems) do
 		i = i + 1
-		print(string.format("\n  %s. Order Item:", i))
+		dbPrintf(string.format("\n  %s. Order Item:", i))
 		
 		local fillType = nil
 		local ftConfig = nil
@@ -355,20 +444,20 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 		until(maxLimitedOrderItems > 0 or not isLimitedFillType)
 		if isLimitedFillType then
 			maxLimitedOrderItems = maxLimitedOrderItems -1
-			print("  --> choose limited filltype")
+			dbPrintf("  --> choose limited filltype")
 		end
 
 		local quantityCorrectionFactor = 1
 		if ftConfig.quantityCorrectionFactor ~= nil then
 			quantityCorrectionFactor = ftConfig.quantityCorrectionFactor
 		end
-		print(string.format("    - FillType: %s (%s) | filltype quantity factor = %.2f", fillType.name, fillType.title, quantityCorrectionFactor))
+		dbPrintf("    - FillType: %s (%s) | filltype quantity factor = %.2f", fillType.name, fillType.title, quantityCorrectionFactor)
 
 		local randomQuantityFaktor = math.random(VIPOrderManager.quantityFactor.min, VIPOrderManager.quantityFactor.max) * specCorFactorQuantity
-		local randomPayoutFactor = math.random(VIPOrderManager.payoutFactor.min, VIPOrderManager.payoutFactor.max) * specCorFactorPayout
+		local randomPayoutFactor = math.random(VIPOrderManager.payoutFactor.min, VIPOrderManager.payoutFactor.max) * specCorFactorPayout / quantityCorrectionFactor
 		local orderItemQuantity = math.floor(randomQuantityFaktor * 1000 / fillType.pricePerLiter * quantityCorrectionFactor)
-		print(string.format("    - final quantity factor = %.2f", randomQuantityFaktor))
-		print(string.format("    - final payout factor   = %.2f", randomPayoutFactor))
+		dbPrintf("    - final quantity factor = %.2f", randomQuantityFaktor)
+		dbPrintf("    - final payout factor   = %.2f", randomPayoutFactor)
 		
 
 		if orderItemQuantity > 1000 then
@@ -378,24 +467,24 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 		elseif orderItemQuantity > 10 then
 			orderItemQuantity = math.floor(orderItemQuantity / 10) * 10
 		end 
-		print(string.format("    ==> Quantity = %.2f * 1000 / %.2f * %.2f = %s", randomQuantityFaktor, fillType.pricePerLiter, quantityCorrectionFactor, orderItemQuantity))
+		dbPrintf("    ==> Quantity = %.2f * 1000 / %.2f * %.2f = %s", randomQuantityFaktor, fillType.pricePerLiter, quantityCorrectionFactor, orderItemQuantity)
 		
 		local orderItemPayout = math.floor(orderItemQuantity * fillType.pricePerLiter * randomPayoutFactor/100)*100
-		print(string.format("    ==> Payout   = %.2f * %.2f * %.2f = %s", orderItemQuantity, fillType.pricePerLiter, randomPayoutFactor, orderItemPayout))
+		dbPrintf("    ==> Payout   = %.2f * %.2f * %.2f = %s", orderItemQuantity, fillType.pricePerLiter, randomPayoutFactor, orderItemPayout)
 
 		-- target station
 		local targetStation = fillType.acceptingStations[math.random(1, #fillType.acceptingStations)]
-		print(string.format("    ==> target station = %s", targetStation.owningPlaceable:getName()))
+		dbPrintf("    ==> target station = %s", targetStation.owningPlaceable:getName())
 
 		if VIPOrder[fillType.name] ~= nil then
 			if allowSumQuantitySameFT then
 				-- Summ double entries
 				VIPOrder[fillType.name].quantity = VIPOrder[fillType.name].quantity + orderItemQuantity/2
 				VIPOrder[fillType.name].payout = VIPOrder[fillType.name].payout + orderItemPayout/2
-				print("  Double --> Sum order items")
+				dbPrintf("  Double --> Sum order items")
 			else
 				i = i - 1 	-- try again
-				print("  Double --> discard current order item and try again")
+				dbPrintf("  Double --> discard current order item and try again")
 			end
 		else
 			VIPOrder[fillType.name] = {fillTypeName=fillType.name, quantity=orderItemQuantity, fillLevel=0, payout=orderItemPayout, targetStation=targetStation}
@@ -405,7 +494,7 @@ end
 
 
 function VIPOrderManager:CalculateOwnFieldArea()
-	print("\ncall VIPOrderManager:CalculateOwnFieldArea()");
+	dbPrintf("\ncall VIPOrderManager:CalculateOwnFieldArea()");
 
 	-- Calculate full farmland
 	local farmlands = g_farmlandManager:getOwnedFarmlandIdsByFarmId(g_currentMission.player.farmId)
@@ -422,14 +511,14 @@ function VIPOrderManager:CalculateOwnFieldArea()
 			for fieldIndex, field in pairs(fields) do
 				fieldCount = fieldCount + 1
 				fieldAreaSum = fieldAreaSum + field.fieldArea
-				print(string.format("  Field: fieldId=%s | name=%s | fieldArea =%s", field.fieldId, field.name, g_i18n:formatArea(field.fieldArea, 2)))
+				dbPrintf("  Field: fieldId=%s | name=%s | fieldArea =%s", field.fieldId, field.name, g_i18n:formatArea(field.fieldArea, 2))
 			end
 		end
 		fieldAreaOverall = fieldAreaOverall + fieldAreaSum
 
-		print(string.format("  --> %s. Owned Farmland: id=%s | FieldCount=%s | FieldAreaSum=%s", i, farmland.id, fieldCount, g_i18n:formatArea(fieldAreaSum, 2)))
+		dbPrintf("  --> %s. Owned Farmland: id=%s | FieldCount=%s | FieldAreaSum=%s", i, farmland.id, fieldCount, g_i18n:formatArea(fieldAreaSum, 2))
 	end
-	print(string.format("  ==> Field Area Overall: %s\n", g_i18n:formatArea(fieldAreaOverall, 2)))
+	dbPrintf("  ==> Field Area Overall: %s\n", g_i18n:formatArea(fieldAreaOverall, 2))
 
 	-- if fieldAreaOverall > 0.01 then
 	-- 	return math.ceil(fieldAreaOverall*100)/100
@@ -451,21 +540,21 @@ function VIPOrderManager:GetFillTypeConfig(ftName)
 		end
 		VIPOrderManager.ftConfigs[ftName] = ftConfig
 	end
-	-- print(string.format("GetFillTypeConfig: ftName=%s --> ftConfig=%s (isUnknown=%s)", ftName, tostring(ftConfig), tostring(ftConfig.isUnknown)))
+	-- dbPrintf("GetFillTypeConfig: ftName=%s --> ftConfig=%s (isUnknown=%s)", ftName, tostring(ftConfig), tostring(ftConfig.isUnknown))
 	
 	return ftConfig
 end
 
 
 function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
-	print("\ncall VIPOrderManager:GetUsableFillTypes()");
+	dbPrintf("\ncall VIPOrderManager:GetUsableFillTypes()");
 	
 	local sellableFillTypes = VIPOrderManager:getAllSellableFillTypes()
 
 	-- Validate FillTypes	
-	print("\nNot usable filltypes:")
+	dbPrintf("\nNot usable filltypes:")
 	for index, sft in pairs(sellableFillTypes) do    
-        print("  Validate FillTypes: " .. index .. " --> " .. sft.name .. " (" .. sft.title .. ")")
+        dbPrintf("  Validate FillTypes: " .. index .. " --> " .. sft.name .. " (" .. sft.title .. ")")
 		local notUsableWarning = nil
 		local tempNameOutput = string.format("%s (%s)", sft.name, sft.title)
 		local defaultWarningText = string.format("  - %-40s | pricePerLiterMax=%f | ", tempNameOutput, sft.priceMax)
@@ -517,11 +606,11 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
 			ftdata.acceptingStations=sft.acceptingStations
             table.insert(usableFillTypes, ftdata)
         else
-            print(defaultWarningText .. notUsableWarning)
+            dbPrintf(defaultWarningText .. notUsableWarning)
         end
 	end
 	
-	print("\nUsable filltypes:")
+	dbPrintf("\nUsable filltypes:")
 	for _, v in pairs(usableFillTypes) do    
 		local tempNameOutput = string.format("%s (%s)", v.name, v.title)
 		
@@ -533,25 +622,19 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
 			stationList = stationList .. v.acceptingStations[i].owningPlaceable:getName()
 		end
 		
-		print(string.format("  - %-40s | price=%f | Stations=%s", tempNameOutput, v.pricePerLiter, stationList));
+		dbPrintf("  - %-40s | price=%f | Stations=%s", tempNameOutput, v.pricePerLiter, stationList)
 	end
 end
 
 
 function VIPOrderManager:getAllSellableFillTypes()
-	print("\ncall VIPOrderManager:getAllSellableFillTypes()");
+	-- dbPrintf("\ncall VIPOrderManager:getAllSellableFillTypes()");
 	local sellableFillTypes = {}
 
 	for _, station in pairs(g_currentMission.storageSystem.unloadingStations) do
-		print(string.format("Station: getName=%s | typeName=%s | categoryName=%s | isSellingPoint=%s | currentSavegameId=%s", 
-			station.owningPlaceable:getName(), tostring(station.owningPlaceable.typeName), tostring(station.owningPlaceable.storeItem.categoryName), tostring(station.isSellingPoint), station.owningPlaceable.currentSavegameId))
+		-- dbPrintf("Station: getName=%s | typeName=%s | categoryName=%s | isSellingPoint=%s | currentSavegameId=%s", 
+		-- 	station.owningPlaceable:getName(), tostring(station.owningPlaceable.typeName), tostring(station.owningPlaceable.storeItem.categoryName), tostring(station.isSellingPoint), station.owningPlaceable.currentSavegameId)
 		-- PRODUCTIONPOINTS, SILOS, ANIMALPENS
-
-		-- if station.uiName ~= nil and string.find(station.uiName, "Bäckerei") and 1==0 then
-		-- 	print("** Start DebugUtil.printTableRecursively() ************************************************************")
-		-- 	DebugUtil.printTableRecursively(station.owningPlaceable, ".", 0, 1)
-		-- 	print("** End DebugUtil.printTableRecursively() **************************************************************\n")
-		-- end
 
 		if station.isSellingPoint ~= nil and station.isSellingPoint == true then
 			for fillTypeIndex, isAccepted in pairs(station.acceptedFillTypes) do
@@ -565,7 +648,7 @@ function VIPOrderManager:getAllSellableFillTypes()
 						extraMsg = " *** Unknown filltype without configuration ***"
 					end
 					
-					-- print(string.format("  - filltype: %s (%s)%s", fillType.name, fillType.title, extraMsg))
+					-- dbPrintf("  - filltype: %s (%s)%s", fillType.name, fillType.title, extraMsg)
 					local price = station:getEffectiveFillTypePrice(fillTypeIndex)
 
 					if sellableFillTypes[fillTypeIndex] == nil then
@@ -595,9 +678,9 @@ end
 
 
 function VIPOrderManager:ShowCurrentVIPOrder()
-	-- print("\ncall VIPOrderManager:ShowCurrentVIPOrder()");
+	-- dbPrintf("\ncall VIPOrderManager:ShowCurrentVIPOrder()");
 
-	-- print(string.format("  current showVIPOrder=%s | new showVIPOrder=%s", VIPOrderManager.showVIPOrder,  (VIPOrderManager.showVIPOrder + 1) % 4))
+	-- dbPrintf("  current showVIPOrder=%s | new showVIPOrder=%s", VIPOrderManager.showVIPOrder,  (VIPOrderManager.showVIPOrder + 1) % 4)
 
 	VIPOrderManager.showVIPOrder = (VIPOrderManager.showVIPOrder + 1) % 3	-- only 0, 1 or 2
 	if VIPOrderManager.showVIPOrder > 0 then
@@ -607,17 +690,21 @@ function VIPOrderManager:ShowCurrentVIPOrder()
 end
 
 
-function VIPOrderManager:GetPayoutTotal()
+function VIPOrderManager:GetPayoutTotal(orderEntries)
 	local payoutTotal = 0
-	for _, vipOrder in pairs(VIPOrderManager.currentVIPOrder) do
-		payoutTotal = payoutTotal + vipOrder.payout
+	for _, entry in pairs(orderEntries) do
+		payoutTotal = payoutTotal + entry.payout
 	end
 	return payoutTotal
 end
 
 -- return: boolean, IsOrderCompleted
 function VIPOrderManager:UpdateOutputLines()
-	-- print("call VIPOrderManager:UpdateOutputLines()");
+	-- dbPrintf("call VIPOrderManager:UpdateOutputLines()");
+	if #VIPOrderManager.VIPOrders < 2 then
+		return
+	end
+
 	local posX = VIPOrderManager.outputStartPoint.x
 	local posY = VIPOrderManager.outputStartPoint.y
 	local fontSize = VIPOrderManager.outputFontSize
@@ -626,14 +713,13 @@ function VIPOrderManager:UpdateOutputLines()
 	VIPOrderManager.outputLines = {}	-- Output lines for the draw() function (text, size, bold, colorId, x, y)
 
 	local title = g_i18n:getText("VIPOrderManager_CurrentVIPOrder")
-	local VIPOrder = VIPOrderManager.currentVIPOrder
-	local level = VIPOrderManager.currentOrderLevel
+	local VIPOrder = VIPOrderManager.VIPOrders[1]
 	
 	if VIPOrderManager.showVIPOrder == 2 then
-		VIPOrder = VIPOrderManager.nextVIPOrder
+		VIPOrder = VIPOrderManager.VIPOrders[2]
 		title = g_i18n:getText("VIPOrderManager_NextVIPOrder")
-		level = VIPOrderManager.currentOrderLevel + 1
 	end
+	local level = VIPOrder.level
 
 	-- calculate max text widths
 	-- local maxTitelTextWidth = 0
@@ -652,14 +738,14 @@ function VIPOrderManager:UpdateOutputLines()
 	-- 		maxQuantityTextWidth = quantityTextWidth
 	-- 	end
 	-- end
-
-	table.insert(VIPOrderManager.outputLines, {text = string.format("%s (Level: %s):", title, level), size = fontSize, bold = true, align=RenderText.ALIGN_LEFT, colorId = 7, x = posX, y = posY})
+	local headerLine = string.format("%s (Level: %s):", title, level)
+	table.insert(VIPOrderManager.outputLines, {text = headerLine, size = fontSize, bold = true, align=RenderText.ALIGN_LEFT, colorId = 7, x = posX, y = posY})
 	posY = posY - fontSize
 	
-	local maxTextWidth = 0
+	local maxTextWidth = getTextWidth(fontSize, headerLine) + 0.005
 	local posXIncrease = getTextWidth(fontSize, "  999.999  ")
 
-	for _, vipOrderEntry in pairs(VIPOrder) do
+	for _, vipOrderEntry in pairs(VIPOrder.entries) do
 		local fillTypeTitle = g_fillTypeManager:getFillTypeByName(vipOrderEntry.fillTypeName).title
 		local requiredQuantity = vipOrderEntry.quantity - math.ceil(vipOrderEntry.fillLevel)
 	
@@ -677,8 +763,8 @@ function VIPOrderManager:UpdateOutputLines()
 		table.insert(VIPOrderManager.outputLines, {text = line, size = fontSize, bold = false, align=RenderText.ALIGN_LEFT, colorId = fillLevelColor, x = posX + posXIncrease, y = posY})
 		posY = posY - fontSize
 		local textWidth = getTextWidth(fontSize, line)
-		if (textWidth > maxTextWidth) then
-			maxTextWidth = textWidth
+		if (textWidth + posXIncrease > maxTextWidth) then
+			maxTextWidth = textWidth + posXIncrease
 		end
 
 		isOrderCompleted = isOrderCompleted and requiredQuantity <= 0
@@ -691,21 +777,21 @@ function VIPOrderManager:UpdateOutputLines()
 
 	if infoHud ~= nil then
 		infoHud:setPosition(VIPOrderManager.outputStartPoint.x - 0.005, VIPOrderManager.outputStartPoint.y + 0.005 + fontSize)
-		infoHud:setDimension(posXIncrease + maxTextWidth + 0.01, VIPOrderManager.outputStartPoint.y - posY + fontSize)
+		infoHud:setDimension(maxTextWidth + 0.01, VIPOrderManager.outputStartPoint.y - posY + fontSize)
 	end
 
-	return isOrderCompleted and VIPOrderManager:getCountElements(VIPOrder) > 0
+	return isOrderCompleted and VIPOrderManager:getCountElements(VIPOrder.entries) > 0
 end
 
 
-function VIPOrderManager:MakePayout()
-	-- print("\ncall VIPOrderManager:MakePayout()");
+function VIPOrderManager:MakePayout(orderEntries)
+	-- dbPrintf("\ncall VIPOrderManager:MakePayout()");
 
 	-- show message
 	g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_OK, g_i18n:getText("VIPOrderManager_OrderCompleted"))
 
 	-- Pay out profit
-	local payoutTotal = VIPOrderManager:GetPayoutTotal()
+	local payoutTotal = VIPOrderManager:GetPayoutTotal(orderEntries)
 	g_currentMission:addMoney(payoutTotal, g_currentMission.player.farmId, MoneyType.MISSIONS, true, true);
 end
 
@@ -725,10 +811,10 @@ function VIPOrderManager:update(dt)
 		if g_currentMission:getIsClient() and g_gui.currentGui == nil then
 			local isOrderCompleted = VIPOrderManager:UpdateOutputLines()
 			if isOrderCompleted then
-				VIPOrderManager:MakePayout()
-				VIPOrderManager.currentVIPOrder = {}
+				VIPOrderManager:MakePayout(VIPOrderManager.VIPOrders[1].entries)
+				table.remove(VIPOrderManager.VIPOrders, 1)
 			end
-			if VIPOrderManager:getCountElements(VIPOrderManager.currentVIPOrder) == 0 or VIPOrderManager:getCountElements(VIPOrderManager.nextVIPOrder) == 0 then
+			if #VIPOrderManager.VIPOrders < VIPOrderManager.maxVIPOrdersCount then
 				VIPOrderManager:RestockVIPOrders()
 			end
 		end
@@ -769,7 +855,7 @@ end
 
 
 function VIPOrderManager:saveSettings()
-	-- print("call VIPOrderManager:saveSettings()");
+	-- dbPrintf("call VIPOrderManager:saveSettings()");
 	
 	local savegameFolderPath = g_currentMission.missionInfo.savegameDirectory.."/";
 	if savegameFolderPath == nil then
@@ -778,58 +864,53 @@ function VIPOrderManager:saveSettings()
 	local key = "VIPOrderManager";
 	local storePlace = g_currentMission.storeSpawnPlaces[1];
 	local xmlFile = createXMLFile(key, savegameFolderPath.."VIPOrderManager.xml", key);
-	setXMLString(xmlFile, key.."#XMLFileVersion", "1.0");
-	setXMLInt(xmlFile, key.."#orderLevel", VIPOrderManager.currentOrderLevel);
-	setXMLInt(xmlFile, key..".countOrderItemsRange#Min", VIPOrderManager.countOrderItemsRange.min)
-	setXMLInt(xmlFile, key..".countOrderItemsRange#Max", VIPOrderManager.countOrderItemsRange.max)
-	setXMLInt(xmlFile, key..".quantityFactor#Min", VIPOrderManager.quantityFactor.min)
-	setXMLInt(xmlFile, key..".quantityFactor#Max", VIPOrderManager.quantityFactor.max)
-	setXMLInt(xmlFile, key..".payoutFactor#Min", VIPOrderManager.payoutFactor.min)
-	setXMLInt(xmlFile, key..".payoutFactor#Max", VIPOrderManager.payoutFactor.max)
+	-- setXMLString(xmlFile, key.."#XMLFileVersion", "1.0");
+	setXMLString(xmlFile, key.."#XMLFileVersion", "2.0");
 
-	-- current VIP order
-	local i = 0
-	for _, vipOrder in pairs(VIPOrderManager.currentVIPOrder) do
-		local localKey = string.format("%s.currentorder(%d)", key, i)
-		setXMLString(xmlFile, localKey.."#fillTypeName", vipOrder.fillTypeName)
-		setXMLInt(xmlFile, localKey.."#quantity", vipOrder.quantity)
-		setXMLInt(xmlFile, localKey.."#fillLevel", math.ceil(vipOrder.fillLevel))
-		setXMLInt(xmlFile, localKey.."#payout", vipOrder.payout)
-		setXMLString(xmlFile, localKey.."#fillTypeTitle_OnlyAsInfo", g_fillTypeManager:getFillTypeByName(vipOrder.fillTypeName).title)
-		if vipOrder.targetStation ~= nil then
-			setXMLInt(xmlFile, localKey.."#targetStationSavegameId", vipOrder.targetStation.owningPlaceable.currentSavegameId)
-			setXMLString(xmlFile, localKey.."#targetStationName_OnlyAsInfo", vipOrder.targetStation.owningPlaceable:getName())
-		end
-		i = i + 1
-	end
+	local settingKey = string.format("%s.Settings", key)
+	-- setXMLInt(xmlFile, key.."#orderLevel", VIPOrderManager.currentOrderLevel);
+	setXMLInt(xmlFile, settingKey..".maxVIPOrdersCount", VIPOrderManager.maxVIPOrdersCount);
+	setXMLInt(xmlFile, settingKey..".countOrderItemsRange#Min", VIPOrderManager.countOrderItemsRange.min)
+	setXMLInt(xmlFile, settingKey..".countOrderItemsRange#Max", VIPOrderManager.countOrderItemsRange.max)
+	setXMLInt(xmlFile, settingKey..".quantityFactor#Min", VIPOrderManager.quantityFactor.min)
+	setXMLInt(xmlFile, settingKey..".quantityFactor#Max", VIPOrderManager.quantityFactor.max)
+	setXMLInt(xmlFile, settingKey..".payoutFactor#Min", VIPOrderManager.payoutFactor.min)
+	setXMLInt(xmlFile, settingKey..".payoutFactor#Max", VIPOrderManager.payoutFactor.max)
 
-	-- next VIP order
-	i = 0
-	for _, vipOrder in pairs(VIPOrderManager.nextVIPOrder) do
-		local localKey = string.format("%s.nextorder(%d)", key, i)
-		setXMLString(xmlFile, localKey.."#fillTypeName", vipOrder.fillTypeName)
-		setXMLInt(xmlFile, localKey.."#quantity", vipOrder.quantity)
-		setXMLInt(xmlFile, localKey.."#fillLevel", vipOrder.fillLevel)
-		setXMLInt(xmlFile, localKey.."#payout", vipOrder.payout)
-		setXMLString(xmlFile, localKey.."#fillTypeTitle_OnlyAsInfo", g_fillTypeManager:getFillTypeByName(vipOrder.fillTypeName).title)
-		if vipOrder.targetStation ~= nil then
-			setXMLInt(xmlFile, localKey.."#targetStationSavegameId", vipOrder.targetStation.owningPlaceable.currentSavegameId)
-			setXMLString(xmlFile, localKey.."#targetStationName_OnlyAsInfo", vipOrder.targetStation.owningPlaceable:getName())
+	local iOrder = 0
+	for _, vipOrder in pairs(VIPOrderManager.VIPOrders) do
+		local orderKey = string.format("%s.VIPOrders.VIPOrder(%d)", key, iOrder)
+		setXMLInt(xmlFile, orderKey.."#level", vipOrder.level)
+
+		local iEntry = 0
+		for _, orderEntry in pairs(vipOrder.entries) do
+			local entryKey = string.format("%s.entry(%d)", orderKey, iEntry)
+			setXMLString(xmlFile, entryKey.."#fillTypeName", orderEntry.fillTypeName)
+			setXMLInt(xmlFile, entryKey.."#quantity", orderEntry.quantity)
+			setXMLInt(xmlFile, entryKey.."#fillLevel", math.ceil(orderEntry.fillLevel))
+			setXMLInt(xmlFile, entryKey.."#payout", orderEntry.payout)
+			setXMLString(xmlFile, entryKey.."#fillTypeTitle_OnlyAsInfo", g_fillTypeManager:getFillTypeByName(orderEntry.fillTypeName).title)
+			if orderEntry.targetStation ~= nil then
+				setXMLInt(xmlFile, entryKey.."#targetStationSavegameId", orderEntry.targetStation.owningPlaceable.currentSavegameId)
+				setXMLString(xmlFile, entryKey.."#targetStationName_OnlyAsInfo", orderEntry.targetStation.owningPlaceable:getName())
+			end
+			iEntry = iEntry + 1
 		end
-		i = i + 1
+		iOrder = iOrder + 1
 	end
 
 	-- Write unknown filltypes as info
 	-- isUnknown=true, isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=1.0, isLimited=false}
-	i = 0
+	local i = 0
 	for ftName, config in pairs(VIPOrderManager.ftConfigs) do
-		if config.isUnknown ~= nil and config.isUnknown then
-			local localKey = string.format("%s.UnknownFilltypesInfo(%d)", key, i)
+		if config.isUnknown ~= nil and config.isUnknown and ftName ~= "DEFAULT_FRUITTYPE" and ftName ~= "DEFAULT_FILLTYPE" then
+			local localKey = string.format("%s.UnknownFilltypesInfos.UnknownFilltypesInfo(%d)", key, i)
 			setXMLString(xmlFile, localKey.."#ftName", ftName)
 			setXMLBool(xmlFile, localKey.."#isAllowed", config.isAllowed)
 			setXMLInt(xmlFile, localKey.."#minOrderLevel", config.minOrderLevel)
 			setXMLFloat(xmlFile, localKey.."#quantityCorrectionFactor", config.quantityCorrectionFactor)
 			setXMLBool(xmlFile, localKey.."#isLimited", config.isLimited)
+			setXMLString(xmlFile, localKey.."#title", g_fillTypeManager:getFillTypeByName(ftName).title)
 			i = i + 1
 		end
 	end
@@ -839,7 +920,7 @@ function VIPOrderManager:saveSettings()
 end
 
 function VIPOrderManager:loadSettings()
-	-- print("call VIPOrderManager:loadSettings()")
+	dbPrintf("call VIPOrderManager:loadSettings()")
 
 	local savegameFolderPath = g_currentMission.missionInfo.savegameDirectory
 	if savegameFolderPath == nil then
@@ -852,62 +933,59 @@ function VIPOrderManager:loadSettings()
 		local xmlFile = loadXMLFile(key, savegameFolderPath.."VIPOrderManager.xml")
 
 		local XMLFileVersion = getXMLString(xmlFile, key.."#XMLFileVersion")
-		VIPOrderManager.currentOrderLevel = Utils.getNoNil(getXMLInt(xmlFile, key.."#orderLevel"), 1)
-		VIPOrderManager.countOrderItemsRange.min = Utils.getNoNil(getXMLInt(xmlFile, key..".countOrderItemsRange#Min"), VIPOrderManager.countOrderItemsRange.min)
-		VIPOrderManager.countOrderItemsRange.max = Utils.getNoNil(getXMLInt(xmlFile, key..".countOrderItemsRange#Max"), VIPOrderManager.countOrderItemsRange.max)
-		VIPOrderManager.quantityFactor.min = Utils.getNoNil(getXMLInt(xmlFile, key..".quantityFactor#Min"), VIPOrderManager.quantityFactor.min)
-		VIPOrderManager.quantityFactor.max = Utils.getNoNil(getXMLInt(xmlFile, key..".quantityFactor#Max"), VIPOrderManager.quantityFactor.max)
-		VIPOrderManager.payoutFactor.min = Utils.getNoNil(getXMLInt(xmlFile, key..".payoutFactor#Min"), VIPOrderManager.payoutFactor.min)
-		VIPOrderManager.payoutFactor.max = Utils.getNoNil(getXMLInt(xmlFile, key..".payoutFactor#Max"), VIPOrderManager.payoutFactor.max)
 
-		local index = 0
-		while true do
-			local localKey = string.format("%s.currentorder(%d)", key, index)
-			if hasXMLProperty(xmlFile, localKey) then
-				local fillTypeName = getXMLString(xmlFile, localKey.."#fillTypeName")
-				local quantity = getXMLInt(xmlFile, localKey.."#quantity")
-				local fillLevel = Utils.getNoNil(getXMLInt(xmlFile, localKey.."#fillLevel"), 0)
-				local payout = getXMLInt(xmlFile, localKey.."#payout")
-				local targetStationSavegameId = getXMLInt(xmlFile, localKey.."#targetStationSavegameId")
-				local targetStationName = getXMLString(xmlFile, localKey.."#targetStationName_OnlyAsInfo")
-				-- print(string.format("loadSettings: %s | %s", targetStationSavegameId, targetStationName))
-				local targetStation = VIPOrderManager:getStationBySavegameId(targetStationSavegameId)
-				if targetStation ~= nil then
-					-- print(string.format("  --> %s | %s", targetStation, targetStation.owningPlaceable:getName()))
+		if XMLFileVersion == "2.0" then
+			local settingKey = string.format("%s.Settings", key)
+			VIPOrderManager.maxVIPOrdersCount = Utils.getNoNil(getXMLInt(xmlFile, settingKey..".maxVIPOrdersCount"), VIPOrderManager.maxVIPOrdersCount)
+
+			VIPOrderManager.countOrderItemsRange.min = Utils.getNoNil(getXMLInt(xmlFile, settingKey..".countOrderItemsRange#Min"), VIPOrderManager.countOrderItemsRange.min)
+			VIPOrderManager.countOrderItemsRange.max = Utils.getNoNil(getXMLInt(xmlFile, settingKey..".countOrderItemsRange#Max"), VIPOrderManager.countOrderItemsRange.max)
+			VIPOrderManager.quantityFactor.min = Utils.getNoNil(getXMLInt(xmlFile, settingKey..".quantityFactor#Min"), VIPOrderManager.quantityFactor.min)
+			VIPOrderManager.quantityFactor.max = Utils.getNoNil(getXMLInt(xmlFile, settingKey..".quantityFactor#Max"), VIPOrderManager.quantityFactor.max)
+			VIPOrderManager.payoutFactor.min = Utils.getNoNil(getXMLInt(xmlFile, settingKey..".payoutFactor#Min"), VIPOrderManager.payoutFactor.min)
+			VIPOrderManager.payoutFactor.max = Utils.getNoNil(getXMLInt(xmlFile, settingKey..".payoutFactor#Max"), VIPOrderManager.payoutFactor.max)
+
+			local iOrder = 0
+			while true do
+				local orderKey = string.format("%s.VIPOrders.VIPOrder(%d)", key, iOrder)
+				if hasXMLProperty(xmlFile, orderKey) then
+					local vipOrder = {level=nil, entries={}}
+					local level = getXMLInt(xmlFile, orderKey.."#level")
+					vipOrder.level = level
+		
+					local iEntry = 0
+					while true do
+						local entryKey = string.format("%s.entry(%d)", orderKey, iEntry)
+						if hasXMLProperty(xmlFile, entryKey) then
+							local fillTypeName = getXMLString(xmlFile, entryKey.."#fillTypeName")
+							local quantity = getXMLInt(xmlFile, entryKey.."#quantity")
+							local fillLevel = Utils.getNoNil(getXMLInt(xmlFile, entryKey.."#fillLevel"), 0)
+							local payout = getXMLInt(xmlFile, entryKey.."#payout")
+							local targetStationSavegameId = getXMLInt(xmlFile, entryKey.."#targetStationSavegameId")
+							local targetStationName = getXMLString(xmlFile, entryKey.."#targetStationName_OnlyAsInfo")
+							-- dbPrintf("loadSettings: %s | %s", targetStationSavegameId, targetStationName)
+							local targetStation = VIPOrderManager:getStationBySavegameId(targetStationSavegameId)
+							if targetStation ~= nil then
+								-- dbPrintf("  --> %s | %s", targetStation, targetStation.owningPlaceable:getName())
+							end
+			
+							vipOrder.entries[fillTypeName] = {fillTypeName=fillTypeName, quantity=quantity, fillLevel=fillLevel, payout=payout, targetStation=targetStation}
+							iEntry = iEntry + 1
+						else
+							break
+						end
+					end
+					table.insert(VIPOrderManager.VIPOrders, vipOrder)
+					iOrder = iOrder + 1
+				else
+					break
 				end
-
-				VIPOrderManager.currentVIPOrder[fillTypeName] = {fillTypeName=fillTypeName, quantity=quantity, fillLevel=fillLevel, payout=payout, targetStation=targetStation}
-				index = index + 1
-			else
-				break
-			end
-		end
-
-		index = 0
-		while true do
-			local localKey = string.format("%s.nextorder(%d)", key, index)
-			if hasXMLProperty(xmlFile, localKey) then
-				local fillTypeName = getXMLString(xmlFile, localKey.."#fillTypeName")
-				local quantity = getXMLInt(xmlFile, localKey.."#quantity")
-				local fillLevel = Utils.getNoNil(getXMLInt(xmlFile, localKey.."#fillLevel"), 0)
-				local payout = getXMLInt(xmlFile, localKey.."#payout")
-				local targetStationSavegameId = getXMLInt(xmlFile, localKey.."#targetStationSavegameId")
-				local targetStationName = getXMLString(xmlFile, localKey.."#targetStationName_OnlyAsInfo")
-				-- print(string.format("loadSettings: %s | %s", targetStationSavegameId, targetStationName))
-				local targetStation = VIPOrderManager:getStationBySavegameId(targetStationSavegameId)
-				if targetStation ~= nil then
-					-- print(string.format("  --> %s | %s", targetStation, targetStation.owningPlaceable:getName()))
-				end
-
-				VIPOrderManager.nextVIPOrder[fillTypeName] = {fillTypeName=fillTypeName, quantity=quantity, fillLevel=fillLevel, payout=payout, targetStation=targetStation}
-				index = index + 1
-			else
-				break
 			end
 		end
 
 		delete(xmlFile);
 	end;
+
 	VIPOrderManager.InitDone = true
 	return VIPOrderManager.isLoaded;
 end
@@ -939,14 +1017,14 @@ function VIPOrderManager.sellingStation_addFillLevelFromTool(station, superFunc,
 	if station.owningPlaceable ~= nil and station.owningPlaceable.storeItem ~= nil then
 		stationCategoryName = station.owningPlaceable.storeItem.categoryName
 	end
-	-- print(string.format("  stationCategoryName=%s | moved=%s | deltaFillLevel=%s | ftName=%s (%s) | ftIndex=%s | toolType=%s", tostring(stationCategoryName), tostring(moved), tostring(deltaFillLevel), ft.name, ft.title, tostring(fillType), tostring(toolType)))
+	-- dbPrintf("  stationCategoryName=%s | moved=%s | deltaFillLevel=%s | ftName=%s (%s) | ftIndex=%s | toolType=%s", tostring(stationCategoryName), tostring(moved), tostring(deltaFillLevel), ft.name, ft.title, tostring(fillType), tostring(toolType))
 
 	if moved > 0 then
-        local vipOrder = VIPOrderManager.currentVIPOrder[ft.name]
-        -- print(string.format("  Anzahl Order Items=%s", VIPOrderManager:getCountElements(VIPOrderManager.currentVIPOrder)))
-		if vipOrder ~= nil then
-			if vipOrder.targetStation == nil or vipOrder.targetStation == station then
-				vipOrder.fillLevel = math.min(vipOrder.fillLevel + moved, vipOrder.quantity)
+        local orderEntry = VIPOrderManager.VIPOrders[1].entries[ft.name]
+        -- dbPrintf("  Anzahl Order Items=%s", VIPOrderManager:getCountElements(VIPOrderManager.currentVIPOrder))
+		if orderEntry ~= nil then
+			if orderEntry.targetStation == nil or orderEntry.targetStation == station then
+				orderEntry.fillLevel = math.min(orderEntry.fillLevel + moved, orderEntry.quantity)
 				VIPOrderManager.showVIPOrder = 1;
 				VIPOrderManager.infoDisplayPastTime = 0
 				VIPOrderManager:UpdateOutputLines()

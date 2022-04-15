@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <GUIProfiles>
     <Presets>
-
         <Preset name="colorTransparent" value="0 0 0 0" />
 
         <Preset name="colorGlass" value="0.018 0.016 0.015 0.6" />
@@ -52,12 +51,9 @@
         <Preset name="colorDescriptionText3" value="0.1845 0.1845 0.1845 1" />
         <Preset name="colorDescriptionText4" value="0.6307 0.6307 0.6307 1" />
 
-
-
-        <!-- <Preset name="colorWhite" value="1 1 1 1"/> -->
-        <!-- <Preset name="colorGrayHeader" value="0.4 0.4 0.4 1"/> -->
         <Preset name="colorListHeaderBackground" value="0 0 0 0.35" />
     </Presets>
+
 	<Traits>
 		<Trait name="debugging">
 			<Value name="debugEnabled" value="true" />
@@ -70,22 +66,8 @@
 			<Value name="screenAlign" value="topCenter" />
 			<Value name="positionOrigin" value="topCenter" />
 		</Trait>
-
-		<!-- <Trait name="anchorMiddleLeft">
-			<Value name="screenAlign" value="center" />
-			<Value name="positionOrigin" value="topCenter" />
-		</Trait>
-		<Trait name="anchorBottomLeft">
-			<Value name="screenAlign" value="topCenter" />
-			<Value name="positionOrigin" value="topCenter" />
-		</Trait>
-        anchorMiddleLeft
-        anchorBottomLeft -->
 	</Traits>
-    <!-- <Profile name="text" extends="dialogTitle">
-        <Value name="textSize" value="18px"/>
-        <Value name="textBold" value="false"/>
-    </Profile> -->
+
     <Profile name="ingameMenuFieldCalculatorRowCellLeft" extends="baseReference">
         <Value name="textSize" value="18px"/>
         <Value name="textBold" value="false"/>
@@ -118,10 +100,7 @@
         <Value name="textAlignment" value="right"/>
         <Value name="textVerticalAlignment" value="middle"/>
     </Profile>
-    <Profile name="ingameMenuFieldCalculatorRowBackground" extends="emptyPanel" with="anchorBottomLeft"> 
-    </Profile>
     <Profile name="ingameMenuFieldCalculatorHeaderBox" extends="emptyPanel" with="anchorTopLeft">
-        <!-- <Value name="size" value="1400px 50px"/> -->
         <Value name="alignmentX" value="left"/>
         <Value name="alignmentY" value="middle"/>
         <Value name="imageColor" value="$preset_colorListHeaderBackground"/>
@@ -132,32 +111,4 @@
         <Value name="autoValidateLayout" value="true"/>
         <Value name="hasFrame" value="false"/>    
     </Profile>
-    <!-- <Profile name="ingameMenuFieldCalculatorOrderHeaderBox" extends="ingameMenuFieldCalculatorHeaderBox" with="anchorTopCenter">
-        <Value name="imageColor" value="$preset_colorWhite"/>
-        <Value name="size" value="655px 50px"/>  
-        <Value name="position" value="50px 700px"/>  
-    </Profile> -->
-    <Profile name="ingameMenuFieldCalculatorOrderList" extends="ingameMenuContractsList" with="anchorTopCenter">
-        <Value name="size" value="1310px 600px"/>  
-        <Value name="position" value="50px -150px"/>  
-    </Profile>
-    <Profile name="verticalListSliderRightDockedOrder" extends="verticalListSliderRightDocked" with="anchorTopCenter">
-        <Value name="size" value="12px 756px" />
-        <Value name="position" value="-40px -150px" />
-    </Profile>
-    <Profile name="ingameMenuFieldCalculatorListItem" extends="ingameMenuContractsListItem" with="anchorBottomLeft">
-        <Value name="size" value="1400px 40.77px"/>
-    </Profile> 
-    <!-- <Profile name="orderFrame" extends="dialogBg">
-        <Value name="size" value="730px 800px"/>
-    </Profile> -->
-    
-    <!-- <Profile name="sptButton" extends="ingameMenuSettingsPauseButton">
-        <Value name="size" value="316px 48px" />
-        <Value name="textAlignment" value="center" />
-        <Value name="textResetSize" value="true" />
-        <Value name="iconSize" value="0px 0px" />
-        <Value name="margin" value="0px 10px 0px 10px" />
-        <Value name="forceFocus" value="true" />
-    </Profile> -->
 </GUIProfiles>

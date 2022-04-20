@@ -2,7 +2,7 @@
 -- Date: 16.04.2022
 -- Version: 1.0.0.0
 
-dbPrintfOn = false
+dbPrintfOn = true
 
 function dbPrintf(...)
 	if dbPrintfOn then
@@ -43,6 +43,7 @@ VIPOrderManager.colors[10] = {'col_brown', {0.1912, 0.1119, 0.0529, 1}}
 VIPOrderManager.dir = g_currentModDirectory
 VIPOrderManager.modName = g_currentModName
 
+VIPOrderManager.existingProductionAndAnimalOutputs = {}	-- 
 VIPOrderManager.VIPOrders 			= {}	-- List of orders {level, entries{[Name] = {fillTypeName, quantity, fillLevel, payout, targetStation}}}
 
 VIPOrderManager.outputLines 		= {}	-- Output lines for the draw() function (text, size, bold, colorId, x, y)
@@ -179,7 +180,7 @@ function VIPOrderManager:RestockVIPOrders()
 	dbPrintf("call VIPOrderManager:RestockVIPOrders()");
 
 	VIPOrderManager.ownFieldArea = VIPOrderManager:CalculateOwnFieldArea()
-	VIPOrderManager:GetExistingProductionOrAnimalOutputs()
+	VIPOrderManager:GetExistingProductionAndAnimalOutputs()
 
 	-- new VIPOrder	
 	local orderLevel = 0
@@ -202,10 +203,17 @@ function VIPOrderManager:RestockVIPOrders()
 	-- print("** End DebugUtil.printTableRecursively() **************************************************************\n")
 end
 
-function VIPOrderManager:GetExistingProductionOrAnimalOutputs()
+
+function VIPOrderManager:GetExistingProductionAndAnimalOutputs()
 	dbPrintf("call VIPOrderManager:GetHusbandryPlaceableTypes()");
-	local outputFillTypes = {}
+	VIPOrderManager.existingProductionAndAnimalOutputs = {}
 	local farmId = g_currentMission.player.farmId;
+	local isMilk = false
+	local isLiquidManure = false
+	local isManure = false
+	local isEgg = false
+	local isWool = false
+
 	local isPig = false
 	local isCow = false
 	local isChicken = false
@@ -219,62 +227,82 @@ function VIPOrderManager:GetExistingProductionOrAnimalOutputs()
 			local specHusbandryLiquidManure = placeable.spec_husbandryLiquidManure
 			local specHusbandryMilk = placeable.spec_husbandryMilk
 			local specHusbandryStraw = placeable.spec_husbandryStraw
-			local isManureActive = nil
+			local isManureActive = false
 			if specHusbandryStraw ~= nil then
 				isManureActive = specHusbandryStraw.isManureActive
 			end
 
 			dbPrintf("  - husbandry placeables:  Name=%s | AnimalType=%s | specMilk=%s | specLiquidManure=%s | specStraw=%s | isManureActive=%s", name, husbandry.animalTypeName, tostring(specHusbandryMilk), tostring(specHusbandryLiquidManure), tostring(specHusbandryStraw), isManureActive)
+
 			isCow = husbandry.animalTypeName == "COW" or isCow
 			isPig = husbandry.animalTypeName == "PIG" or isPig
 			isChicken = husbandry.animalTypeName == "CHICKEN" or isChicken
 			isSheep = husbandry.animalTypeName == "SHEEP" or isSheep
 			isHorse = husbandry.animalTypeName == "HORSE" or isHorse
+
+			isMilk = specHusbandryMilk ~= nil or isMilk
+			isLiquidManure = specHusbandryLiquidManure ~= nil or isLiquidManure
+			isManure = isManureActive or isManure
+			isEgg = isChicken
+			isWool = isSheep
 		end
 	end
 
-	-- if isPig then
-	-- 	outputFillTypes[WOOL]=true
-	-- 	outputFillTypes[MILK]=true
-	-- 	outputFillTypes[EGG]=true
-	-- 	outputFillTypes[MANURE]=true
-	-- 	outputFillTypes[LIQUIDMANURE]=true
-	-- end
+	if isMilk then
+		VIPOrderManager.existingProductionAndAnimalOutputs.MILK = true	
+	end
+	if isLiquidManure then
+		VIPOrderManager.existingProductionAndAnimalOutputs.LIQUIDMANURE = true	
+	end
+	if isManure then
+		VIPOrderManager.existingProductionAndAnimalOutputs.MANURE = true	
+	end
+	if isEgg then
+		VIPOrderManager.existingProductionAndAnimalOutputs.EGG = true	
+	end
+	if isWool then
+		VIPOrderManager.existingProductionAndAnimalOutputs.WOOL = true	
+	end
+
 	local isCow = false
 	local isChicken = false
 	local isSheep = false
 	local isHorse = false
 
-
 	if g_currentMission.productionChainManager.farmIds[farmId] ~= nil and g_currentMission.productionChainManager.farmIds[farmId].productionPoints ~= nil then
 		for _, productionPoint in pairs(g_currentMission.productionChainManager.farmIds[farmId].productionPoints) do
 			
 			for fillTypeId, fillLevel in pairs(productionPoint.storage.fillLevels) do
-				local productionItem = {}
-				productionItem.name = productionPoint.owningPlaceable:getName();
-				productionItem.fillTypeId = fillTypeId
-				productionItem.isInput = false;
+				local name = productionPoint.owningPlaceable:getName()
+				local fillTypeId = fillTypeId
+				local fillTypeName = g_currentMission.fillTypeManager.fillTypes[fillTypeId].name
+				local fillTypeTitle = g_currentMission.fillTypeManager.fillTypes[fillTypeId].title
+				local isInput = false
 				
 				-- prüfen ob input type
 				if productionPoint.inputFillTypeIds[fillTypeId] ~= nil then
-					productionItem.isInput = productionPoint.inputFillTypeIds[fillTypeId];
+					isInput = productionPoint.inputFillTypeIds[fillTypeId]
 				end
 				
-				productionItem.fillTypeTitle = g_currentMission.fillTypeManager.fillTypes[fillTypeId].title;
+				
 				
 				for _, production in pairs(productionPoint.activeProductions) do
 					for _, input in pairs(production.inputs) do
 						-- status 3 = läuft nicht weil ausgang voll
 						if input.type == fillTypeId then
-							productionItem.isInput = true;
+							isInput = true
 						end
 					end
 				end
-
-				dbPrintf("  - Production: Name=%s  | fillTypeTitle=%s | isInput=%s", productionItem.name, productionItem.fillTypeTitle, productionItem.isInput)
+				dbPrintf("  - Production: Name=%s  | fillTypeName=%s | fillTypeTitle=%s | isInput=%s", name, fillTypeName, fillTypeTitle, isInput)
+				if not isInput then
+					VIPOrderManager.existingProductionAndAnimalOutputs[fillTypeName] = true	
+				end
 			end
 		end
 	end
+
+	DebugUtil.printTableRecursively(VIPOrderManager.existingProductionAndAnimalOutputs, ".", 0, 3)
 end
 
 
@@ -500,12 +528,17 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
         end
 
         --  "order level" not high enough
-		if notUsableWarning == nil and ftConfig.minOrderLevel > orderLevel then
+		local minOrderLevel = ftConfig.minOrderLevel
+		if ftConfig.minOrderLevelIfProductionExists ~= nil and VIPOrderManager.existingProductionAndAnimalOutputs[sft.name] then
+			dbPrintf("  - Overwrite MinOrderLevel as production/animal husbandry allready owned: %s --> %s", ftConfig.minOrderLevel, ftConfig.minOrderLevelIfProductionExists)
+			minOrderLevel = ftConfig.minOrderLevelIfProductionExists
+		end
+		if notUsableWarning == nil and minOrderLevel > orderLevel then
 			if ftConfig.isUnknown ~= nil and ftConfig.isUnknown then
 				--  unknown filltype
-				notUsableWarning = string.format("Not usable, because current VIP-Order level (%s) is for new fill types not high enough (needs %s)", orderLevel, ftConfig.minOrderLevel)
+				notUsableWarning = string.format("Not usable, because current VIP-Order level (%s) is for new fill types not high enough (needs %s)", orderLevel, minOrderLevel)
 			else
-				notUsableWarning = string.format("Not usable, because current VIP-Order level (%s) is not high enough (needs %s)", orderLevel, ftConfig.minOrderLevel)
+				notUsableWarning = string.format("Not usable, because current VIP-Order level (%s) is not high enough (needs %s)", orderLevel, minOrderLevel)
 			end
         end
 
@@ -821,6 +854,9 @@ function VIPOrderManager:saveSettings()
 			setXMLInt(xmlFile, localKey.."#minOrderLevel", config.minOrderLevel)
 			setXMLFloat(xmlFile, localKey.."#quantityCorrectionFactor", config.quantityCorrectionFactor)
 			setXMLBool(xmlFile, localKey.."#isLimited", config.isLimited)
+			if config.minOrderLevelIfProductionExists ~= nil then
+				setXMLInt(xmlFile, localKey.."#minOrderLevelIfProductionExists", config.minOrderLevelIfProductionExists)
+			end
 			setXMLString(xmlFile, localKey.."#title", g_fillTypeManager:getFillTypeByName(ftName).title)
 			i = i + 1
 		end

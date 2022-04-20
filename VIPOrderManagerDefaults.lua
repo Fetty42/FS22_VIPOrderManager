@@ -7,11 +7,12 @@
 -- minOrderLevel (1 - n) - from which level the fill type is offered
 -- quantityCorrectionFactor (> 0) - Factor for the correction of the quantity calculation
 -- isLimited (true, false) - whether the fill type is limted to x prozent of the order items
+-- minOrderLevelIfProductionExists	- Korrection of needed minOrderLevel if production allready exists
 VIPOrderManager.ftConfigs = 
 {
 	-- Defaults
 	DEFAULT_FRUITTYPE	= {isUnknown=true, isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=1.0, isLimited=false},		-- for unknown fruittypes
-	DEFAULT_FILLTYPE	= {isUnknown=true, isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true},		-- for unknown filltypes
+	DEFAULT_FILLTYPE	= {isUnknown=true, isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=4},		-- for unknown filltypes
 	
 	-- Not Allowed
 	STONE 			= {isAllowed=false, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Steine
@@ -50,11 +51,11 @@ VIPOrderManager.ftConfigs =
 
 	-- Animal products
 	HONEY 			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.3, isLimited=false},		-- Honig
-	EGG 			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.7, isLimited=false},		-- Eier
-	WOOL 			= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.7, isLimited=false},		-- Wolle
-	MILK 			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false},		-- Milch
-	LIQUIDMANURE 	= {isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=0.3, isLimited=false},		-- Gülle
-	MANURE 			= {isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=0.3, isLimited=false},		-- Mist
+	EGG 			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.7, isLimited=false, minOrderLevelIfProductionExists=1},		-- Eier
+	WOOL 			= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.7, isLimited=false, minOrderLevelIfProductionExists=2},		-- Wolle
+	MILK 			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false, minOrderLevelIfProductionExists=2},		-- Milch
+	LIQUIDMANURE 	= {isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionExists=3},		-- Gülle
+	MANURE 			= {isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionExists=3},		-- Mist
 
 	-- Greenhouse products
 	STRAWBERRY 	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.8, isLimited=false},		-- Erdbeeren
@@ -62,24 +63,24 @@ VIPOrderManager.ftConfigs =
 	LETTUCE 	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.8, isLimited=false},		-- Salat
 
 	-- Factory products
-	DIESEL 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Diesel
-	GRAPEJUICE 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Traubensaft
-	OLIVE_OIL 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Olivenöl
-	RAISINS 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Rosinen
-	SUGAR 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Zucker
-	SUNFLOWER_OIL 	= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Sonnenblumenöl
-	BUTTER 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Butter
-	CANOLA_OIL 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Rapsöl
-	FLOUR 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Mehl
-	BOARDS 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Bretter
-	BREAD 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Brot
-	CHEESE 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Käse
-	CLOTHES 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Kleidung
-	FABRIC			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true},		-- Stoff
-	CAKE 			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true},		-- Kuchen
-	CEREAL 			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true},		-- Müsli
-	CHOCOLATE 		= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true},		-- Schokolade
-	FURNITURE 		= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true}		-- Möbel
+	DIESEL 			= {isAllowed=false, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Diesel
+	GRAPEJUICE 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3},		-- Traubensaft
+	OLIVE_OIL 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3},		-- Olivenöl
+	RAISINS 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3},		-- Rosinen
+	SUGAR 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3},		-- Zucker
+	SUNFLOWER_OIL 	= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3},		-- Sonnenblumenöl
+	BUTTER 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3},		-- Butter
+	CANOLA_OIL 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3},		-- Rapsöl
+	FLOUR 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3},		-- Mehl
+	BOARDS 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3},		-- Bretter
+	BREAD 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3},		-- Brot
+	CHEESE 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3},		-- Käse
+	CLOTHES 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3},		-- Kleidung
+	FABRIC			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=4},		-- Stoff
+	CAKE 			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=4},		-- Kuchen
+	CEREAL 			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=4},		-- Müsli
+	CHOCOLATE 		= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=4},		-- Schokolade
+	FURNITURE 		= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=4}		-- Möbel
 }
 
 -- orders definition for order level 1 and own field area of 1 ha

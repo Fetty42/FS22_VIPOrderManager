@@ -2,16 +2,6 @@
 -- Date: 16.04.2022
 -- Version: 1.0.0.0
 
-dbPrintfOn = false
-
-function dbPrintf(...)
-	if dbPrintfOn then
-    	print(string.format(...))
-	end
-end
-
-
-
 
 OrderFrame = {
 	CONTROLS = {

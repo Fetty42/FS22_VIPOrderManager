@@ -20,7 +20,9 @@ Da ich selbst lieber mit kleinen Feldern spiele, ist die Berechnung hierauf opti
 Bereits mit dem LS19 hatte ich angefangen den VIP Order Manager zu entwickeln, um so etwas wie Kampagnen abzubilden. Ich wollte das Spiel etwas interessanter gestalten, 
 in dem mir Vorgegeben wird, was ich anbauen muss.
 
-Ich möchte auch noch all den anderen Moddern danken, aus deren Mods ich mir im Laufe der Zeit viele Anregungen und Lösungsansätze holen konnte.]]></de>
+Ich möchte auch noch all den anderen Moddern danken, aus deren Mods ich mir im Laufe der Zeit viele Anregungen und Lösungsansätze holen konnte.
+
+Für Fehlermeldungen oder Anregungen besucht bitte: https://github.com/Fetty42/FS22_VIPOrderManager]]></de>
 		<en><![CDATA[The VIP Order Manager offers the farmer VIP orders consisting of several products to be delivered. 
 For each product with explicit specification of the quantity to be delivered and the destination. In addition to the current VIP order, the next three VIP orders to follow can also be seen.
 However, only the current order can be delivered.
@@ -35,7 +37,9 @@ Since I prefer to play with small fields myself, the calculation is optimised fo
 Already with FS19, I had started to develop the VIP Order Manager to represent something like campaigns. I wanted to make the game a little more interesting, 
 by telling me what I have to grow.
 
-I would also like to thank all the other modders whose mods have given me many ideas and solutions over the time.]]></en>
+I would also like to thank all the other modders whose mods have given me many ideas and solutions over the time.
+
+For any error messages or suggestions, please visit: https://github.com/Fetty42/FS22_VIPOrderManager]]></en>
 		<fr><![CDATA[Le VIP Order Manager propose à l'agriculteur des commandes VIP composées de plusieurs produits à livrer. 
 Pour chaque produit, la quantité à livrer et le lieu de destination sont explicitement indiqués. En plus de l'ordre VIP actuel, on peut déjà voir les trois prochains ordres VIP.
 Mais seule la commande actuelle peut être livrée.
@@ -50,7 +54,9 @@ Comme je préfère jouer avec de petites parcelles, le calcul est optimisé à c
 Avec LS19, j'avais déjà commencé à développer le VIP Order Manager pour représenter quelque chose comme des campagnes. Je voulais rendre le jeu un peu plus intéressant, 
 en me donnant des indications sur ce que je dois cultiver.
 
-Je voudrais aussi remercier tous les autres moddeurs, dont les mods m'ont donné beaucoup d'idées et de solutions au fil du temps.]]></fr>
+Je voudrais aussi remercier tous les autres moddeurs, dont les mods m'ont donné beaucoup d'idées et de solutions au fil du temps.
+
+Pour les messages d'erreur ou les suggestions, veuillez visiter : https://github.com/Fetty42/FS22_VIPOrderManager]]></fr>
     </description>
 	
 	<iconFilename>icon.dds</iconFilename>

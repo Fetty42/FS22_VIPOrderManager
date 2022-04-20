@@ -1,11 +1,23 @@
+-- Author: Fetty42
+-- Date: 16.04.2022
+-- Version: 1.0.0.0
+
+dbPrintfOn = false
+
+function dbPrintf(...)
+	if dbPrintfOn then
+    	print(string.format(...))
+	end
+end
+
+
+
 
 OrderFrame = {
 	CONTROLS = {
 		DIALOG_TITLE = "dialogTitleElement",
-		-- CLOSE_BUTTON = "closeButton",
-        TABLE = "fieldCalculatorOrderTable",
-        TABLE_TEMPLATE = "fieldCalculatorOrderRowTemplate",
-		-- BUTTON_CLOSE = "buttonClose",
+        TABLE = "orderTable",
+        TABLE_TEMPLATE = "orderRowTemplate",
 		BUTTON_ABORT = "buttonAbort"
 	}
 }
@@ -20,30 +32,30 @@ function OrderFrame.new(target, custom_mt)
 end
 
 function OrderFrame:onGuiSetupFinished()
-	-- print("OrderFrame:onGuiSetupFinished()")
+	-- dbPrintf("OrderFrame:onGuiSetupFinished()")
 	OrderFrame:superClass().onGuiSetupFinished(self)
-	self.fieldCalculatorOrderTable:setDataSource(self)
-	self.fieldCalculatorOrderTable:setDelegate(self)
+	self.orderTable:setDataSource(self)
+	self.orderTable:setDelegate(self)
 end
 
 function OrderFrame:onCreate()
-	-- print("OrderFrame:onCreate()")
+	-- dbPrintf("OrderFrame:onCreate()")
 	OrderFrame:superClass().onCreate(self)    
 	self.buttonAbort.inputActionName = InputAction.MENU_EXTRA_1
 end
 
 
 function OrderFrame:onOpen()
-	-- print("OrderFrame:onOpen()")
+	-- dbPrintf("OrderFrame:onOpen()")
 	OrderFrame:superClass().onOpen(self)
-	FocusManager:setFocus(self.fieldCalculatorOrderTable)
+	FocusManager:setFocus(self.orderTable)
 end
 
 
 function OrderFrame:setVIPOrders(VIPOrders)   
-	-- print("OrderFrame:setVIPOrders()")
+	-- dbPrintf("OrderFrame:setVIPOrders()")
 
-	-- fill table data (fillTypeName, quantity, fillLevel, payout, targetStation)
+	-- fill table data (fillTypeName, quantity, fillLevel, payout, targetStation, isCompleted)
 	self.VIPOrdersData = {}
 
 	-- hudOverlayFilename :: dataS/menu/hud/fillTypes/hud_fill_grass.png
@@ -58,6 +70,7 @@ function OrderFrame:setVIPOrders(VIPOrders)
 			-- orderEntry.requiredQuantity = g_i18n:formatNumber(vipOrderEntry.quantity - math.ceil(vipOrderEntry.fillLevel), 1, false)
 			orderEntry.fillLevel = g_i18n:formatVolume(math.ceil(vipOrderEntry.fillLevel), 0)
 			orderEntry.quantity = g_i18n:formatVolume(vipOrderEntry.quantity, 0)
+			orderEntry.isCompleted =  math.ceil(vipOrderEntry.fillLevel) >= vipOrderEntry.quantity
 			
 			if vipOrderEntry.targetStation ~= nil then
 				orderEntry.targetStation = vipOrderEntry.targetStation.owningPlaceable:getName()
@@ -76,7 +89,7 @@ function OrderFrame:setVIPOrders(VIPOrders)
 		table.insert(self.VIPOrdersData, VIPOrderData)
 	end
    
-	self.fieldCalculatorOrderTable:reloadData()    
+	self.orderTable:reloadData()    
 end
 
 
@@ -91,7 +104,7 @@ end
 
 
 function OrderFrame:getTitleForSectionHeader(list, section)
-	-- print("OrderFrame:getTitleForSectionHeader()")
+	-- dbPrintf("OrderFrame:getTitleForSectionHeader()")
 	return self.VIPOrdersData[section].title
 end
 
@@ -108,7 +121,9 @@ function OrderFrame:populateCellForItemInSection(list, section, index, cell)
 	local color = {1, 1, 1, 1}
 	local colorSelected = {1, 1, 1, 1}
 	
-	if orderEntry.fillLevel >= orderEntry.quantity then
+	dbPrintf("section=%s | index=%s | ftTitle=%s | quantity=%s | filllevel=%s", section, index, orderEntry.ftTitle, orderEntry.quantity, orderEntry.fillLevel)
+	if orderEntry.isCompleted then
+		dbPrintf("order entry completed")
 		-- color completed order entrys
 		color = {0.2122, 0.5271, 0.0307, 1} 
 		colorSelected = {0.0781, 0.2233, 0.0478, 1}
@@ -131,26 +146,26 @@ function OrderFrame:populateCellForItemInSection(list, section, index, cell)
 	cell:getAttribute("targetStation").textColor = color
 	cell:getAttribute("targetStation"):setTextSelectedColor(unpack(colorSelected))
 
-	-- print("** Start DebugUtil.printTableRecursively() ************************************************************")
+	-- dbPrintf("** Start DebugUtil.printTableRecursively() ************************************************************")
 	-- DebugUtil.printTableRecursively(cell:getAttribute("targetStation"), ".", 0, 2)
-	-- print("** End DebugUtil.printTableRecursively() **************************************************************\n")
+	-- dbPrintf("** End DebugUtil.printTableRecursively() **************************************************************\n")
 end
 
 
 function OrderFrame:onClose()
-	-- print("OrderFrame:onClose()")
+	-- dbPrintf("OrderFrame:onClose()")
 	OrderFrame:superClass().onClose(self)
 end
 
 
 function OrderFrame:onClickBack(sender)
-	-- print("OrderFrame:onClickBack()")
+	-- dbPrintf("OrderFrame:onClickBack()")
 	self:close()
 end
 
 
 function OrderFrame:onClickAbort()
-	-- print("OrderFrame:onClickAbort()")
+	-- dbPrintf("OrderFrame:onClickAbort()")
 	VIPOrderManager:AbortCurrentVIPOrder()
 end
 

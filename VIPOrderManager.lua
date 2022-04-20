@@ -1,6 +1,6 @@
 -- Author: Fetty42
--- Date: 02.01.2022
--- Version: 1.1.0.0
+-- Date: 16.04.2022
+-- Version: 1.0.0.0
 
 dbPrintfOn = false
 
@@ -13,108 +13,6 @@ end
 
 
 VIPOrderManager = {}; -- Class
-
--- isAllowed (true, false) - whether the fill type is offered 
--- minOrderLevel (1 - n) - from which level the fill type is offered
--- quantityCorrectionFactor (> 0) - Factor for the correction of the quantity calculation
--- isLimited (true, false) - whether the fill type is limted to x prozent of the order items
-VIPOrderManager.ftConfigs = 
-{
-	-- Defaults
-	DEFAULT_FRUITTYPE	= {isUnknown=true, isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=1.0, isLimited=false},		-- for unknown fruittypes
-	DEFAULT_FILLTYPE	= {isUnknown=true, isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true},		-- for unknown filltypes
-	
-	-- Not Allowed
-	STONE 			= {isAllowed=false, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Steine
-	ROUNDBALE 		= {isAllowed=false, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Rundballen
-	ROUNDBALE_WOOD 	= {isAllowed=false, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- RundballenHolz
-	SQUAREBALE 		= {isAllowed=false, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Quaderballen
-	WATER	 		= {isAllowed=false, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Wasser
-
-	-- Basic crops
-	BARLEY 			= {isAllowed=true, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Gerste
-	WHEAT 			= {isAllowed=true, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Weizen
-	OAT 			= {isAllowed=true, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Hafer
-	CANOLA 			= {isAllowed=true, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Raps
-	SORGHUM 		= {isAllowed=true, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Sorghumhirse
-	SOYBEAN 		= {isAllowed=true, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Sojabohnen
-	SUNFLOWER 		= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=1.0, isLimited=false},		-- Sonnenblumen
-	MAIZE 			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=1.0, isLimited=false},		-- Mais
-	SUGARBEET 		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=1.0, isLimited=false},		-- Zuckerrüben
-	SUGARBEET_CUT	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=1.0, isLimited=false},		-- Zuckerrübenschnitzel
-	POTATO 			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false},		-- Kartoffeln
-	OLIVE 			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false},		-- Oliven
-	GRAPE 			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false},		-- Trauben
-	COTTON 			= {isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=1.0, isLimited=false},		-- Baumwolle
-	SUGARCANE 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=1.0, isLimited=false},		-- Zuckerrohr
-
-	-- Straw, grass and chaff
-	STRAW 				= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.4, isLimited=false},		-- Stroh
-	GRASS_WINDROW 		= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.4, isLimited=false},		-- Gras
-	DRYGRASS_WINDROW 	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},		-- Heu
-	SILAGE 				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.5, isLimited=false},		-- Silage
-	CHAFF 				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.5, isLimited=false},		-- Häckselgut
-
-	-- Tree products
-	WOOD 		= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false},		-- Holz
-	WOODCHIPS 	= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.8, isLimited=false},		-- Hackschnitzel
-
-	-- Animal products
-	HONEY 			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.3, isLimited=false},		-- Honig
-	EGG 			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.7, isLimited=false},		-- Eier
-	WOOL 			= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.7, isLimited=false},		-- Wolle
-	MILK 			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false},		-- Milch
-	LIQUIDMANURE 	= {isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=0.3, isLimited=false},		-- Gülle
-	MANURE 			= {isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=0.3, isLimited=false},		-- Mist
-
-	-- Greenhouse products
-	STRAWBERRY 	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.8, isLimited=false},		-- Erdbeeren
-	TOMATO 		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.8, isLimited=false},		-- Tomaten
-	LETTUCE 	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.8, isLimited=false},		-- Salat
-
-	-- Factory products
-	DIESEL 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Diesel
-	GRAPEJUICE 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Traubensaft
-	OLIVE_OIL 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Olivenöl
-	RAISINS 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Rosinen
-	SUGAR 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Zucker
-	SUNFLOWER_OIL 	= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Sonnenblumenöl
-	BUTTER 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Butter
-	CANOLA_OIL 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Rapsöl
-	FLOUR 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Mehl
-	BOARDS 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Bretter
-	BREAD 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Brot
-	CHEESE 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Käse
-	CLOTHES 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Kleidung
-	FABRIC			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true},		-- Stoff
-	CAKE 			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true},		-- Kuchen
-	CEREAL 			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true},		-- Müsli
-	CHOCOLATE 		= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true},		-- Schokolade
-	FURNITURE 		= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true}		-- Möbel
-}
-
--- orders definition for order level 1 and own field area of 1 ha
-VIPOrderManager.countOrderItemsRange = {min=2, max=4}
-VIPOrderManager.quantityFactor = {min=8, max=10}
-VIPOrderManager.payoutFactor = {min=3, max=5}
-VIPOrderManager.isLimitedPercentage = 20 -- percentage from current order level round off
-
--- Depending on the OrderLeven, special correction factors for count, quantity and payout
-VIPOrderManager.orderLevelCorrectionFactors = {}
-VIPOrderManager.orderLevelCorrectionFactors[1] = {0.50, 0.50, 1.00}
--- VIPOrderManager.orderLevelCorrectionFactors[2] = {0.75, 0.65, 1.00}
--- VIPOrderManager.orderLevelCorrectionFactors[3] = {1.00, 0.75, 1.00}
-
-
--- Constants for filltype selection
--- VIPOrderManager.fillTypesNeededFruitType = {ALFALFA_WINDROW="ALFALFA", DRYALFALFA_WINDROW="ALFALFA", ALFALFA_FERMENTED="ALFALFA", CLOVER_WINDROW="CLOVER", DRYCLOVER_WINDROW="CLOVER", CLOVER_FERMENTED="CLOVER", Carrot="CARROT"} -- filltype check for maps who not support MaizePlus
-VIPOrderManager.fillTypesNoPriceList = {}
-
--- constants
-VIPOrderManager.abortFeeInPercent = 25
-VIPOrderManager.allowSumQuantitySameFT = false	-- Summarize quantity of same filetypes
-VIPOrderManager.ownFieldArea = 1
-
 
 -- update delay
 VIPOrderManager.updateDelta = 0;  		-- time since the last update
@@ -145,54 +43,67 @@ VIPOrderManager.colors[10] = {'col_brown', {0.1912, 0.1119, 0.0529, 1}}
 VIPOrderManager.dir = g_currentModDirectory
 VIPOrderManager.modName = g_currentModName
 
-VIPOrderManager.maxVIPOrdersCount	= 4		-- Count of already calculated orders (preview)
 VIPOrderManager.VIPOrders 			= {}	-- List of orders {level, entries{[Name] = {fillTypeName, quantity, fillLevel, payout, targetStation}}}
 
--- VIPOrderManager.currentVIPOrder 	= {}	-- [Name] = {fillTypeName, quantity, fillLevel, payout, targetStation}
--- VIPOrderManager.nextVIPOrder 		= {}	-- [Name] = {fillTypeName, quantity, fillLevel, payout, targetStation}
--- VIPOrderManager.currentOrderLevel 	= 0		-- will be increased by 1 with each orders generation
 VIPOrderManager.outputLines 		= {}	-- Output lines for the draw() function (text, size, bold, colorId, x, y)
 VIPOrderManager.infoHud 			= nil	-- VID Order Info HUD
 VIPOrderManager.OrderDlg			= nil
 
-
+source(Utils.getFilename("VIPOrderManagerDefaults.lua", VIPOrderManager.dir))
 source(Utils.getFilename("InfoHUD.lua", VIPOrderManager.dir))
 source(VIPOrderManager.dir .. "gui/OrderFrame.lua")
 
 function VIPOrderManager:loadMap(name)
     dbPrintf("call VIPOrderManager:loadMap()");
 
-	Player.registerActionEvents = Utils.appendedFunction(Player.registerActionEvents, VIPOrderManager.registerActionEvents);
-	Drivable.onRegisterActionEvents = Utils.appendedFunction(Drivable.onRegisterActionEvents, VIPOrderManager.registerActionEvents);
-	VIPOrderManager.eventName = {};
+	if g_currentMission:getIsClient() then
+		Player.registerActionEvents = Utils.appendedFunction(Player.registerActionEvents, VIPOrderManager.registerActionEvents);
+		Enterable.onRegisterActionEvents = Utils.appendedFunction(Enterable.onRegisterActionEvents, VIPOrderManager.registerActionEvents);
+		-- VIPOrderManager.eventName = {};
 
-	FSBaseMission.saveSavegame = Utils.appendedFunction(FSBaseMission.saveSavegame, VIPOrderManager.saveSettings);
-	FSBaseMission.onFinishedLoading = Utils.appendedFunction(FSBaseMission.onFinishedLoading, VIPOrderManager.loadSettings);
-	--VIPOrderManager:loadSettings();
+		FSBaseMission.saveSavegame = Utils.appendedFunction(FSBaseMission.saveSavegame, VIPOrderManager.saveSettings);
+		FSBaseMission.onFinishedLoading = Utils.appendedFunction(FSBaseMission.onFinishedLoading, VIPOrderManager.loadSettings);
+		--VIPOrderManager:loadSettings();
 
-	SellingStation.addFillLevelFromTool = Utils.overwrittenFunction(SellingStation.addFillLevelFromTool, VIPOrderManager.sellingStation_addFillLevelFromTool)	
+		SellingStation.addFillLevelFromTool = Utils.overwrittenFunction(SellingStation.addFillLevelFromTool, VIPOrderManager.sellingStation_addFillLevelFromTool)	
+	end
 end;
 
 
 function VIPOrderManager:registerActionEvents()
 	dbPrintf("call VIPOrderManager:registerActionEvents()");
 
-	local result, eventName = InputBinding.registerActionEvent(g_inputBinding, 'ShowCurrentVIPOrder',self, VIPOrderManager.ShowCurrentVIPOrder ,false ,true ,false ,true)
-	if result then
-        table.insert(VIPOrderManager.eventName, eventName);
-		g_inputBinding.events[eventName].displayIsVisible = true;
-    end
-	result, eventName = InputBinding.registerActionEvent(g_inputBinding, 'ShowVIPOrderDlg',self, VIPOrderManager.ShowVIPOrderDlg ,false ,true ,false ,true)
-	if result then
-        table.insert(VIPOrderManager.eventName, eventName);
-		g_inputBinding.events[eventName].displayIsVisible = true;
-    end
+	if self.isClient then --isOwner
+		-- local result, actionEventId = InputBinding.registerActionEvent(g_inputBinding, 'ShowCurrentVIPOrder',self, VIPOrderManager.ShowCurrentVIPOrder ,false ,true ,false ,true)
+		local result, actionEventId = g_inputBinding:registerActionEvent('ShowCurrentVIPOrder',InputBinding.NO_EVENT_TARGET, VIPOrderManager.ShowCurrentVIPOrder ,false ,true ,false ,true)
+		dbPrintf("Result=%s | actionEventId=%s | self.isClient=%s", result, actionEventId, self.isClient)
+		if result and actionEventId then
+			g_inputBinding:setActionEventTextVisibility(actionEventId, true)
+			g_inputBinding:setActionEventActive(actionEventId, true)
+			g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_VERY_LOW) -- GS_PRIO_VERY_HIGH, GS_PRIO_HIGH, GS_PRIO_LOW, GS_PRIO_VERY_LOW
 
-	if infoHud == nil then
-		infoHud = InfoHUD.new()
-		infoHud:setVisible(true)
+			-- table.insert(VIPOrderManager.eventName, actionEventId);
+			-- g_inputBinding.events[actionEventId].displayIsVisible = true;
+			dbPrintf("Action event inserted successfully")
+		end
+		local result2, actionEventId2 = g_inputBinding:registerActionEvent('ShowVIPOrderDlg',InputBinding.NO_EVENT_TARGET, VIPOrderManager.ShowVIPOrderDlg ,false ,true ,false ,true)
+		dbPrintf("Result2=%s | actionEventId2=%s | self.isClient=%s", result2, actionEventId2, self.isClient)
+		if result2 and actionEventId2 then
+			g_inputBinding:setActionEventTextVisibility(actionEventId2, true)
+			g_inputBinding:setActionEventActive(actionEventId2, true)
+			g_inputBinding:setActionEventTextPriority(actionEventId2, GS_PRIO_VERY_LOW) -- GS_PRIO_VERY_HIGH, GS_PRIO_HIGH, GS_PRIO_LOW, GS_PRIO_VERY_LOW
+
+			-- table.insert(VIPOrderManager.eventName, actionEventId2);
+			-- g_inputBinding.events[actionEventId2].displayIsVisible = true;
+			dbPrintf("Action event inserted successfully")
+		end
+
+		if infoHud == nil then
+			infoHud = InfoHUD.new()
+			infoHud:setVisible(true)
+		end
+		-- hud:delete()
 	end
-	-- hud:delete()
 end;
 
 

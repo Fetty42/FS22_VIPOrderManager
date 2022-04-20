@@ -1,21 +1,58 @@
-<modDesc descVersion="63">
-	<author>Fetty</author>
-	<version>1.5.0.0</version>
-		 <title>
+<modDesc descVersion="64">
+	<author>Fetty42</author>
+	<version>1.0.0.0</version>
+	<title>
         <en>VIP Order Manager</en>
 		<de>VIP Auftrags Manager</de>
     </title>
     <description>
-        <de><![CDATA[Der VIP Order Manager bietet dem Landwirte VIP Aufträge an, Diese bestehen aus mehreren zu liefernden Produkten mit expliziter Vorgabe der Menge und des Zielortes. Es wird der aktuelle Auftrag und der nächste Auftrag angezeigt.]]></de>
-		<en><![CDATA[The VIP Order Manager offers the farmer VIP orders, which consist of several products to be delivered with explicit specification of the quantity and destination. The current order and the next order are displayed.]]></en>
-		<fr><![CDATA[Le VIP Order Manager propose à l'agriculteur des commandes VIP, composées de plusieurs produits à livrer avec une indication explicite de la quantité et de la destination. La commande actuelle et la prochaine commande sont affichées.]]></fr>
+        <de><![CDATA[Der VIP Order Manager bietet dem Landwirt VIP Aufträge an, die aus mehreren zu liefernden Produkten bestehen. 
+Pro Produkt mit expliziter Vorgabe der zu liefernden Menge und des Zielortes. Zusätzlich zum aktuellen VIP Auftrag kann man auch bereits die nächsten drei folgenden VIP Aufträge sehen.
+Es kann aber nur der aktuelle Auftrag beliefert werden.
+
+Mit STRG rechts + O wird der aktuelle Auftrag für einige Sekunden eingeblendet. Mit ALT rechts + O wird die Übersicht über alle VIP Aufträge angezeigt.
+In dieser Ansicht kann man auch den aktuellen VIP Auftrag gegen eine Gebühr, für die noch nicht erfüllten Teilaufträge, abbrechen.
+
+Mit jedem VIP Auftrag wird der aktuelle Level erhöht und damit auch die Anzahl der enthaltenen Einzelaufträge und die zu liefernden Mengen erhöht und die Erlöse verringert. 
+Auch die im Besitz befindliche Fläche wird bei der Berechnung berücksichtigt. Mit steigendem Level werden auch weitere Produkte berücksichtigt. 
+Da ich selbst lieber mit kleinen Feldern spiele, ist die Berechnung hierauf optimiert.
+
+Bereits mit dem LS19 hatte ich angefangen den VIP Order Manager zu entwickeln, um so etwas wie Kampagnen abzubilden. Ich wollte das Spiel etwas interessanter gestalten, 
+in dem mir Vorgegeben wird, was ich anbauen muss.
+
+Ich möchte auch noch all den anderen Moddern danken, aus deren Mods ich mir im Laufe der Zeit viele Anregungen und Lösungsansätze holen konnte.]]></de>
+		<en><![CDATA[The VIP Order Manager offers the farmer VIP orders consisting of several products to be delivered. 
+For each product with explicit specification of the quantity to be delivered and the destination. In addition to the current VIP order, the next three VIP orders to follow can also be seen.
+However, only the current order can be delivered.
+
+With CTRL right + O the current order is displayed for a few seconds. ALT right + O displays the overview of all VIP Orders.
+In this view, you can also cancel the current VIP Order for a fee for the partial orders that have not yet been fulfilled.
+
+With each VIP Order, the current level is increased and thus also the number of individual orders contained and the quantities to be delivered are increased and the revenues are reduced. 
+The area owned is also taken into account in the calculation. As the level increases, more products are also taken into account. 
+Since I prefer to play with small fields myself, the calculation is optimised for this.
+
+Already with FS19, I had started to develop the VIP Order Manager to represent something like campaigns. I wanted to make the game a little more interesting, 
+by telling me what I have to grow.
+
+I would also like to thank all the other modders whose mods have given me many ideas and solutions over the time.]]></en>
+		<fr><![CDATA[Le VIP Order Manager propose à l'agriculteur des commandes VIP composées de plusieurs produits à livrer. 
+Pour chaque produit, la quantité à livrer et le lieu de destination sont explicitement indiqués. En plus de l'ordre VIP actuel, on peut déjà voir les trois prochains ordres VIP.
+Mais seule la commande actuelle peut être livrée.
+
+Avec CTRL droite + O, la commande actuelle est affichée pendant quelques secondes. ALT droite + O permet d'afficher la vue d'ensemble de toutes les commandes VIP.
+Dans cette vue, il est également possible d'annuler la commande VIP actuelle moyennant une taxe pour les commandes partielles non encore exécutées.
+
+Avec chaque commande VIP, le niveau actuel est augmenté et donc le nombre de commandes individuelles contenues et les quantités à livrer augmentent et les recettes diminuent. 
+La surface détenue est également prise en compte dans le calcul. Au fur et à mesure que le niveau augmente, d'autres produits sont également pris en compte. 
+Comme je préfère jouer avec de petites parcelles, le calcul est optimisé à cet effet.
+
+Avec LS19, j'avais déjà commencé à développer le VIP Order Manager pour représenter quelque chose comme des campagnes. Je voulais rendre le jeu un peu plus intéressant, 
+en me donnant des indications sur ce que je dois cultiver.
+
+Je voudrais aussi remercier tous les autres moddeurs, dont les mods m'ont donné beaucoup d'idées et de solutions au fil du temps.]]></fr>
     </description>
 	
-	<title>VIP Order Manager</title>
-	<description>
-		<en>Manager for VIP Orders</en>
-		<de>Manager für VIP Aufträge</de>
-	</description>
 	<iconFilename>icon.dds</iconFilename>
 	<multiplayer supported="true" />
 	<extraSourceFiles>
@@ -23,15 +60,11 @@
 	</extraSourceFiles>    
 	<actions>
     	<action name="ShowCurrentVIPOrder" category="PLAYER VEHICLE" />
-      	<action name="AbortCurrentVIPOrder" category="PLAYER VEHICLE" />
       	<action name="ShowVIPOrderDlg" category="PLAYER VEHICLE" />
   	</actions>	
   	<inputBinding>
       	<actionBinding action="ShowCurrentVIPOrder">
         	<binding device="KB_MOUSE_DEFAULT" input="KEY_rctrl KEY_o" />
-      	</actionBinding>
-      	<actionBinding action="AbortCurrentVIPOrder">
-          	<binding device="KB_MOUSE_DEFAULT" input="KEY_ralt KEY_rctrl KEY_o" />
       	</actionBinding>
       	<actionBinding action="ShowVIPOrderDlg">
         	<binding device="KB_MOUSE_DEFAULT" input="KEY_ralt KEY_o" />
@@ -42,10 +75,6 @@
 			<de>Durchblättern VIP Aufträge</de>
 			<en>Flip VIP Orders</en>
 		</text>		
-		<text name="input_AbortCurrentVIPOrder">
-			<de>Abbruch VIP Auftrag</de>
-			<en>Aborting VIP Orders</en>
-		</text>
 		<text name="input_ShowVIPOrderDlg">
 			<de>Anzeige des VIP Auftragsdialogs</de>
 			<en>Shows VIP Orders Dialog</en>

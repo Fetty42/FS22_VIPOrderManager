@@ -58,9 +58,9 @@ VIPOrderManager.ftConfigs =
 	MANURE 			= {isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionExists=3},		-- Mist
 
 	-- Greenhouse products
-	STRAWBERRY 	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.8, isLimited=false},		-- Erdbeeren
-	TOMATO 		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.8, isLimited=false},		-- Tomaten
-	LETTUCE 	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.8, isLimited=false},		-- Salat
+	STRAWBERRY 	= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.8, isLimited=false},		-- Erdbeeren
+	TOMATO 		= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.8, isLimited=false},		-- Tomaten
+	LETTUCE 	= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.8, isLimited=false},		-- Salat
 
 	-- Factory products
 	DIESEL 			= {isAllowed=false, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Diesel

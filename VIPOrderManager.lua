@@ -2,9 +2,9 @@
 -- Date: 16.04.2022
 -- Version: 1.0.0.0
 
-dbPrintfOn = true
+local dbPrintfOn = false
 
-function dbPrintf(...)
+local function dbPrintf(...)
 	if dbPrintfOn then
     	print(string.format(...))
 	end

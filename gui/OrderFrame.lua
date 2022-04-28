@@ -3,6 +3,16 @@
 -- Version: 1.0.0.0
 
 
+local dbPrintfOn = false
+
+local function dbPrintf(...)
+	if dbPrintfOn then
+    	print(string.format(...))
+	end
+end
+
+
+
 OrderFrame = {
 	CONTROLS = {
 		DIALOG_TITLE = "dialogTitleElement",

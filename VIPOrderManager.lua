@@ -966,7 +966,7 @@ function VIPOrderManager.sellingStation_addFillLevelFromTool(station, superFunc,
 	end
 	-- dbPrintf("  stationCategoryName=%s | moved=%s | deltaFillLevel=%s | ftName=%s (%s) | ftIndex=%s | toolType=%s", tostring(stationCategoryName), tostring(moved), tostring(deltaFillLevel), ft.name, ft.title, tostring(fillType), tostring(toolType))
 
-	if moved > 0 then
+	if moved > 0 and VIPOrderManager.VIPOrders ~= nil and VIPOrderManager.VIPOrders[1] ~= nil then
         local orderEntry = VIPOrderManager.VIPOrders[1].entries[ft.name]
         -- dbPrintf("  Anzahl Order Items=%s", VIPOrderManager:getCountElements(VIPOrderManager.currentVIPOrder))
 		if orderEntry ~= nil then

@@ -92,9 +92,9 @@ VIPOrderManager.isLimitedPercentage = 20 -- Max share of limited products
 
 -- Depending on the OrderLeven, special correction factors for count, quantity and payout
 VIPOrderManager.orderLevelCorrectionFactors = {}
-VIPOrderManager.orderLevelCorrectionFactors[1] = {0.50, 0.50, 1.00}
--- VIPOrderManager.orderLevelCorrectionFactors[2] = {0.75, 0.65, 1.00}
--- VIPOrderManager.orderLevelCorrectionFactors[3] = {1.00, 0.75, 1.00}
+VIPOrderManager.orderLevelCorrectionFactors[1] = {0.25, 0.70, 1.00}
+VIPOrderManager.orderLevelCorrectionFactors[2] = {0.50, 0.80, 1.00}
+VIPOrderManager.orderLevelCorrectionFactors[3] = {0.75, 0.90, 1.00}
 
 
 -- Constants for filltype selection

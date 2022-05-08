@@ -1,4 +1,4 @@
-<modDesc descVersion="64">
+<modDesc descVersion="65">
 	<author>Fetty42</author>
 	<version>1.1.0.0</version>
 	<title>
@@ -23,7 +23,11 @@ Die Multiplayer-Kompatibilität habe ich nicht geteset.
 
 Ich möchte auch noch all den anderen Moddern danken, aus deren Mods ich mir im Laufe der Zeit viele Anregungen und Lösungsansätze holen konnte.
 
-Für Fehlermeldungen oder Anregungen besucht bitte: https://github.com/Fetty42/FS22_VIPOrderManager]]></de>
+Für Fehlermeldungen oder Anregungen besucht bitte: https://github.com/Fetty42/FS22_VIPOrderManager
+
+Update 1.1.0
+-  Consideration of already own animal husbandries and productions
+-  first smal multiplayer adjustments (not yet multiplayer compatible)]]></de>
 		<en><![CDATA[The VIP Order Manager offers the farmer VIP orders consisting of several products to be delivered. 
 For each product with explicit specification of the quantity to be delivered and the destination. In addition to the current VIP order, the next three VIP orders to follow can also be seen.
 However, only the current order can be delivered.
@@ -41,7 +45,11 @@ I have not tested the multiplayer compatibility.
 
 I would also like to thank all the other modders whose mods have given me many ideas and solutions over the time.
 
-For any error messages or suggestions, please visit: https://github.com/Fetty42/FS22_VIPOrderManager]]></en>
+For any error messages or suggestions, please visit: https://github.com/Fetty42/FS22_VIPOrderManager
+
+Update 1.1.0
+- Berücksichtigung von bereits eigenen Tierhaltungen und Produktionen
+- erste kleine Multiplayer-Anpassungen (noch nicht multiplayerkompatibel)]]></en>
 		<fr><![CDATA[Le VIP Order Manager propose à l'agriculteur des commandes VIP composées de plusieurs produits à livrer. 
 Pour chaque produit, la quantité à livrer et le lieu de destination sont explicitement indiqués. En plus de l'ordre VIP actuel, on peut déjà voir les trois prochains ordres VIP.
 Mais seule la commande actuelle peut être livrée.
@@ -59,11 +67,15 @@ Je n'ai pas testé la compatibilité multijoueur.
 
 Je voudrais aussi remercier tous les autres moddeurs, dont les mods m'ont donné beaucoup d'idées et de solutions au fil du temps.
 
-Pour les messages d'erreur ou les suggestions, veuillez visiter : https://github.com/Fetty42/FS22_VIPOrderManager]]></fr>
+Pour les messages d'erreur ou les suggestions, veuillez visiter : https://github.com/Fetty42/FS22_VIPOrderManager
+
+Update 1.1.0
+- Prise en compte des élevages et des productions déjà propres à l'entreprise
+- premières petites adaptations multijoueurs (pas encore compatibles avec le multijoueur)]]></fr>
     </description>
 	
 	<iconFilename>icon.dds</iconFilename>
-	<multiplayer supported="false" />
+	<multiplayer supported="true" />
 	<extraSourceFiles>
 		<sourceFile filename="VIPOrderManager.lua" />
 	</extraSourceFiles>    

@@ -1,12 +1,18 @@
 -- Author: Fetty42
--- Date: 16.04.2022
--- Version: 1.0.0.0
+-- Date: 08.05.2022
+-- Version: 1.1.0.0
 
 local dbPrintfOn = false
 
 local function dbPrintf(...)
 	if dbPrintfOn then
     	print(string.format(...))
+	end
+end
+
+local function dbPrintHeader(ftName)
+	if dbPrintfOn then
+    	print(string.format("Call %s: g_currentMission:getIsServer()=%s | g_currentMission:getIsClient()=%s", ftName, g_currentMission:getIsServer(), g_currentMission:getIsClient()))
 	end
 end
 
@@ -55,7 +61,7 @@ source(Utils.getFilename("InfoHUD.lua", VIPOrderManager.dir))
 source(VIPOrderManager.dir .. "gui/OrderFrame.lua")
 
 function VIPOrderManager:loadMap(name)
-    dbPrintf("call VIPOrderManager:loadMap()");
+    dbPrintHeader("VIPOrderManager:loadMap()")
 
 	if g_currentMission:getIsClient() then
 		Player.registerActionEvents = Utils.appendedFunction(Player.registerActionEvents, VIPOrderManager.registerActionEvents);
@@ -67,17 +73,38 @@ function VIPOrderManager:loadMap(name)
 		--VIPOrderManager:loadSettings();
 
 		SellingStation.addFillLevelFromTool = Utils.overwrittenFunction(SellingStation.addFillLevelFromTool, VIPOrderManager.sellingStation_addFillLevelFromTool)	
+
+		-- g_messageCenter:subscribe(MessageType.HOUR_CHANGED, self.onHourChanged, self)
+		-- g_messageCenter:subscribe(MessageType.MINUTE_CHANGED, self.onMinuteChanged, self)
 	end
 end;
 
 
-function VIPOrderManager:registerActionEvents()
-	dbPrintf("call VIPOrderManager:registerActionEvents()");
+-- function VIPOrderManager:onMinuteChanged()
+--     dbPrintHeader("VIPOrderManager:onMinuteChanged()")
 
-	if self.isClient then --isOwner
+-- 	-- if g_server ~= nil then
+--  		-- g_currentMission:addMoney(money * -1, farmId, MoneyType.OTHER, true, true)
+-- 	-- end
+-- end
+
+
+-- function VIPOrderManager:onHourChanged()
+--     dbPrintHeader("VIPOrderManager:onHourChanged()")
+
+-- 	-- if g_server ~= nil then
+--  		-- g_currentMission:addMoney(money * -1, farmId, MoneyType.OTHER, true, true)
+-- 	-- end
+-- end
+
+
+function VIPOrderManager:registerActionEvents()
+    -- dbPrintHeader("VIPOrderManager:registerActionEvents()")
+
+	if g_currentMission:getIsClient() then --isOwner
 		-- local result, actionEventId = InputBinding.registerActionEvent(g_inputBinding, 'ShowCurrentVIPOrder',self, VIPOrderManager.ShowCurrentVIPOrder ,false ,true ,false ,true)
 		local result, actionEventId = g_inputBinding:registerActionEvent('ShowCurrentVIPOrder',InputBinding.NO_EVENT_TARGET, VIPOrderManager.ShowCurrentVIPOrder ,false ,true ,false ,true)
-		dbPrintf("Result=%s | actionEventId=%s | self.isClient=%s", result, actionEventId, self.isClient)
+		dbPrintf("Result=%s | actionEventId=%s | g_currentMission:getIsClient()=%s", result, actionEventId, g_currentMission:getIsClient())
 		if result and actionEventId then
 			g_inputBinding:setActionEventTextVisibility(actionEventId, true)
 			g_inputBinding:setActionEventActive(actionEventId, true)
@@ -88,7 +115,7 @@ function VIPOrderManager:registerActionEvents()
 			dbPrintf("Action event inserted successfully")
 		end
 		local result2, actionEventId2 = g_inputBinding:registerActionEvent('ShowVIPOrderDlg',InputBinding.NO_EVENT_TARGET, VIPOrderManager.ShowVIPOrderDlg ,false ,true ,false ,true)
-		dbPrintf("Result2=%s | actionEventId2=%s | self.isClient=%s", result2, actionEventId2, self.isClient)
+		dbPrintf("Result2=%s | actionEventId2=%s | g_currentMission:getIsClient()=%s", result2, actionEventId2, g_currentMission:getIsClient())
 		if result2 and actionEventId2 then
 			g_inputBinding:setActionEventTextVisibility(actionEventId2, true)
 			g_inputBinding:setActionEventActive(actionEventId2, true)
@@ -110,7 +137,7 @@ end;
 
 --  
 function VIPOrderManager:ShowVIPOrderDlg(actionName, keyStatus, arg3, arg4, arg5)
-	dbPrintf("call VIPOrderManager:ShowVIPOrderDlg()");
+    dbPrintHeader("VIPOrderManager:ShowVIPOrderDlg()")
 
 	VIPOrderManager.OrderDlg = nil
 	g_gui:loadProfiles(VIPOrderManager.dir .. "gui/guiProfiles.xml")
@@ -127,7 +154,7 @@ end
 
 -- Payout complete orders less a abort fee for incomplete orders. 
 function VIPOrderManager:AbortCurrentVIPOrder()
-	dbPrintf("call VIPOrderManager:AbortCurrentVIPOrder()");
+    dbPrintHeader("VIPOrderManager:AbortCurrentVIPOrder()")
 
 	local sumAbortFee, sumPayout = VIPOrderManager:GetSumAbortFeeAndSumPayout()
 
@@ -138,8 +165,9 @@ end
 
 
 function VIPOrderManager:reactToDialog_AbortCurrentVIPOrder(yes)
-	dbPrintf("call VIPOrderManager:reactToDialog_AbortCurrentVIPOrder()");
-    if yes then
+    dbPrintHeader("VIPOrderManager:reactToDialog_AbortCurrentVIPOrder()")
+
+	if yes and VIPOrderManager.VIPOrders[1] ~= nil then
 		local sumAbortFee, sumPayout = VIPOrderManager:GetSumAbortFeeAndSumPayout()
 	
 		-- show message and payout
@@ -157,7 +185,8 @@ end
 
 
 function VIPOrderManager:GetSumAbortFeeAndSumPayout()
-	dbPrintf("call VIPOrderManager:GetSumAbortFeeAndSumPayout()");
+    dbPrintHeader("VIPOrderManager:GetSumAbortFeeAndSumPayout()")
+
 	local sumPayout = 0
 	local sumAbortFee = 0
 
@@ -177,35 +206,37 @@ end
 
 
 function VIPOrderManager:RestockVIPOrders()
-	dbPrintf("call VIPOrderManager:RestockVIPOrders()");
+    dbPrintHeader("VIPOrderManager:RestockVIPOrders()")
 
-	VIPOrderManager.ownFieldArea = VIPOrderManager:CalculateOwnFieldArea()
-	VIPOrderManager:GetExistingProductionAndAnimalOutputs()
+	if g_currentMission:getIsClient() and g_currentMission.player.farmId > 0 then
+		VIPOrderManager.ownFieldArea = VIPOrderManager:CalculateOwnFieldArea()
+		VIPOrderManager:GetExistingProductionAndAnimalOutputs()
 
-	-- new VIPOrder	
-	local orderLevel = 0
-	if #VIPOrderManager.VIPOrders > 0 then
-		orderLevel = VIPOrderManager.VIPOrders[#VIPOrderManager.VIPOrders].level
+		-- new VIPOrder	
+		local orderLevel = 0
+		if #VIPOrderManager.VIPOrders > 0 then
+			orderLevel = VIPOrderManager.VIPOrders[#VIPOrderManager.VIPOrders].level
+		end
+		while (#VIPOrderManager.VIPOrders < VIPOrderManager.maxVIPOrdersCount) do
+			local newEntries = {}
+			orderLevel = orderLevel + 1
+			dbPrintf("  - Create new VIPOrder with level " .. orderLevel)
+			VIPOrderManager:calculateAndFillOrder(newEntries, orderLevel)
+			table.insert(VIPOrderManager.VIPOrders, {level = orderLevel, entries = newEntries})
+		end
+		self.showVIPOrder = 1
+		self.infoDisplayPastTime = 0
+		VIPOrderManager:UpdateOutputLines()
 	end
-	while (#VIPOrderManager.VIPOrders < VIPOrderManager.maxVIPOrdersCount) do
-		local newEntries = {}
-		orderLevel = orderLevel + 1
-		dbPrintf("  - Create new VIPOrder with level " .. orderLevel)
-		VIPOrderManager:calculateAndFillOrder(newEntries, orderLevel)
-		table.insert(VIPOrderManager.VIPOrders, {level = orderLevel, entries = newEntries})
-	end
-	self.showVIPOrder = 1
-	self.infoDisplayPastTime = 0
-	VIPOrderManager:UpdateOutputLines()
-
 	-- print("** Start DebugUtil.printTableRecursively() ************************************************************")
 	-- DebugUtil.printTableRecursively(VIPOrderManager.VIPOrders, ".", 0, 3)
-	-- print("** End DebugUtil.printTableRecursively() **************************************************************\n")
+	-- print("** End DebugUtil.printTableRecursively() **************************************************************")
 end
 
 
 function VIPOrderManager:GetExistingProductionAndAnimalOutputs()
-	dbPrintf("call VIPOrderManager:GetHusbandryPlaceableTypes()");
+    dbPrintHeader("VIPOrderManager:GetExistingProductionAndAnimalOutputs()")
+
 	VIPOrderManager.existingProductionAndAnimalOutputs = {}
 	local farmId = g_currentMission.player.farmId;
 	local isMilk = false
@@ -307,7 +338,7 @@ end
 
 
 function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
-	dbPrintf("call VIPOrderManager:calculateAndFillOrder()");
+    dbPrintHeader("VIPOrderManager:calculateAndFillOrder()")
 
 	local usableFillTypes = {};
 	VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
@@ -325,7 +356,7 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 	local specCorFactorCount = ((1 + orderLevel * 0.04) - 0.04)
 	local specCorFactorQuantity = ((1 + orderLevel*orderLevel*0.005) - 0.005)
 	local specCorFactorPayout = 1.0 / ((1 + orderLevel*0.05) - 0.05)
-	dbPrintf("\nCreate new VIP Order: Level %s", orderLevel)
+	dbPrintf("Create new VIP Order: Level %s", orderLevel)
 	dbPrintf("  Initial basic correction factors:")
 	dbPrintf("    - Count factor    = %.2f", specCorFactorCount)
 	dbPrintf("    - Quantity factor = %.2f", specCorFactorQuantity)
@@ -366,7 +397,7 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 	local i = 0
 	while (i < countOrderItems) do
 		i = i + 1
-		dbPrintf(string.format("\n  %s. Order Item:", i))
+		dbPrintf(string.format("  %s. Order Item:", i))
 		
 		local fillType = nil
 		local ftConfig = nil
@@ -433,7 +464,7 @@ end
 
 
 function VIPOrderManager:CalculateOwnFieldArea()
-	dbPrintf("\ncall VIPOrderManager:CalculateOwnFieldArea()");
+    dbPrintHeader("VIPOrderManager:CalculateOwnFieldArea()")
 
 	-- Calculate full farmland
 	local farmlands = g_farmlandManager:getOwnedFarmlandIdsByFarmId(g_currentMission.player.farmId)
@@ -457,7 +488,7 @@ function VIPOrderManager:CalculateOwnFieldArea()
 
 		dbPrintf("  --> %s. Owned Farmland: id=%s | FieldCount=%s | FieldAreaSum=%s", i, farmland.id, fieldCount, g_i18n:formatArea(fieldAreaSum, 2))
 	end
-	dbPrintf("  ==> Field Area Overall: %s\n", g_i18n:formatArea(fieldAreaOverall, 2))
+	dbPrintf("  ==> Field Area Overall: %s", g_i18n:formatArea(fieldAreaOverall, 2))
 
 	-- if fieldAreaOverall > 0.01 then
 	-- 	return math.ceil(fieldAreaOverall*100)/100
@@ -470,6 +501,8 @@ end
 
 
 function VIPOrderManager:GetFillTypeConfig(ftName)
+    -- dbPrintHeader("VIPOrderManager:GetFillTypeConfig()")
+
 	local ftConfig = VIPOrderManager.ftConfigs[ftName]
 	if ftConfig == nil then
 		if g_fruitTypeManager:getFruitTypeByName(ftName) ~= nil then
@@ -486,12 +519,12 @@ end
 
 
 function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
-	dbPrintf("\ncall VIPOrderManager:GetUsableFillTypes()");
+    dbPrintHeader("VIPOrderManager:GetUsableFillTypes()")
 	
 	local sellableFillTypes = VIPOrderManager:getAllSellableFillTypes()
 
 	-- Validate FillTypes	
-	dbPrintf("\nNot usable filltypes:")
+	dbPrintf("Not usable filltypes:")
 	for index, sft in pairs(sellableFillTypes) do    
         dbPrintf("  Validate FillTypes: " .. index .. " --> " .. sft.name .. " (" .. sft.title .. ")")
 		local notUsableWarning = nil
@@ -554,7 +587,7 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
         end
 	end
 	
-	dbPrintf("\nUsable filltypes:")
+	dbPrintf("Usable filltypes:")
 	for _, v in pairs(usableFillTypes) do    
 		local tempNameOutput = string.format("%s (%s)", v.name, v.title)
 		
@@ -572,15 +605,17 @@ end
 
 
 function VIPOrderManager:getAllSellableFillTypes()
-	-- dbPrintf("\ncall VIPOrderManager:getAllSellableFillTypes()");
+    dbPrintHeader("VIPOrderManager:getAllSellableFillTypes()")
+
 	local sellableFillTypes = {}
 
 	for _, station in pairs(g_currentMission.storageSystem.unloadingStations) do
-		-- dbPrintf("Station: getName=%s | typeName=%s | categoryName=%s | isSellingPoint=%s | currentSavegameId=%s", 
-		-- 	station.owningPlaceable:getName(), tostring(station.owningPlaceable.typeName), tostring(station.owningPlaceable.storeItem.categoryName), tostring(station.isSellingPoint), station.owningPlaceable.currentSavegameId)
+		local placeable = station.owningPlaceable
+		-- dbPrintf("Station: getName=%s | typeName=%s | categoryName=%s | isSellingPoint=%s | currentSavegameId=%s | placeable.ownerFarmId=%s | g_currentMission:getFarmId()=%s", 
+			-- placeable:getName(), tostring(placeable.typeName), tostring(placeable.storeItem.categoryName), tostring(station.isSellingPoint), placeable.currentSavegameId, placeable.ownerFarmId, g_currentMission:getFarmId())
 		-- PRODUCTIONPOINTS, SILOS, ANIMALPENS
 
-		if station.isSellingPoint ~= nil and station.isSellingPoint == true then
+		if station.isSellingPoint ~= nil and station.isSellingPoint == true and placeable.ownerFarmId ~= g_currentMission:getFarmId() then
 			for fillTypeIndex, isAccepted in pairs(station.acceptedFillTypes) do
 				local fillType = g_fillTypeManager:getFillTypeByIndex(fillTypeIndex)
                 local fruitType = g_fruitTypeManager:getFruitTypeByName(fillType.name)
@@ -615,6 +650,23 @@ function VIPOrderManager:getAllSellableFillTypes()
 					table.insert(sellableFillTypes[fillTypeIndex].acceptingStations, station)
 				end
 			end
+		else
+			dbPrintf("  - Station not relevant: Name=%s | isSellingPoint=%s | placeable.ownerFarmId=%s", placeable:getName(), station.isSellingPoint, placeable.ownerFarmId)
+		end
+	end
+
+	if dbPrintfOn then
+		dbPrintf("  Allowed filltypes with stations")
+		for index, ftInfo in pairs(sellableFillTypes) do 
+			local stationsString = ""
+			for index, station in pairs(ftInfo.acceptingStations) do 
+				if stationsString == "" then
+					stationsString = station.owningPlaceable:getName()
+				else
+					stationsString = stationsString .. ", " .. station.owningPlaceable:getName()
+				end
+			end
+			dbPrintf("  - %s: pricePerLiter=%s | Stations=%s", ftInfo.name, ftInfo.pricePerLiter, stationsString)
 		end
 	end
 	return sellableFillTypes
@@ -622,7 +674,7 @@ end
 
 
 function VIPOrderManager:ShowCurrentVIPOrder()
-	-- dbPrintf("\ncall VIPOrderManager:ShowCurrentVIPOrder()");
+    dbPrintHeader("VIPOrderManager:ShowCurrentVIPOrder()")
 
 	-- dbPrintf("  current showVIPOrder=%s | new showVIPOrder=%s", VIPOrderManager.showVIPOrder,  (VIPOrderManager.showVIPOrder + 1) % 4)
 
@@ -635,6 +687,8 @@ end
 
 
 function VIPOrderManager:GetPayoutTotal(orderEntries)
+    dbPrintHeader("VIPOrderManager:GetPayoutTotal()")
+
 	local payoutTotal = 0
 	for _, entry in pairs(orderEntries) do
 		payoutTotal = payoutTotal + entry.payout
@@ -644,7 +698,8 @@ end
 
 -- return: boolean, IsOrderCompleted
 function VIPOrderManager:UpdateOutputLines()
-	-- dbPrintf("call VIPOrderManager:UpdateOutputLines()");
+    -- dbPrintHeader("VIPOrderManager:UpdateOutputLines()")
+
 	if #VIPOrderManager.VIPOrders < 2 then
 		return
 	end
@@ -729,7 +784,7 @@ end
 
 
 function VIPOrderManager:MakePayout(orderEntries)
-	-- dbPrintf("\ncall VIPOrderManager:MakePayout()");
+    dbPrintHeader("VIPOrderManager:MakePayout()")
 
 	-- show message
 	g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_OK, g_i18n:getText("VIPOrderManager_OrderCompleted"))
@@ -741,7 +796,9 @@ end
 
 
 function VIPOrderManager:update(dt)
-    VIPOrderManager.updateDelta = VIPOrderManager.updateDelta + dt;
+    -- dbPrintHeader("VIPOrderManager:update()")
+
+	VIPOrderManager.updateDelta = VIPOrderManager.updateDelta + dt;
 	VIPOrderManager.infoDisplayPastTime = VIPOrderManager.infoDisplayPastTime + dt
 
 	if VIPOrderManager.updateDelta > VIPOrderManager.updateRate and VIPOrderManager.InitDone then
@@ -752,7 +809,7 @@ function VIPOrderManager:update(dt)
 			VIPOrderManager.infoDisplayPastTime = 0
 		end
 
-		if g_currentMission:getIsClient() and g_gui.currentGui == nil then
+		if g_currentMission:getIsClient() and g_gui.currentGui == nil and g_currentMission.player.farmId > 0 then
 			local isOrderCompleted = VIPOrderManager:UpdateOutputLines()
 			if isOrderCompleted then
 				VIPOrderManager:MakePayout(VIPOrderManager.VIPOrders[1].entries)
@@ -765,13 +822,18 @@ function VIPOrderManager:update(dt)
 	end
 
 	if infoHud ~= nil then
-		infoHud:setVisible(VIPOrderManager.showVIPOrder > 0)
+		if #VIPOrderManager.VIPOrders > 0  and #VIPOrderManager.outputLines > 0 then
+			infoHud:setVisible(VIPOrderManager.showVIPOrder > 0)
+		else
+			infoHud:setVisible(false)
+		end
 	end
-
 end
 
 
 function VIPOrderManager:draw()
+    -- dbPrintHeader("VIPOrderManager:draw()")
+
 	-- Only render when no other GUI is open
     if g_gui.currentGuiName ~= "InGameMenu" and VIPOrderManager.showVIPOrder > 0 and VIPOrderManager.InitDone then --if g_gui.currentGui == nil
 		for _, line in ipairs(VIPOrderManager.outputLines) do
@@ -786,6 +848,8 @@ end
 
 
 function VIPOrderManager:renderText(x, y, size, text, bold, colorId, align)
+    -- dbPrintHeader("VIPOrderManager:renderText()")
+
 	setTextColor(unpack(VIPOrderManager.colors[colorId][2]))
 	setTextBold(bold)
 	setTextAlignment(align)
@@ -799,7 +863,7 @@ end
 
 
 function VIPOrderManager:saveSettings()
-	-- dbPrintf("call VIPOrderManager:saveSettings()");
+    dbPrintHeader("VIPOrderManager:saveSettings()")
 	
 	local savegameFolderPath = g_currentMission.missionInfo.savegameDirectory.."/";
 	if savegameFolderPath == nil then
@@ -867,7 +931,7 @@ function VIPOrderManager:saveSettings()
 end
 
 function VIPOrderManager:loadSettings()
-	dbPrintf("call VIPOrderManager:loadSettings()")
+    dbPrintHeader("VIPOrderManager:loadSettings()")
 
 	local savegameFolderPath = g_currentMission.missionInfo.savegameDirectory
 	if savegameFolderPath == nil then
@@ -939,6 +1003,8 @@ end
 
 
 function VIPOrderManager:getStationBySavegameId(targetStationSavegameId)
+    dbPrintHeader("VIPOrderManager:getStationBySavegameId()")
+
 	for _, station in pairs(g_currentMission.storageSystem.unloadingStations) do
 		if station.owningPlaceable ~= nil and station.owningPlaceable.currentSavegameId == targetStationSavegameId then
 			return station
@@ -956,6 +1022,8 @@ end
 
 -- Observe "SellingStation.addFillLevelFromTool" when products are sold at points of sale
 function VIPOrderManager.sellingStation_addFillLevelFromTool(station, superFunc, farmId, deltaFillLevel, fillType, fillInfo, toolType)
+    dbPrintHeader("VIPOrderManager:sellingStation_addFillLevelFromTool()")
+
 	local moved = 0
 	moved = superFunc(station, farmId, deltaFillLevel, fillType, fillInfo, toolType)
 

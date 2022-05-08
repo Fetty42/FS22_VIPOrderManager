@@ -1,6 +1,6 @@
 <modDesc descVersion="64">
 	<author>Fetty42</author>
-	<version>1.0.0.0</version>
+	<version>1.1.0.0</version>
 	<title>
         <en>VIP Order Manager</en>
 		<de>VIP Auftrags Manager</de>
@@ -63,7 +63,7 @@ Pour les messages d'erreur ou les suggestions, veuillez visiter : https://github
     </description>
 	
 	<iconFilename>icon.dds</iconFilename>
-	<multiplayer supported="true" />
+	<multiplayer supported="false" />
 	<extraSourceFiles>
 		<sourceFile filename="VIPOrderManager.lua" />
 	</extraSourceFiles>    

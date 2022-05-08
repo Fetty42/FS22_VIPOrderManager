@@ -1,6 +1,6 @@
 -- Author: Fetty42
--- Date: 16.04.2022
--- Version: 1.0.0.0
+-- Date: 08.05.2022
+-- Version: 1.1.0.0
 
 
 -- isAllowed (true, false) - whether the fill type is offered 

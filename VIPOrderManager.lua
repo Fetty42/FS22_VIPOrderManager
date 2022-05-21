@@ -49,7 +49,7 @@ VIPOrderManager.colors[10] = {'col_brown', {0.1912, 0.1119, 0.0529, 1}}
 VIPOrderManager.dir = g_currentModDirectory
 VIPOrderManager.modName = g_currentModName
 
-VIPOrderManager.existingProductionAndAnimalOutputs = {}	-- 
+VIPOrderManager.existingProductionAndAnimalOutputs = {}	--
 VIPOrderManager.VIPOrders 			= {}	-- List of orders {level, entries{[Name] = {fillTypeName, quantity, fillLevel, payout, targetStation}}}
 
 VIPOrderManager.outputLines 		= {}	-- Output lines for the draw() function (text, size, bold, colorId, x, y)
@@ -135,13 +135,13 @@ function VIPOrderManager:registerActionEvents()
 end;
 
 
---  
+--
 function VIPOrderManager:ShowVIPOrderDlg(actionName, keyStatus, arg3, arg4, arg5)
     dbPrintHeader("VIPOrderManager:ShowVIPOrderDlg()")
 
 	VIPOrderManager.OrderDlg = nil
 	g_gui:loadProfiles(VIPOrderManager.dir .. "gui/guiProfiles.xml")
-	local orderFrame = OrderFrame.new(g_i18n) 
+	local orderFrame = OrderFrame.new(g_i18n)
 	g_gui:loadGui(VIPOrderManager.dir .. "gui/OrderFrame.xml", "OrderFrame", orderFrame)
 	VIPOrderManager.OrderDlg = g_gui:showDialog("OrderFrame")
 
@@ -152,7 +152,7 @@ function VIPOrderManager:ShowVIPOrderDlg(actionName, keyStatus, arg3, arg4, arg5
 end
 
 
--- Payout complete orders less a abort fee for incomplete orders. 
+-- Payout complete orders less a abort fee for incomplete orders.
 function VIPOrderManager:AbortCurrentVIPOrder()
     dbPrintHeader("VIPOrderManager:AbortCurrentVIPOrder()")
 
@@ -436,7 +436,7 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 			orderItemQuantity = math.floor(orderItemQuantity / 100) * 100
 		elseif orderItemQuantity > 10 then
 			orderItemQuantity = math.floor(orderItemQuantity / 10) * 10
-		end 
+		end
 		dbPrintf("    ==> Quantity = %.2f * 1000 / %.2f * %.2f = %s", randomQuantityFaktor, fillType.pricePerLiter, quantityCorrectionFactor, orderItemQuantity)
 		
 		local orderItemPayout = math.floor(orderItemQuantity * fillType.pricePerLiter * randomPayoutFactor/100)*100
@@ -524,8 +524,8 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
 	local sellableFillTypes = VIPOrderManager:getAllSellableFillTypes()
 
 	-- Validate FillTypes	
-	dbPrintf("Not usable filltypes:")
-	for index, sft in pairs(sellableFillTypes) do    
+	dbPrintf("Validating filltypes:")
+	for index, sft in pairs(sellableFillTypes) do
         dbPrintf("  Validate FillTypes: " .. index .. " --> " .. sft.name .. " (" .. sft.title .. ")")
 		local notUsableWarning = nil
 		local tempNameOutput = string.format("%s (%s)", sft.name, sft.title)
@@ -538,6 +538,13 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
 		-- not allowed
 		if notUsableWarning == nil and not ftConfig.isAllowed then
 			notUsableWarning = "Not usable, because is not allowed"
+        end
+
+
+		-- not supported from the map
+		local fruitType = g_fruitTypeManager:getFruitTypeByName(sft.name)
+		if notUsableWarning == nil and fruitType ~= nil and not fruitType.shownOnMap then
+			notUsableWarning = string.format("Not usable, because the current map does not support this fruittype")
         end
 
 		-- needed fruit type not available
@@ -588,7 +595,7 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
 	end
 	
 	dbPrintf("Usable filltypes:")
-	for _, v in pairs(usableFillTypes) do    
+	for _, v in pairs(usableFillTypes) do
 		local tempNameOutput = string.format("%s (%s)", v.name, v.title)
 		
 		local stationList = ""
@@ -611,14 +618,25 @@ function VIPOrderManager:getAllSellableFillTypes()
 
 	for _, station in pairs(g_currentMission.storageSystem.unloadingStations) do
 		local placeable = station.owningPlaceable
-		-- dbPrintf("Station: getName=%s | typeName=%s | categoryName=%s | isSellingPoint=%s | currentSavegameId=%s | placeable.ownerFarmId=%s | g_currentMission:getFarmId()=%s", 
-			-- placeable:getName(), tostring(placeable.typeName), tostring(placeable.storeItem.categoryName), tostring(station.isSellingPoint), placeable.currentSavegameId, placeable.ownerFarmId, g_currentMission:getFarmId())
+        local production = placeable.spec_productionPoint
+		dbPrintf("Station: getName=%s | typeName=%s | categoryName=%s | isSellingPoint=%s | currentSavegameId=%s | placeable.ownerFarmId=%s | g_currentMission:getFarmId()=%s",
+			placeable:getName(), tostring(placeable.typeName), tostring(placeable.storeItem.categoryName), tostring(station.isSellingPoint), placeable.currentSavegameId, placeable.ownerFarmId, g_currentMission:getFarmId())
 		-- PRODUCTIONPOINTS, SILOS, ANIMALPENS
 
-		if station.isSellingPoint ~= nil and station.isSellingPoint == true and placeable.ownerFarmId ~= g_currentMission:getFarmId() then
+		if station.isSellingPoint ~= nil and station.isSellingPoint == true then	-- and placeable.ownerFarmId ~= g_currentMission:getFarmId() then DH
 			for fillTypeIndex, isAccepted in pairs(station.acceptedFillTypes) do
 				local fillType = g_fillTypeManager:getFillTypeByIndex(fillTypeIndex)
-                local fruitType = g_fruitTypeManager:getFruitTypeByName(fillType.name)
+
+				-- accept for own placeable production points only fill types that are not also loadable at the same time
+                if isAccepted
+				  and placeable.ownerFarmId == g_currentMission:getFarmId()
+				  and production ~= nil
+				  and production.productionPoint.loadingStation ~= nil
+				  and production.productionPoint.loadingStation.supportedFillTypes[fillTypeIndex] then
+					isAccepted = false
+					dbPrintf("  - own placeable production point: filltype %s (%s) is not supported as it is also loadable", fillType.name, fillType.title)
+				end
+
 				if isAccepted == true then
 				
 					-- Unknown filltype
@@ -627,7 +645,7 @@ function VIPOrderManager:getAllSellableFillTypes()
 						extraMsg = " *** Unknown filltype without configuration ***"
 					end
 					
-					-- dbPrintf("  - filltype: %s (%s)%s", fillType.name, fillType.title, extraMsg)
+					dbPrintf("  - filltype: %s (%s)%s", fillType.name, fillType.title, extraMsg)
 					local price = station:getEffectiveFillTypePrice(fillTypeIndex)
 
 					if sellableFillTypes[fillTypeIndex] == nil then
@@ -657,9 +675,9 @@ function VIPOrderManager:getAllSellableFillTypes()
 
 	if dbPrintfOn then
 		dbPrintf("  Allowed filltypes with stations")
-		for index, ftInfo in pairs(sellableFillTypes) do 
+		for index, ftInfo in pairs(sellableFillTypes) do
 			local stationsString = ""
-			for index, station in pairs(ftInfo.acceptingStations) do 
+			for index, station in pairs(ftInfo.acceptingStations) do
 				if stationsString == "" then
 					stationsString = station.owningPlaceable:getName()
 				else

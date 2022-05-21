@@ -1,6 +1,6 @@
 <modDesc descVersion="65">
 	<author>Fetty42</author>
-	<version>1.1.0.0</version>
+	<version>1.1.1.0</version>
 	<title>
         <en>VIP Order Manager</en>
 		<de>VIP Auftrags Manager</de>
@@ -25,6 +25,9 @@ Ich möchte auch noch all den anderen Moddern danken, aus deren Mods ich mir im 
 
 Für Fehlermeldungen oder Anregungen besucht bitte: https://github.com/Fetty42/FS22_VIPOrderManager
 
+Update 1.1.1
+- Probleme mit eigenen Verkaufsstationen und Produktionen behoben
+
 Update 1.1.0
 - Berücksichtigung von bereits eigenen Tierhaltungen und Produktionen
 - erste kleine Multiplayer-Anpassungen (noch nicht multiplayerkompatibel)]]></de>
@@ -46,6 +49,9 @@ I have not tested the multiplayer compatibility.
 I would also like to thank all the other modders whose mods have given me many ideas and solutions over the time.
 
 For any error messages or suggestions, please visit: https://github.com/Fetty42/FS22_VIPOrderManager
+
+Update 1.1.1
+- Fixed problems with own selling stations and productions
 
 Update 1.1.0
 -  Consideration of already own animal husbandries and productions
@@ -69,6 +75,9 @@ Je voudrais aussi remercier tous les autres moddeurs, dont les mods m'ont donné
 
 Pour les messages d'erreur ou les suggestions, veuillez visiter : https://github.com/Fetty42/FS22_VIPOrderManager
 
+Update 1.1.1
+- Correction de problèmes avec les propres points de vente et productions
+
 Update 1.1.0
 - Prise en compte des élevages et des productions déjà propres à l'entreprise
 - premières petites adaptations multijoueurs (pas encore compatibles avec le multijoueur)]]></fr>
@@ -90,6 +99,9 @@ Non ho testato la compatibilità multiplayer.
 Vorrei anche ringraziare tutti gli altri modder le cui mod mi hanno dato molte idee e soluzioni nel tempo.
 
 Per eventuali messaggi di errore o suggerimenti, visitare: https://github.com/Fetty42/FS22_VIPOrderManager
+
+Update 1.1.1
+- Problemi con le proprie stazioni di vendita e produzioni risolti
 
 Update 1.1.0
 -  Vengono Considerati allevamenti e produzioni già di proprietà
@@ -168,7 +180,7 @@ Update 1.1.0
         <text name="ui_orderDlg_header_product">
 			<de>Produkt</de>	
 			<en>Product</en>
-			<it>Prodotto</en>
+			<it>Prodotto</it>
         </text>		
         <text name="ui_orderDlg_header_requested">
 			<de>Angefordert</de>	

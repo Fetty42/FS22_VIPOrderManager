@@ -4,6 +4,7 @@
 	<title>
         <en>VIP Order Manager</en>
 		<de>VIP Auftrags Manager</de>
+		<ru>Менеджер VIP-заказов</ru>
     </title>
     <description>
         <de><![CDATA[Der VIP Order Manager bietet dem Landwirt VIP Aufträge an, die aus mehreren zu liefernden Produkten bestehen. 
@@ -120,6 +121,32 @@ Update 1.1.1
 Update 1.1.0
 -  Vengono Considerati allevamenti e produzioni già di proprietà
 -  prime piccole modifiche al multiplayer (non ancora compatibile con il multiplayer)]]></it>
+		<ru><![CDATA[Менеджер VIP-заказов предлагает фермеру VIP-заказы, состоящие из нескольких продуктов, которые необходимо доставить. 
+Для каждой продукции указано количество, которое необходимо доставить, и пункт назначения. В дополнение к активному VIP-заказу, также можно увидеть следующие три VIP-заказа.
+Однако доставка будет производится только для текущего заказа.
+
+Нажав CTRL Right + O - в течение нескольких секунд будет отображается текущий заказ. Alt Right + O  - обзор всех VIP-заказов.
+Здесь вы также можете отменить текущий VIP-заказ возместив ущерб за часть заказов, которые еще не выполнены.
+
+С каждым VIP-заказом увеличивается текущий уровень, и, следовательно, количество отдельных заказов и объём, который необходимо доставить, а доходы уменьшаются.
+В рамках расчета также учитывается площадь полей в собственности. По мере увеличения уровня также учитывается больше продуктов.
+Поскольку я предпочитаю играть с небольшими полями, расчет оптимизирован именно для этого.
+
+Уже с FS19 я начал разрабатывать менеджера VIP-заказов, чтобы представлять что-то вроде кампаний. Я хотел сделать игру немного более интересной, намекая мне, что я должен расти.
+Я не проверял совместимость с многопользовательской игрой.
+
+Я также хотел бы поблагодарить всех мододелов, чьи моды за это время дали мне много идей и решений.
+
+Для любых сообщений об ошибках или предложениях, пожалуйста, посетите: https://github.com/Fetty42/FS22_VIPOrderManager
+
+Обновление 1.2.0
+- Поддержка MaizePlus
+- Вероятность использования определённого заполнения typesUpdate 1.1.1
+- Исправлены проблемы с собственными точками продаж и производствами
+
+Обновление 1.1.0
+- Учитывается, есть ли в собственности загоны для животных и производства 
+- Первые небольшие корректировки для многопользовательской игры (ещё не совместим с многопользовательской игрой)]]></ru>
     </description>
 	
 	<iconFilename>icon.dds</iconFilename>
@@ -144,11 +171,13 @@ Update 1.1.0
 			<de>Durchblättern VIP Aufträge</de>
 			<en>Flip VIP Orders</en>
 			<it>Vedi Ordini VIP correnti</it>
+			<ru>Взглянуть VIP-заказы</ru>
 		</text>		
 		<text name="input_ShowVIPOrderDlg">
 			<de>Anzeige des VIP Auftragsdialogs</de>
 			<en>Shows VIP Orders Dialog</en>
 			<it>Mostra la panoramnica degli Ordini VIP</it>
+			<ru>Обзор VIP-заказов</ru>
 		</text>
 
 	<!-- Abort Dlg -->
@@ -156,11 +185,13 @@ Update 1.1.0
 			<de>Abbruch aktuellen VIP Auftrag</de>
 			<en>Aborting current VIP Orders</en>
 			<it>Annulla gli Ordini VIP correnti</it>
+			<ru>Отказаться от текущих VIP-заказов</ru>
 		</text>
 		<text name="VIPOrderManager_DlgMsg_AbortCurrentVIPOrder">
 			<de>Du musst eine Abbruchgebühr von %s bezahlen. Für die bereits abgeschlossenen Teilaufträge erhältst du %s.</de>
 			<en>You have to pay a aborting fee of %s. For the already completed partial orders you will receive %s.</en>
 			<it>Devi pagare una commissione di %s per l'annullamento. Per gli ordini parziali già consegnati ricevi una somma di %s.</it>
+			<ru>За отказ вам необходимо возместить убытки в размере %s. За уже выполненную часть заказов вы получите %s.</ru>
 		</text>
 
 	<!-- HUD -->
@@ -168,21 +199,25 @@ Update 1.1.0
 			<de>Aktueller VIP Auftrag</de>
 			<en>Current VIP Order</en>
 			<it>Ordine VIP corrente</it>
+			<ru>Текущий VIP-заказ</ru>
 		</text>
 		<text name="VIPOrderManager_NextVIPOrder">
 			<de>Nächster VIP Auftrag</de>
 			<en>Next VIP Order</en>
 			<it>Prossimo Ordine VIP</it>
+			<ru>Следующий VIP-заказ</ru>
 		</text>
 		<text name="VIPOrderManager_Payout">
 			<de>Auszahlung: %s</de>
 			<en>Payout: %s</en>
 			<it>Pagamento: %s</it>
+			<ru>Выплата: %s</ru>
 		</text>
 		<text name="VIPOrderManager_OrderCompleted">
 			<de>Der aktuelle VIP-Auftrag wurde abgeschlossen.</de>
 			<en>Current VIP order was completed.</en>
 			<it>Ordine VIP corrente completato.</it>
+			<ru>Текущий VIP-заказ был завершён.</ru>
 		</text>
 
 	<!-- Neuer Dlg -->
@@ -190,51 +225,61 @@ Update 1.1.0
 			<de>Übersicht der VIP-Aufträge</de>
 			<en>Overview VIP Orders</en>
 			<it>Panoramica Ordini VIP</it>
+			<ru>Обзор VIP-заказов</ru>
 		</text>		
         <text name="ui_orderDlg_header_product">
 			<de>Produkt</de>	
 			<en>Product</en>
 			<it>Prodotto</it>
+			<ru>Продукция</ru>
         </text>		
         <text name="ui_orderDlg_header_requested">
 			<de>Angefordert</de>	
 			<en>Requested</en>
 			<it>Richiesto</it>
+			<ru>Запрошено</ru>
         </text>		
         <text name="ui_orderDlg_header_delivered">
 			<de>Geliefert</de>
 			<en>Delivered</en>
 			<it>Consegnato</it>
+			<ru>Доставлено</ru>
         </text>		
         <text name="ui_orderDlg_header_payout">
 			<de>Auszahlung</de>	
 			<en>Payout</en>
 			<it>Pagamento</it>
+			<ru>Выплата</ru>
         </text>		
         <text name="ui_orderDlg_header_station">
 			<de>Lieferstation</de>	
 			<en>Delivery station</en>
 			<it>Luogo di Consegna</it>
+			<ru>Станция доставки</ru>
         </text>		
         <text name="ui_orderDlg_btnClose">
 			<de>Schließen</de>	
 			<en>Close</en>
 			<it>Chiuso</it>
+			<ru>Закрыть</ru>
 		</text>		
         <text name="ui_orderDlg_btnAbort">
 			<de>Abbruch des aktuellen VIP Auftrags</de>	
 			<en>Abort current VIP Order</en>
 			<it>Annulla l'Ordine VIP corrente</it>
+			<ru>Отказаться от текущего VIP-заказа</ru>
 		</text>		
         <text name="ui_orderDlg_section_active">
 			<de>Level %s - Auszahlung: %s (Aktiv)</de>	
 			<en>Level %s - Payout: %s (Active)</en>
 			<it>Livello %s - Pagamento: %s (Attivo)</it>
+			<ru>Уровень %s - Выплата: %s (активный)</ru>
 		</text>		
         <text name="ui_orderDlg_section_notactive">
 			<de>Level %s - Auszahlung: %s</de>	
 			<en>Level %s - Payout: %s</en>
 			<it>Livello %s - Pagamento: %s</it>
+			<ru>Уровень %s - Выплата: %s</ru>
 		</text>		
 	</l10n>
 </modDesc>

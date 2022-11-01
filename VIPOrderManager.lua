@@ -1,8 +1,8 @@
 -- Author: Fetty42
--- Date: 08.05.2022
--- Version: 1.1.0.0
+-- Date: 01.11.2022
+-- Version: 1.2.0.0
 
-local dbPrintfOn = true
+local dbPrintfOn = false
 local dbInfoPrintfOn = true
 
 local function dbInfoPrintf(...)

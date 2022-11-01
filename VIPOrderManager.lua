@@ -2,7 +2,14 @@
 -- Date: 08.05.2022
 -- Version: 1.1.0.0
 
-local dbPrintfOn = false
+local dbPrintfOn = true
+local dbInfoPrintfOn = true
+
+local function dbInfoPrintf(...)
+	if dbInfoPrintfOn then
+    	print(string.format(...))
+	end
+end
 
 local function dbPrintf(...)
 	if dbPrintfOn then
@@ -403,15 +410,29 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 		local ftConfig = nil
 		local isLimitedFillType = nil
 		repeat
+			isNextTry = false
 			fillType = usableFillTypes[math.random(1, countFillTypes)]
 			ftConfig = VIPOrderManager:GetFillTypeConfig(fillType.name)
 
-			isLimitedFillType = true
-			if ftConfig.isLimited ~= nil then
-				isLimitedFillType = ftConfig.isLimited
+			-- Limited?
+			if not isNextTry and ftConfig.isLimited ~= nil and ftConfig.isLimited then
+				isLimitedFillType = true
+
+				if maxLimitedOrderItems <= 0 then
+					isNextTry = true
+				end
+				dbPrintf("    - ft  %s (%s) is limited and maxLimitedOrderItems=%s --> isNextTry=%s", fillType.name, fillType.title, maxLimitedOrderItems, isNextTry)	
 			end
 
-		until(maxLimitedOrderItems > 0 or not isLimitedFillType)
+			-- Exists probability
+			if not isNextTry and ftConfig.probability ~= nil and ftConfig.probability < 100 then
+				probability = ftConfig.probability
+				random = math.random() * 100
+				isNextTry = random > probability
+				dbPrintf("    - ft  %s (%s) has probability: probability=%s, random=%s --> isNextTry=%s", fillType.name, fillType.title, probability, random, isNextTry)	
+			end
+		until(not isNextTry)
+
 		if isLimitedFillType then
 			maxLimitedOrderItems = maxLimitedOrderItems -1
 			dbPrintf("  --> choose limited filltype")
@@ -541,17 +562,17 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
         end
 
 
-		-- not supported from the map
+		-- existing fruittype is not useable
 		local fruitType = g_fruitTypeManager:getFruitTypeByName(sft.name)
 		if notUsableWarning == nil and fruitType ~= nil and not fruitType.shownOnMap then
-			notUsableWarning = string.format("Not usable, because the current map does not support this fruittype")
+			notUsableWarning = string.format("Not usable, because the current map does not support this existing fruittype (not shown on map)")
         end
 
-		-- needed fruit type not available
-		-- local neededFruitType = VIPOrderManager.fillTypesNeededFruitType[sft.name]
-		-- if notUsableWarning == nil and neededFruitType and g_fruitTypeManager:getFruitTypeByName(neededFruitType) == nil then
-		-- 	notUsableWarning = string.format("Not usable, because needed fruittype (%s) is missing", neededFruitType)
-		-- end
+		-- needed original fruit type not available on this map
+		local neededFruitType = ftConfig.neededFruittype
+		if notUsableWarning == nil and neededFruitType ~= nil and g_fruitTypeManager:getFruitTypeByName(neededFruitType) == nil then
+			notUsableWarning = string.format("Not usable, because needed fruittype (%s) is missing", neededFruitType)
+		end
 
 		-- not sell able
 		if notUsableWarning == nil and not sft.showOnPriceTable then
@@ -594,7 +615,8 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
         end
 	end
 	
-	dbPrintf("Usable filltypes:")
+	dbInfoPrintf("")
+	dbInfoPrintf("Usable filltypes:")
 	for _, v in pairs(usableFillTypes) do
 		local tempNameOutput = string.format("%s (%s)", v.name, v.title)
 		
@@ -606,7 +628,7 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
 			stationList = stationList .. v.acceptingStations[i].owningPlaceable:getName()
 		end
 		
-		dbPrintf("  - %-40s | price=%f | Stations=%s", tempNameOutput, v.pricePerLiter, stationList)
+		dbInfoPrintf("  - %-40s | price=%f | Stations=%s", tempNameOutput, v.pricePerLiter, stationList)
 	end
 end
 
@@ -673,8 +695,8 @@ function VIPOrderManager:getAllSellableFillTypes()
 		end
 	end
 
-	if dbPrintfOn then
-		dbPrintf("  Allowed filltypes with stations")
+	if dbInfoPrintfOn then
+		dbInfoPrintf("  Allowed filltypes with stations")
 		for index, ftInfo in pairs(sellableFillTypes) do
 			local stationsString = ""
 			for index, station in pairs(ftInfo.acceptingStations) do
@@ -684,7 +706,7 @@ function VIPOrderManager:getAllSellableFillTypes()
 					stationsString = stationsString .. ", " .. station.owningPlaceable:getName()
 				end
 			end
-			dbPrintf("  - %s: pricePerLiter=%s | Stations=%s", ftInfo.name, ftInfo.pricePerLiter, stationsString)
+			dbInfoPrintf("  - %s: pricePerLiter=%s | Stations=%s", ftInfo.name, ftInfo.pricePerLiter, stationsString)
 		end
 	end
 	return sellableFillTypes

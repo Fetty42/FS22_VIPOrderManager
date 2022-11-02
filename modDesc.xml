@@ -29,6 +29,8 @@ Für Fehlermeldungen oder Anregungen besucht bitte: https://github.com/Fetty42/F
 Update 1.2.0
 - Unterstützung für MaizePlus
 - Wahrscheinlichkeiten für die Verwendung von jeweiligen Fülltypen
+- Übersetzung ins Russische (Dank an Gonimy-Vetrom)
+
 
 Update 1.1.1
 - Probleme mit eigenen Verkaufsstationen und Produktionen behoben
@@ -36,6 +38,7 @@ Update 1.1.1
 Update 1.1.0
 - Berücksichtigung von bereits eigenen Tierhaltungen und Produktionen
 - erste kleine Multiplayer-Anpassungen (noch nicht multiplayerkompatibel)]]></de>
+
 		<en><![CDATA[The VIP Order Manager offers the farmer VIP orders consisting of several products to be delivered. 
 For each product with explicit specification of the quantity to be delivered and the destination. In addition to the current VIP order, the next three VIP orders to follow can also be seen.
 However, only the current order can be delivered.
@@ -57,12 +60,16 @@ For any error messages or suggestions, please visit: https://github.com/Fetty42/
 
 Update 1.2.0
 - Support for MaizePlus
-- Probabilities for the use of specific fill typesUpdate 1.1.1
+- Probabilities for the use of specific fill types
+- Translation into Russian (thanks to Gonimy-Vetrom)
+
+Update 1.1.1
 - Fixed problems with own selling stations and productions
 
 Update 1.1.0
 -  Consideration of already own animal husbandries and productions
 -  first smal multiplayer adjustments (not yet multiplayer compatible)]]></en>
+
 		<fr><![CDATA[Le VIP Order Manager propose à l'agriculteur des commandes VIP composées de plusieurs produits à livrer. 
 Pour chaque produit, la quantité à livrer et le lieu de destination sont explicitement indiqués. En plus de l'ordre VIP actuel, on peut déjà voir les trois prochains ordres VIP.
 Mais seule la commande actuelle peut être livrée.
@@ -85,6 +92,7 @@ Pour les messages d'erreur ou les suggestions, veuillez visiter : https://github
 Update 1.2.0
 - Prise en charge de MaizePlus
 - Probabilités d'utilisation de chaque type de remplissage
+- Traduction en russe (merci à Gonimy-Vetrom)
 
 Update 1.1.1
 - Correction de problèmes avec les propres points de vente et productions
@@ -92,6 +100,7 @@ Update 1.1.1
 Update 1.1.0
 - Prise en compte des élevages et des productions déjà propres à l'entreprise
 - premières petites adaptations multijoueurs (pas encore compatibles avec le multijoueur)]]></fr>
+
 	    	<it><![CDATA[Il VIP Order Manager offre all'agricoltore ordini VIP composti da diversi prodotti da consegnare. 
 Per ogni prodotto sono esplicitamente indicati la quantità da consegnare e il luogo di destinazione. Oltre all'ordine VIP corrente, puoi già vedere i successivi tre ordini.
 Tuttavia, solo l'ordine corrente può essere consegnato.
@@ -114,6 +123,7 @@ Per eventuali messaggi di errore o suggerimenti, visitare: https://github.com/Fe
 Update 1.2.0
 - Supporto per MaizePlus
 - Probabilità di utilizzo dei rispettivi tipi di riempimento
+- Traduzione in russo (grazie a Gonimy-Vetrom)
 
 Update 1.1.1
 - Problemi con le proprie stazioni di vendita e produzioni risolti
@@ -121,6 +131,7 @@ Update 1.1.1
 Update 1.1.0
 -  Vengono Considerati allevamenti e produzioni già di proprietà
 -  prime piccole modifiche al multiplayer (non ancora compatibile con il multiplayer)]]></it>
+
 		<ru><![CDATA[Менеджер VIP-заказов предлагает фермеру VIP-заказы, состоящие из нескольких продуктов, которые необходимо доставить. 
 Для каждой продукции указано количество, которое необходимо доставить, и пункт назначения. В дополнение к активному VIP-заказу, также можно увидеть следующие три VIP-заказа.
 Однако доставка будет производится только для текущего заказа.
@@ -141,7 +152,10 @@ Update 1.1.0
 
 Обновление 1.2.0
 - Поддержка MaizePlus
-- Вероятность использования определённого заполнения typesUpdate 1.1.1
+- Вероятность использования определённого заполнения types
+- Перевод на русский язык (спасибо Gonimy-Vetrom)
+
+Обновление 1.1.1
 - Исправлены проблемы с собственными точками продаж и производствами
 
 Обновление 1.1.0

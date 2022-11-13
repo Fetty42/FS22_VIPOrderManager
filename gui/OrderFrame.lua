@@ -66,7 +66,7 @@ function OrderFrame:setVIPOrders(VIPOrders)
 		local payoutTotal = 0
 		for _, vipOrderEntry in pairs(vipOrder.entries) do
 			local orderEntry = {}
-			orderEntry.ftTitle = g_fillTypeManager:getFillTypeByName(vipOrderEntry.fillTypeName).title
+			orderEntry.ft = g_fillTypeManager:getFillTypeByName(vipOrderEntry.fillTypeName)
 			-- orderEntry.requiredQuantity = g_i18n:formatNumber(vipOrderEntry.quantity - math.ceil(vipOrderEntry.fillLevel), 1, false)
 			orderEntry.fillLevel = g_i18n:formatVolume(math.ceil(vipOrderEntry.fillLevel), 0)
 			orderEntry.quantity = g_i18n:formatVolume(vipOrderEntry.quantity, 0)
@@ -111,7 +111,8 @@ end
 
 function OrderFrame:populateCellForItemInSection(list, section, index, cell)
 	local orderEntry = self.VIPOrdersData[section].orders[index]    
-	cell:getAttribute("ftTitle"):setText(orderEntry.ftTitle)
+	cell:getAttribute("fillTypeIcon"):setImageFilename(orderEntry.ft.hudOverlayFilename)
+	cell:getAttribute("ftTitle"):setText(orderEntry.ft.title)
  	cell:getAttribute("quantity"):setText(orderEntry.quantity)
 	cell:getAttribute("fillLevel"):setText(orderEntry.fillLevel)
 	cell:getAttribute("payout"):setText(orderEntry.payout)
@@ -121,7 +122,7 @@ function OrderFrame:populateCellForItemInSection(list, section, index, cell)
 	local color = {1, 1, 1, 1}
 	local colorSelected = {1, 1, 1, 1}
 	
-	dbPrintf("section=%s | index=%s | ftTitle=%s | quantity=%s | filllevel=%s", section, index, orderEntry.ftTitle, orderEntry.quantity, orderEntry.fillLevel)
+	dbPrintf("section=%s | index=%s | ftTitle=%s | quantity=%s | filllevel=%s", section, index, orderEntry.ft.title, orderEntry.quantity, orderEntry.fillLevel)
 	if orderEntry.isCompleted then
 		dbPrintf("order entry completed")
 		-- color completed order entrys

@@ -9,6 +9,7 @@
     <GuiElement type="bitmap" profile="dialogBg" id="dialogElement" size="1350px 800px" imageColor="0.118 0.116 0.115 0.20">        
         <GuiElement type="text" profile="dialogTitle" text="$l10n_ui_orderDlg_title" id="dialogTitleElement" position="0px -30px" />
 
+        <!-- Main list -->
         <GuiElement type="bitmap" profile="ingameMenuHeaderBox" id="tableHeaderBox" position="50px 650px" size="1250px 50px" imageColor="$preset_colorBlack2">
             <GuiElement type="text" profile="ingameMenuHeaderCellLeft" position="10px -0px" size="390px 40.77px" text="$l10n_ui_orderDlg_header_product"/>
             <GuiElement type="text" profile="ingameMenuHeaderCellRight" position="400px -0px" size="150px 40.77px" text="$l10n_ui_orderDlg_header_requested"/>
@@ -21,7 +22,8 @@
         <GuiElement type="smoothList" profile="ingameMenuContractsList" id="orderTable" focusInit="onOpen" listSectionHeader="section" position="50px -150px" size="1250px 600px">
             <GuiElement type="listItem" profile="ingameMenuContractsListItem" name="orderRowTemplate" size="1250px 40.77px">
                 <GuiElement type="bitmap" profile="emptyPanel">
-                    <GuiElement type="text" profile="ingameMenuRowCellLeft" position="10px 0px" size="390px 40.77px" name="ftTitle" />
+                    <GuiElement type="bitmap" profile="ingameMenuFillTypeImage" name="fillTypeIcon" />
+                    <GuiElement type="text" profile="ingameMenuRowCellLeft" position="45px 0px" size="355px 40.77px" name="ftTitle" />
                     <GuiElement type="text" profile="ingameMenuRowCellRight" position="400px 0px" size="150px 40.77px" name="quantity" textAlignment="right"/>
                     <GuiElement type="text" profile="ingameMenuRowCellRight" position="550px 0px" size="150px 40.77px" name="fillLevel" textAlignment="right"/>
                     <GuiElement type="text" profile="ingameMenuRowCellRight" position="700px 0px" size="150px 40.77px" name="payout" textAlignment="right"/>
@@ -33,9 +35,10 @@
             </GuiElement>
         </GuiElement>
         <GuiElement type="threePartBitmap" profile="verticalListSliderRightDocked" position="-25px -150px" size="12px 600px">
-            <GuiElement type="slider" profile="verticalListSliderBar" size="6px 592px" dataElementId="orderTable" id="tableSlider" handleFocus="false" focusInit="onOpen"/>
+            <GuiElement type="slider" profile="verticalListSliderBar" size="6px 592px" dataElementId="orderTable" id="tableSlider"/>
         </GuiElement>  
 
+        <!-- Buttons -->
         <GuiElement type="flowLayout" profile="buttonBoxDialog">
             <GuiElement type="button" profile="buttonBack" text="$l10n_ui_orderDlg_btnClose" onClick="onClickBack" />
             <GuiElement type="button" profile="buttonBack" text="$l10n_ui_orderDlg_btnAbort" onClick="onClickAbort" id="buttonAbort" />

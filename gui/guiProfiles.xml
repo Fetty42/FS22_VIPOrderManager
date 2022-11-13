@@ -111,4 +111,9 @@
         <Value name="autoValidateLayout" value="true"/>
         <Value name="hasFrame" value="false"/>    
     </Profile>
+    <Profile name="ingameMenuFillTypeImage" extends="baseReference">
+        <Value name="size" value="31px 31px" />
+        <Value name="position" value="5px 4px" />
+        <Value name="imageUVs" value="0 0 1 1" />
+    </Profile>
 </GUIProfiles>

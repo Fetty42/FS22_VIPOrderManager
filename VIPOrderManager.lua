@@ -1101,7 +1101,9 @@ end
 
 function VIPOrderManager:onLoad(savegame)end;
 function VIPOrderManager:onUpdate(dt)end;
-function VIPOrderManager:deleteMap()end;
+function VIPOrderManager:deleteMap()
+	printf("VIPOrderManager:deleteMap")
+end;
 function VIPOrderManager:keyEvent(unicode, sym, modifier, isDown)end;
 function VIPOrderManager:mouseEvent(posX, posY, isDown, isUp, button)end;
 

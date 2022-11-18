@@ -1,4 +1,4 @@
-<modDesc descVersion="71">
+<modDesc descVersion="72">
 	<author>Fetty42</author>
 	<version>1.2.0.0</version>
 	<title>
@@ -20,7 +20,8 @@ Da ich selbst lieber mit kleinen Feldern spiele, ist die Berechnung hierauf opti
 
 Bereits mit dem LS19 hatte ich angefangen den VIP Order Manager zu entwickeln, um so etwas wie Kampagnen abzubilden. Ich wollte das Spiel etwas interessanter gestalten, 
 in dem mir Vorgegeben wird, was ich anbauen muss.
-Die Multiplayer-Kompatibilität habe ich nicht geteset.
+
+Multiplayer wird derzeit nicht unterstützt. 
 
 Ich möchte auch noch all den anderen Moddern danken, aus deren Mods ich mir im Laufe der Zeit viele Anregungen und Lösungsansätze holen konnte.
 
@@ -30,7 +31,6 @@ Update 1.2.0
 - Unterstützung für MaizePlus
 - Wahrscheinlichkeiten für die Verwendung von jeweiligen Fülltypen
 - Übersetzung ins Russische (Dank an Gonimy-Vetrom)
-
 
 Update 1.1.1
 - Probleme mit eigenen Verkaufsstationen und Produktionen behoben
@@ -52,7 +52,8 @@ Since I prefer to play with small fields myself, the calculation is optimised fo
 
 Already with FS19, I had started to develop the VIP Order Manager to represent something like campaigns. I wanted to make the game a little more interesting, 
 by telling me what I have to grow.
-I have not tested the multiplayer compatibility.
+
+Multiplayer is currently not supported. 
 
 I would also like to thank all the other modders whose mods have given me many ideas and solutions over the time.
 
@@ -83,6 +84,7 @@ Comme je préfère jouer avec de petites parcelles, le calcul est optimisé à c
 
 Avec LS19, j'avais déjà commencé à développer le VIP Order Manager pour représenter quelque chose comme des campagnes. Je voulais rendre le jeu un peu plus intéressant, 
 en me donnant des indications sur ce que je dois cultiver.
+
 Je n'ai pas testé la compatibilité multijoueur.
 
 Je voudrais aussi remercier tous les autres moddeurs, dont les mods m'ont donné beaucoup d'idées et de solutions au fil du temps.
@@ -114,7 +116,8 @@ Since I prefer to play with small fields myself, the calculation is optimised fo
 
 Già con FS19, avevo iniziato a sviluppare il VIP Order Manager per rappresentare qualcosa di simile alle campagne. Volevo rendere il gioco un po' più interessante,
 dicendomi cosa devo coltivare.
-Non ho testato la compatibilità multiplayer.
+
+Le multijoueur n'est pas pris en charge pour le moment. 
 
 Vorrei anche ringraziare tutti gli altri modder le cui mod mi hanno dato molte idee e soluzioni nel tempo.
 
@@ -144,7 +147,8 @@ Update 1.1.0
 Поскольку я предпочитаю играть с небольшими полями, расчет оптимизирован именно для этого.
 
 Уже с FS19 я начал разрабатывать менеджера VIP-заказов, чтобы представлять что-то вроде кампаний. Я хотел сделать игру немного более интересной, намекая мне, что я должен расти.
-Я не проверял совместимость с многопользовательской игрой.
+
+Многопользовательская игра в настоящее время не поддерживается. 
 
 Я также хотел бы поблагодарить всех мододелов, чьи моды за это время дали мне много идей и решений.
 
@@ -164,7 +168,7 @@ Update 1.1.0
     </description>
 	
 	<iconFilename>icon.dds</iconFilename>
-	<multiplayer supported="true" />
+	<multiplayer supported="false" />
 	<extraSourceFiles>
 		<sourceFile filename="VIPOrderManager.lua" />
 	</extraSourceFiles>    

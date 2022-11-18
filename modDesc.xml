@@ -168,7 +168,7 @@ Update 1.1.0
     </description>
 	
 	<iconFilename>icon.dds</iconFilename>
-	<multiplayer supported="false" />
+	<multiplayer supported="true" />
 	<extraSourceFiles>
 		<sourceFile filename="VIPOrderManager.lua" />
 	</extraSourceFiles>    

@@ -237,6 +237,36 @@ Update 1.1.0
 			<it>Ordine VIP corrente completato.</it>
 			<ru>Текущий VIP-заказ был завершён.</ru>
 		</text>
+        <text name="VIPOrderManager_Months">
+			<de>Monate</de>	
+			<en>months</en>
+			<it>mesi</it>
+			<ru>мес.</ru>
+		</text>		
+        <text name="VIPOrderManager_FreeChoise">
+			<de>** Freie Wahl **</de>	
+			<en>** Free choice **</en>
+			<it>** Scelta libera **</it>
+			<ru>** Свободный выбор **</ru>
+		</text>		
+        <text name="VIPOrderManager_Automatic">
+			<de>** Automatisch **</de>	
+			<en>** Automatic **</en>
+			<it>** Automatico **</it>
+			<ru>** Автоматический **</ru>
+		</text>		
+        <text name="VIPOrderManager_Piece">
+			<de>Stk.</de>	
+			<en>pcs.</en>
+			<it>pz.</it>
+			<ru>шт.</ru>
+		</text>		
+        <text name="VIPOrderManager_AnimalsDelivered">
+			<de>%s "%s" geliefert für den aktuellen VIP-Auftrag</de>	
+			<en>%s "%s" delivered for the current VIP order</en>
+			<it>%s "%s" consegnate per l'ordine VIP in corso</it>
+			<ru>%s "%s" доставленных для текущего VIP-заказа</ru>
+		</text>		
 
 	<!-- Neuer Dlg -->
         <text name="ui_orderDlg_title">

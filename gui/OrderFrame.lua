@@ -67,16 +67,26 @@ function OrderFrame:setVIPOrders(VIPOrders)
 		for _, vipOrderEntry in pairs(vipOrder.entries) do
 			local orderEntry = {}
 			orderEntry.ft = g_fillTypeManager:getFillTypeByName(vipOrderEntry.fillTypeName)
-			-- orderEntry.requiredQuantity = g_i18n:formatNumber(vipOrderEntry.quantity - math.ceil(vipOrderEntry.fillLevel), 1, false)
-			orderEntry.fillLevel = g_i18n:formatVolume(math.ceil(vipOrderEntry.fillLevel), 0)
-			orderEntry.quantity = g_i18n:formatVolume(vipOrderEntry.quantity, 0)
+			if vipOrderEntry.isAnimal then
+				orderEntry.fillLevel = string.format("%d %s", math.ceil(vipOrderEntry.fillLevel), g_i18n:getText("VIPOrderManager_Piece"))
+				orderEntry.quantity = string.format("%d %s", vipOrderEntry.quantity, g_i18n:getText("VIPOrderManager_Piece"))
+			else
+				orderEntry.fillLevel = g_i18n:formatVolume(math.ceil(vipOrderEntry.fillLevel), 0)
+				orderEntry.quantity = g_i18n:formatVolume(vipOrderEntry.quantity, 0)
+			end
 			orderEntry.isCompleted =  math.ceil(vipOrderEntry.fillLevel) >= vipOrderEntry.quantity
+			orderEntry.title = vipOrderEntry.title
 			
 			if vipOrderEntry.targetStation ~= nil then
 				orderEntry.targetStation = vipOrderEntry.targetStation.owningPlaceable:getName()
 			else
-				orderEntry.targetStation = "Free choice"
+				if vipOrderEntry.isAnimal then
+				orderEntry.targetStation = g_i18n:getText("VIPOrderManager_Automatic")
+				else
+					orderEntry.targetStation = g_i18n:getText("VIPOrderManager_FreeChoise")
+				end
 			end
+			
 			orderEntry.payout = g_i18n:formatMoney(vipOrderEntry.payout, 0, true)	-- g_i18n:formatMoney(value, bool Währung ausgeben, bool Währung vor dem Betrag?)
 			table.insert(VIPOrderData.orders, orderEntry)	
 			payoutTotal = payoutTotal + vipOrderEntry.payout
@@ -112,7 +122,7 @@ end
 function OrderFrame:populateCellForItemInSection(list, section, index, cell)
 	local orderEntry = self.VIPOrdersData[section].orders[index]    
 	cell:getAttribute("fillTypeIcon"):setImageFilename(orderEntry.ft.hudOverlayFilename)
-	cell:getAttribute("ftTitle"):setText(orderEntry.ft.title)
+	cell:getAttribute("ftTitle"):setText(orderEntry.title)
  	cell:getAttribute("quantity"):setText(orderEntry.quantity)
 	cell:getAttribute("fillLevel"):setText(orderEntry.fillLevel)
 	cell:getAttribute("payout"):setText(orderEntry.payout)
@@ -122,7 +132,7 @@ function OrderFrame:populateCellForItemInSection(list, section, index, cell)
 	local color = {1, 1, 1, 1}
 	local colorSelected = {1, 1, 1, 1}
 	
-	dbPrintf("section=%s | index=%s | ftTitle=%s | quantity=%s | filllevel=%s", section, index, orderEntry.ft.title, orderEntry.quantity, orderEntry.fillLevel)
+	dbPrintf("section=%s | index=%s | title=%s | quantity=%s | filllevel=%s", section, index, orderEntry.title, orderEntry.quantity, orderEntry.fillLevel)
 	if orderEntry.isCompleted then
 		dbPrintf("order entry completed")
 		-- color completed order entrys

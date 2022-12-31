@@ -7,13 +7,13 @@
 -- minOrderLevel (1 - n) - from which level the fill type is offered
 -- quantityCorrectionFactor (> 0) - Factor for the correction of the quantity calculation
 -- isLimited (true, false) - whether the fill type is limted to x prozent of the order items
--- minOrderLevelIfProductionExists	- Korrection of needed minOrderLevel if production allready exists
+-- minOrderLevelIfProductionOrAnimalHusbandryExists	- Korrection of needed minOrderLevel if production allready exists
 -- probability - The probability with which this filltype is taken when selected. Default is 100%
 VIPOrderManager.ftConfigs = 
 {
 	-- Defaults
 	DEFAULT_FRUITTYPE	= {isUnknown=true, isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=1.0, isLimited=false, probability=50},		-- for unknown fruittypes
-	DEFAULT_FILLTYPE	= {isUnknown=true, isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=4, probability=50},		-- for unknown filltypes
+	DEFAULT_FILLTYPE	= {isUnknown=true, isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=50},		-- for unknown filltypes
 		
 	-- Not Allowed
 	STONE 			= {isAllowed=false, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Steine
@@ -32,9 +32,9 @@ VIPOrderManager.ftConfigs =
 	SOYBEAN 		= {isAllowed=true, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false, probability=50},		-- Sojabohnen
 	SUNFLOWER 		= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=1.0, isLimited=false, probability=50},		-- Sonnenblumen
 	MAIZE 			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=1.0, isLimited=false, probability=100},		-- Mais
-	SUGARBEET 		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=1.0, isLimited=false, probability=90},		-- Zuckerrüben
-	SUGARBEET_CUT	= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false, probability=90},		-- Zuckerrübenschnitzel
-	POTATO 			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false, probability=90},		-- Kartoffeln
+	SUGARBEET 		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=1.0, isLimited=false, probability=80},		-- Zuckerrüben
+	SUGARBEET_CUT	= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false, probability=80},		-- Zuckerrübenschnitzel
+	POTATO 			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false, probability=80},		-- Kartoffeln
 	OLIVE 			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false, probability=50},		-- Oliven
 	GRAPE 			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false, probability=50},		-- Trauben
 	COTTON 			= {isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=1.0, isLimited=false, probability=50},		-- Baumwolle
@@ -44,20 +44,20 @@ VIPOrderManager.ftConfigs =
 	STRAW 				= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.4, isLimited=false, probability=80},		-- Stroh
 	GRASS_WINDROW 		= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.4, isLimited=false, probability=50},		-- Gras
 	DRYGRASS_WINDROW 	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=50},		-- Heu
-	SILAGE 				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.5, isLimited=false, probability=50},		-- Silage
-	CHAFF 				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.5, isLimited=false, probability=80},		-- Häckselgut
+	SILAGE 				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.5, isLimited=false, probability=50, quantityCorrectionFactorMaizePlus=0.1},		-- Silage
+	CHAFF 				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.5, isLimited=false, probability=80, quantityCorrectionFactorMaizePlus=0.1},		-- Häckselgut
 
 	-- Tree products
-	WOOD 		= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false, probability=50},		-- Holz
-	WOODCHIPS 	= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.8, isLimited=false, probability=50},		-- Hackschnitzel
+	WOOD 		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=1.0, isLimited=false, probability=50},		-- Holz
+	WOODCHIPS 	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.8, isLimited=false, probability=50},		-- Hackschnitzel
 
 	-- Animal products
 	HONEY 			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.3, isLimited=false},		-- Honig
-	EGG 			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.7, isLimited=false, minOrderLevelIfProductionExists=1, probability=90},		-- Eier
-	WOOL 			= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.7, isLimited=false, minOrderLevelIfProductionExists=2, probability=90},		-- Wolle
-	MILK 			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false, minOrderLevelIfProductionExists=2, probability=90},		-- Milch
-	LIQUIDMANURE 	= {isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=0.1, isLimited=false, minOrderLevelIfProductionExists=3, probability=50},		-- Gülle
-	MANURE 			= {isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=0.1, isLimited=false, minOrderLevelIfProductionExists=3, probability=50},		-- Mist
+	EGG 			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.7, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=1, probability=70},		-- Eier
+	WOOL 			= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.7, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=70},		-- Wolle
+	MILK 			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=1.0, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=70},		-- Milch
+	LIQUIDMANURE 	= {isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=0.1, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=40},		-- Gülle
+	MANURE 			= {isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=0.1, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=40},		-- Mist
 
 	-- Greenhouse products
 	STRAWBERRY 	= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.8, isLimited=false, probability=80},		-- Erdbeeren
@@ -66,34 +66,34 @@ VIPOrderManager.ftConfigs =
 
 	-- Factory products
 	DIESEL 			= {isAllowed=false, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Diesel
-	GRAPEJUICE 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3, probability=50},		-- Traubensaft
-	OLIVE_OIL 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3, probability=50},		-- Olivenöl
-	RAISINS 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3, probability=50},		-- Rosinen
-	SUGAR 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3, probability=50},		-- Zucker
-	SUNFLOWER_OIL 	= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3, probability=50},		-- Sonnenblumenöl
-	BUTTER 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3, probability=50},		-- Butter
-	CANOLA_OIL 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3, probability=50},		-- Rapsöl
-	FLOUR 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3, probability=50},		-- Mehl
-	BOARDS 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3, probability=50},		-- Bretter
-	BREAD 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3, probability=50},		-- Brot
-	CHEESE 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3, probability=50},		-- Käse
-	CLOTHES 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=3, probability=50},		-- Kleidung
-	FABRIC			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=4, probability=50},		-- Stoff
-	CAKE 			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=4, probability=50},		-- Kuchen
-	CEREAL 			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=4, probability=50},		-- Müsli
-	CHOCOLATE 		= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=4, probability=50},		-- Schokolade
-	FURNITURE 		= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionExists=4, probability=50},		-- Möbel
+	GRAPEJUICE 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=50},		-- Traubensaft
+	OLIVE_OIL 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=50},		-- Olivenöl
+	RAISINS 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=50},		-- Rosinen
+	SUGAR 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=50},		-- Zucker
+	SUNFLOWER_OIL 	= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=50},		-- Sonnenblumenöl
+	BUTTER 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=50},		-- Butter
+	CANOLA_OIL 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=50},		-- Rapsöl
+	FLOUR 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=50},		-- Mehl
+	BOARDS 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=50},		-- Bretter
+	BREAD 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=50},		-- Brot
+	CHEESE 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=50},		-- Käse
+	CLOTHES 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=3, probability=50},		-- Kleidung
+	FABRIC			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=4, probability=50},		-- Stoff
+	CAKE 			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=4, probability=50},		-- Kuchen
+	CEREAL 			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=4, probability=50},		-- Müsli
+	CHOCOLATE 		= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=4, probability=50},		-- Schokolade
+	FURNITURE 		= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, minOrderLevelIfProductionOrAnimalHusbandryExists=4, probability=50},		-- Möbel
 
 	-- MaizePlus
-	CCM						= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=100},
-	CCMRAW					= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=100},
-	GRAINGRIST				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=100},
+	CCM						= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=80},
+	CCMRAW					= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=80},
+	GRAINGRIST				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=80},
 
-	CHOPPEDMAIZE			= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.7, isLimited=false, probability=80},
-	CHOPPEDMAIZE_FERMENTED	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.7, isLimited=false, probability=100},
-	DRYGRASS_WINDROW 		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=80},
-	GRASS_FERMENTED			= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=80},
-	POTATO_CUT				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=100},
+	CHOPPEDMAIZE			= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.7, isLimited=false, probability=70},
+	CHOPPEDMAIZE_FERMENTED	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.7, isLimited=false, probability=90},
+	DRYGRASS_WINDROW 		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=70},
+	GRASS_FERMENTED			= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=70},
+	POTATO_CUT				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=70},
 
 	-- MaizePlus - only allowed if fruittype exists
 	CARROT					= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=100, neededFruittype="CARROT"},
@@ -105,8 +105,8 @@ VIPOrderManager.ftConfigs =
 	HORSEGRASS_FERMENTED	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=80, neededFruittype="HORSEGRASS"},
 
 	-- MaizePlus - is allowed, as the purchased product still has to be fermented
-	BREWERSGRAIN_FERMENTED	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=100},
-	BEETPULP_FERMENTED		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=100},
+	BREWERSGRAIN_FERMENTED	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=70},
+	BEETPULP_FERMENTED		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=70},
 
 	-- MaizePlus - not allowed because is only buyable
 	CROP_WINDROW			= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
@@ -125,14 +125,37 @@ VIPOrderManager.ftConfigs =
 	PIGFOOD2				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
 	POWERFOOD				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
 	SHEEPFOOD				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
-	EMPTYPALLET				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false}
+	EMPTYPALLET				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
+
+	-- standard Animals
+	CHICKEN					= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.01, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=1, probability=80},
+	CHICKEN_ROOSTER			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.01, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=1, probability=70},
+	SHEEP_BLACK_WELSH		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=1, probability=60},
+	SHEEP_SWISS_MOUNTAIN	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=1, probability=60},
+	SHEEP_LANDRACE			= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=1, probability=60},
+	SHEEP_STEINSCHAF		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=1, probability=60},
+	COW_HOLSTEIN			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=60},
+	COW_LIMOUSIN			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=60},
+	COW_SWISS_BROWN			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=60},
+	COW_ANGUS				= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=60},
+	PIG_BLACK_PIED			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=60},
+	PIG_LANDRACE			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=60},
+	PIG_BERKSHIRE			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=60},
+	HORSE_BAY				= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=30},
+	HORSE_PALOMINO			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=30},
+	HORSE_CHESTNUT			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=30},
+	HORSE_DUN				= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=30},
+	HORSE_PINTO				= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=30},
+	HORSE_BLACK				= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=30},
+	HORSE_GRAY				= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=30},
+	HORSE_SEAL_BROWN		= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, minOrderLevelIfProductionOrAnimalHusbandryExists=2, probability=30}
 }
 
 
 -- orders definition for order level 1 and own field area of 1 ha
 VIPOrderManager.countOrderItemsRange = {min=3, max=5}
 VIPOrderManager.quantityFactor = {min=7, max=9}
-VIPOrderManager.payoutFactor = {min=4, max=6}
+VIPOrderManager.payoutFactor = {min=3, max=5}
 
 VIPOrderManager.isLimitedPercentage = 20 -- Max share of limited products
 
@@ -148,8 +171,11 @@ VIPOrderManager.fillTypesNoPriceList = {}
 
 -- constants
 VIPOrderManager.maxVIPOrdersCount	= 4		-- Count of already calculated orders (preview)
-VIPOrderManager.abortFeeInPercent = 25
+VIPOrderManager.abortFeeInPercent = 35
 VIPOrderManager.allowSumQuantitySameFT = false	-- Summarize quantity of same filetypes
 VIPOrderManager.ownFieldArea = 1	-- min field area
+VIPOrderManager.rangeAnimalCheckTime = {min=8, max=17}
+VIPOrderManager.rangeAnimalAgeDifInMonths = {min=4, max=12}
+
 
 

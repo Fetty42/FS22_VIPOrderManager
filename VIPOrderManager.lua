@@ -1,6 +1,6 @@
 -- Author: Fetty42
--- Date: 01.11.2022
--- Version: 1.2.0.0
+-- Date: 08.04.2023
+-- Version: 1.3.0.0
 
 local dbPrintfOn = false
 local dbInfoPrintfOn = true
@@ -118,7 +118,7 @@ function VIPOrderManager:onHourChanged(hour)
 					local orderEntry = currentVipOrder.entries[g_currentMission.animalSystem.subTypes[cluster.subTypeIndex].name]
 					if orderEntry ~= nil then
                         dbPrintf("    --> fitting order entry exists with:  quantity=%s | fillLevel=%s | neededAgeInMonths=%s", orderEntry.quantity, orderEntry.fillLevel, orderEntry.neededAgeInMonths)
-						if cluster.age == orderEntry.neededAgeInMonths and cluster.health == 100 then
+						if cluster.age == orderEntry.neededAgeInMonths and cluster.health >= 75 then
 							local numAninmalsToSell = math.min(orderEntry.quantity - orderEntry.fillLevel, cluster.numAnimals)
 
 							if numAninmalsToSell > 0 then
@@ -354,26 +354,12 @@ function VIPOrderManager:GetExistingProductionAndAnimalHusbandryOutputs()
         local fillType = g_fillTypeManager:getFillTypeByIndex(fillTypeIdx)
         local animalSubType = g_currentMission.animalSystem.fillTypeIndexToSubType[fillTypeIdx]
 
-		local animalName = g_currentMission.animalSystem.typeIndexToName[animalSubType.typeIndex]
-		if foundAnimalTypeNames[animalName] ~= nil then
-			VIPOrderManager.existingProductionAndAnimalHusbandryOutputs[fillType.name] = true
-		
-			-- local animalStoreTitle = animalSubType.visuals[1] ~= nil and animalSubType.visuals[1].store.name or "Unknown animal title"
-
-		-- print("** Start DebugUtil.printTableRecursively() ************************************************************")
-		-- print("fillType:")
-		-- DebugUtil.printTableRecursively(fillType, ".", 0, 3)
-		-- print("** End DebugUtil.printTableRecursively() **************************************************************")
-
-		-- print("** Start DebugUtil.printTableRecursively() ************************************************************")
-		-- print("g_currentMission.animalSystem:")
-		-- DebugUtil.printTableRecursively(g_currentMission.animalSystem, ".", 0, 1)
-		-- print("** End DebugUtil.printTableRecursively() **************************************************************")
-
-		-- printf("FillType: %s (%s) - animalTypeIndex=%s | MinBuyPrice=%s", fillType.name, fillType.title, animalSubType.typeIndex, animalSubType.buyPrice.keyframes[1][1])
-        -- for ii, visual in pairs(animalSubType.visuals) do
-        --     printf("  - canBeBought=%s | minAge=%s | name=%s", visual.store.canBeBought, visual.minAge, visual.store.name)
-         end
+		if animalSubType ~= nil then
+			local animalName = g_currentMission.animalSystem.typeIndexToName[animalSubType.typeIndex]
+			if foundAnimalTypeNames[animalName] ~= nil then
+				VIPOrderManager.existingProductionAndAnimalHusbandryOutputs[fillType.name] = true
+			end
+		end
 	end
 
 	-- look for own productions and insert output products
@@ -482,7 +468,7 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 		repeat
 			isNextTry = false
 			usableFillType = usableFillTypes[math.random(1, countFillTypes)]
-			ftConfig = VIPOrderManager:GetFillTypeConfig(usableFillType.name)
+			ftConfig = VIPOrderManager:GetFillTypeConfig(usableFillType.name, usableFillType.isAnimal)
 
 			-- Limited?
 			if not isNextTry and ftConfig.isLimited ~= nil and ftConfig.isLimited then
@@ -512,13 +498,6 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 		if ftConfig.quantityCorrectionFactor ~= nil then
 			quantityCorrectionFactor = ftConfig.quantityCorrectionFactor
 		end
-
-		-- check if FS22_MaizePlus mod is present and loaded
-		local mod = g_modManager:getModByName("FS22_MaizePlus")
-		if mod ~= nil and g_modIsLoaded["FS22_MaizePlus"] and ftConfig.quantityCorrectionFactorMaizePlus ~= nil then
-			quantityCorrectionFactor = ftConfig.quantityCorrectionFactorMaizePlus
-			dbPrintf("Using special MaizePlus quantity correction factor for filltype %s", usableFillType.name)
-		end;
 		
 		dbPrintf("    - FillType: %s (%s) | filltype quantity factor = %.2f", usableFillType.name, usableFillType.title, quantityCorrectionFactor)
 
@@ -622,6 +601,12 @@ function VIPOrderManager:CalculateOwnFieldArea()
 				dbPrintf("  Field: fieldId=%s | name=%s | fieldArea =%s", field.fieldId, field.name, g_i18n:formatArea(field.fieldArea, 2))
 			end
 		end
+
+		if fieldCount > 0 and fieldAreaSum <= 0.01 and farmland.totalFieldArea ~= nil then
+			dbPrintf("  sum single field sizes to small --> using farmland.totalFieldArea")
+			fieldAreaSum = farmland.totalFieldArea
+		end
+
 		fieldAreaOverall = fieldAreaOverall + fieldAreaSum
 
 		dbPrintf("  --> %s. Owned Farmland: id=%s | FieldCount=%s | FieldAreaSum=%s", i, farmland.id, fieldCount, g_i18n:formatArea(fieldAreaSum, 2))
@@ -638,21 +623,53 @@ function VIPOrderManager:CalculateOwnFieldArea()
 end
 
 
-function VIPOrderManager:GetFillTypeConfig(ftName)
+function VIPOrderManager:GetFillTypeConfig(ftName, isAnimal)
     -- dbPrintHeader("VIPOrderManager:GetFillTypeConfig()")
 
 	local ftConfig = VIPOrderManager.ftConfigs[ftName]
 	if ftConfig == nil then
 		if g_fruitTypeManager:getFruitTypeByName(ftName) ~= nil then
 			ftConfig = VIPOrderManager.ftConfigs["DEFAULT_FRUITTYPE"]
+		elseif isAnimal then
+			ftConfig = VIPOrderManager.ftConfigs["DEFAULT_ANIMALTYPE"]
 		else
 			ftConfig = VIPOrderManager.ftConfigs["DEFAULT_FILLTYPE"]
 		end
 		VIPOrderManager.ftConfigs[ftName] = ftConfig
 	end
+
+	local ftConfigCopy = VIPOrderManager:deepcopy(ftConfig)
+
+	-- ftconfig overwrite for minOrderLevel and probability if fitting Production or AnimalHusbandry already exists
+	if VIPOrderManager.existingProductionAndAnimalHusbandryOutputs[ftName] then
+		if ftConfig.minOrderLevel ~= nil then
+			ftConfigCopy.minOrderLevel = math.max(1, ftConfig.minOrderLevel - VIPOrderManager.minOrderLevelDecreaseIfProductionOrAnimalHusbandryExists)
+			dbPrintf("  - Overwrite 'minOrderLevel' as production/animal husbandry already owned: %s --> %s (%s)", ftConfig.minOrderLevel, ftConfigCopy.minOrderLevel, ftName)
+		end
+
+		if ftConfig.probability  ~= nil then
+			ftConfigCopy.probability = math.min(100, ftConfig.probability * VIPOrderManager.probabilityMultiplierIfProductionOrAnimalHusbandryExists)
+			dbPrintf("  - Overwrite 'Probability' as production/animal husbandry allready owned: %s --> %s (%s)", ftConfig.probability, ftConfigCopy.probability, ftName)
+		end
+	end
+
+	-- ftconfig overwrite for quantityCorrectionFactor if FS22_MaizePlus mod is present and loaded
+	local mod = g_modManager:getModByName("FS22_MaizePlus")
+	if mod ~= nil and g_modIsLoaded["FS22_MaizePlus"] then
+		if ftConfig.quantityCorrectionFactorMaizePlus ~= nil then
+			ftConfigCopy.quantityCorrectionFactor = ftConfig.quantityCorrectionFactorMaizePlus
+			dbPrintf("Overwrite 'quantityCorrectionFactor' as MOD MaizePlus is in use: %s --> %s (%s)", ftConfig.quantityCorrectionFactor, ftConfigCopy.quantityCorrectionFactor, ftName)
+		end
+
+		if ftConfig.probabilityMaizePlus ~= nil then
+			ftConfigCopy.probability = ftConfig.probabilityMaizePlus
+			dbPrintf("Overwrite 'probability' as MOD MaizePlus is in use: %s --> %s (%s)", ftConfig.probability, ftConfigCopy.probability, ftName)
+		end
+	end
+
 	-- dbPrintf("GetFillTypeConfig: ftName=%s --> ftConfig=%s (isUnknown=%s)", ftName, tostring(ftConfig), tostring(ftConfig.isUnknown))
 	
-	return ftConfig
+	return ftConfigCopy
 end
 
 
@@ -689,7 +706,7 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
 		local defaultWarningText = string.format("  - %-50s | pricePerLiterMax=%f | ", tempNameOutput, possibleFT.priceMax)
 		local takeTheFillTypeExplicitly = false
 		local ftConfig = nil
-		ftConfig = VIPOrderManager:GetFillTypeConfig(possibleFT.name)
+		ftConfig = VIPOrderManager:GetFillTypeConfig(possibleFT.name, possibleFT.isAnimal)
 
 
 		-- not allowed
@@ -726,10 +743,6 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
 
         --  "order level" not high enough
 		local minOrderLevel = ftConfig.minOrderLevel
-		if ftConfig.minOrderLevelIfProductionExists ~= nil and VIPOrderManager.existingProductionAndAnimalHusbandryOutputs[possibleFT.name] then
-			dbPrintf("  - Overwrite MinOrderLevel as production/animal husbandry allready owned: %s --> %s", ftConfig.minOrderLevel, ftConfig.minOrderLevelIfProductionOrAnimalHusbandryExists)
-			minOrderLevel = ftConfig.minOrderLevelIfProductionOrAnimalHusbandryExists
-		end
 		if notUsableWarning == nil and minOrderLevel > orderLevel then
 			if ftConfig.isUnknown ~= nil and ftConfig.isUnknown then
 				--  unknown filltype
@@ -753,9 +766,10 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
 	end
 	
 	dbInfoPrintf("")
-	dbInfoPrintf("Usable filltypes:")
+	dbInfoPrintf("Usable filltypes (orderLevel=%s):", orderLevel)
 	for _, v in pairs(usableFillTypes) do
 		local tempNameOutput = string.format("%s (%s)", v.name, v.title)
+		local ftConfig = VIPOrderManager:GetFillTypeConfig(v.name, v.isAnimal)
 		
 		local stationList = ""
 		for i=1, #v.acceptingStations do
@@ -764,9 +778,10 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
 			end
 			stationList = stationList .. v.acceptingStations[i].owningPlaceable:getName()
 		end
-		
-		dbInfoPrintf("  - %-50s | price=%f | Stations=%s", tempNameOutput, v.priceMax, stationList)
+		dbInfoPrintf("  - %-50s | price=%f | minOrderLevel=%s | probability=%s | Stations=%s", tempNameOutput, v.priceMax, ftConfig.minOrderLevel, ftConfig.probability, stationList)
 	end
+	dbInfoPrintf("")
+	dbInfoPrintf("")
 end
 
 
@@ -791,7 +806,7 @@ function VIPOrderManager:addAllSellableFillTypes(possibleFillTypes)
 				  and production.productionPoint.loadingStation ~= nil
 				  and production.productionPoint.loadingStation.supportedFillTypes[fillTypeIndex] then
 					isAccepted = false
-					dbPrintf("  - own placeable production point: filltype %s (%s) is not supported as it is also loadable", fillType.name, fillType.title)
+					dbPrintf("  - own placeable production point: filltype %s-%s (%s) is not supported as it is also loadable", fillTypeIndex, fillType.name, fillType.title)
 				end
 
 				if isAccepted == true then
@@ -802,7 +817,7 @@ function VIPOrderManager:addAllSellableFillTypes(possibleFillTypes)
 						extraMsg = " *** Unknown filltype without configuration ***"
 					end
 					
-					dbPrintf("  - filltype: %s (%s)%s", fillType.name, fillType.title, extraMsg)
+					dbPrintf("  - filltype: %s-%s (%s)%s", fillTypeIndex, fillType.name, fillType.title, extraMsg)
 					local price = station:getEffectiveFillTypePrice(fillTypeIndex)
 
 					if possibleFillTypes[fillTypeIndex] == nil then
@@ -840,34 +855,40 @@ function VIPOrderManager:addAllAnimalFillTypes(possibleFillTypes)
 	for i, fillTypeIdx in pairs(g_fillTypeManager:getFillTypesByCategoryNames("ANIMAL HORSE")) do
         local fillType = g_fillTypeManager:getFillTypeByIndex(fillTypeIdx)
         local animalSubType = g_currentMission.animalSystem.fillTypeIndexToSubType[fillTypeIdx]
-		local animalStoreTitle = VIPOrderManager:GetAnimalTitleByFillTypeIdx(fillTypeIdx)
+		if animalSubType == nil then
+			printf("VIPOrderManager:addAllAnimalFillTypes warning: animal filltype without animalSubType: %s-%s (%s)",fillTypeIdx, fillType.name, fillType.title)
+		else
+			local animalStoreTitle = VIPOrderManager:GetAnimalTitleByFillTypeIdx(fillTypeIdx)
 
-		-- print("** Start DebugUtil.printTableRecursively() ************************************************************")
-		-- print("fillType:")
-		-- DebugUtil.printTableRecursively(fillType, ".", 0, 3)
-		-- print("** End DebugUtil.printTableRecursively() **************************************************************")
+			-- print("** Start DebugUtil.printTableRecursively() ************************************************************")
+			-- print("fillType:")
+			-- DebugUtil.printTableRecursively(fillType, ".", 0, 3)
+			-- print("** End DebugUtil.printTableRecursively() **************************************************************")
 
-		-- print("** Start DebugUtil.printTableRecursively() ************************************************************")
-		-- print("g_currentMission.animalSystem:")
-		-- DebugUtil.printTableRecursively(g_currentMission.animalSystem, ".", 0, 1)
-		-- print("** End DebugUtil.printTableRecursively() **************************************************************")
+			-- print("** Start DebugUtil.printTableRecursively() ************************************************************")
+			-- print("g_currentMission.animalSystem:")
+			-- DebugUtil.printTableRecursively(g_currentMission.animalSystem, ".", 0, 1)
+			-- print("** End DebugUtil.printTableRecursively() **************************************************************")
 
-		-- printf("FillType: %s (%s) - animalTypeIndex=%s | MinBuyPrice=%s", fillType.name, fillType.title, animalSubType.typeIndex, animalSubType.buyPrice.keyframes[1][1])
-        -- for ii, visual in pairs(animalSubType.visuals) do
-        --     printf("  - canBeBought=%s | minAge=%s | name=%s", visual.store.canBeBought, visual.minAge, visual.store.name)
-        -- end
+			-- printf("FillType: %s (%s) - animalTypeIndex=%s | MinBuyPrice=%s", fillType.name, fillType.title, animalSubType.typeIndex, animalSubType.buyPrice.keyframes[1][1])
+			-- for ii, visual in pairs(animalSubType.visuals) do
+			--     printf("  - canBeBought=%s | minAge=%s | name=%s", visual.store.canBeBought, visual.minAge, visual.store.name)
+			-- end
 
-		-- Unknown filltype
-		local extraMsg = ""
-		if VIPOrderManager.ftConfigs[fillType.name] == nil then
-			extraMsg = " *** Unknown filltype without configuration ***"
-		end
-		
-		dbPrintf("  - filltype: %s (%s) %s", fillType.name, animalStoreTitle, extraMsg)
-		local price = animalSubType.buyPrice.keyframes[1][1]
+			-- Unknown filltype
+			local extraMsg = ""
+			if VIPOrderManager.ftConfigs[fillType.name] == nil then
+				extraMsg = " *** Unknown filltype without configuration ***"
+			end
+			
+			dbPrintf("  - filltype: %s-%s (%s) %s", fillTypeIdx, fillType.name, animalStoreTitle, extraMsg)
+			local price = animalSubType.buyPrice.keyframes[1][1]
 
-		if possibleFillTypes[fillTypeIdx] == nil then
-			possibleFillTypes[fillTypeIdx] = {}
+			if possibleFillTypes[fillTypeIdx] == nil then
+				possibleFillTypes[fillTypeIdx] = {}
+			else
+				printf("VIPOrderManager:addAllAnimalFillTypes warning: animal filltype already exists: %s-%s (%s)", fillTypeIdx, fillType.name, animalStoreTitle)
+			end
 			possibleFillTypes[fillTypeIdx].priceMax = price
 			possibleFillTypes[fillTypeIdx].acceptingStations = {}
 			possibleFillTypes[fillTypeIdx].name = fillType.name
@@ -875,11 +896,8 @@ function VIPOrderManager:addAllAnimalFillTypes(possibleFillTypes)
 			possibleFillTypes[fillTypeIdx].pricePerLiter = fillType.pricePerLiter
 			possibleFillTypes[fillTypeIdx].showOnPriceTable = true
 			possibleFillTypes[fillTypeIdx].literPerSqm = 0
-
 			-- only for animals
 			possibleFillTypes[fillTypeIdx].isAnimal = true
-		else
-			printf("VIPOrderManager:addAllAnimalFillTypes error: Double filltype: %s (%s)", fillType.name, animalStoreTitle)
 		end
 	end
 end
@@ -1238,24 +1256,16 @@ function VIPOrderManager:getStationBySavegameId(targetStationSavegameId)
 end
 
 
-function VIPOrderManager:getCountElements(myTable)
-	local i = 0
-	for _, _ in pairs(myTable) do
-		i = i + 1
-	end
-	return i	
-end
-
-
-function VIPOrderManager:round(num, numDecimalPlaces)
-	local mult = 10^(numDecimalPlaces or 0)
-	return math.floor(num * mult + 0.5) / mult
-end
-
-
 function VIPOrderManager:GetAnimalTitleByFillTypeIdx(fillTypeIdx, neededAgeInMonths)
 	local animalSubType = g_currentMission.animalSystem.fillTypeIndexToSubType[fillTypeIdx]
-	local animalStoreTitle = animalSubType.visuals[1] ~= nil and animalSubType.visuals[1].store.name or "Unknown animal title"
+	local animalStoreTitle = "Unknown animal title"
+	local animalAge = neededAgeInMonths == nil and 0 or neededAgeInMonths
+	
+	for i, visual in pairs(animalSubType.visuals) do
+		if animalAge >= visual.minAge then
+			animalStoreTitle = visual.store.name
+		end
+	end
 
 	if neededAgeInMonths ~= nil then
 		animalStoreTitle = animalStoreTitle .. string.format(" (%s %s)", neededAgeInMonths, g_i18n:getText("VIPOrderManager_Months"))
@@ -1295,7 +1305,6 @@ function VIPOrderManager.sellingStation_addFillLevelFromTool(station, superFunc,
     return moved
 end
 
-
 function VIPOrderManager:onLoad(savegame)end;
 function VIPOrderManager:onUpdate(dt)end;
 function VIPOrderManager:deleteMap()end;
@@ -1303,3 +1312,44 @@ function VIPOrderManager:keyEvent(unicode, sym, modifier, isDown)end;
 function VIPOrderManager:mouseEvent(posX, posY, isDown, isUp, button)end;
 
 addModEventListener(VIPOrderManager);
+
+
+-- ************************************************************************************************
+-- Utilities
+-- ************************************************************************************************
+
+function VIPOrderManager:getCountElements(myTable)
+	local i = 0
+	for _, _ in pairs(myTable) do
+		i = i + 1
+	end
+	return i	
+end
+
+function VIPOrderManager:round(num, numDecimalPlaces)
+	local mult = 10^(numDecimalPlaces or 0)
+	return math.floor(num * mult + 0.5) / mult
+end
+
+-- Save copied tables in `copies`, indexed by original table.
+-- http://lua-users.org/wiki/CopyTable
+function VIPOrderManager:deepcopy(orig, copies)
+    copies = copies or {}
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        if copies[orig] then
+            copy = copies[orig]
+        else
+            copy = {}
+            copies[orig] = copy
+            for orig_key, orig_value in next, orig, nil do
+                copy[VIPOrderManager:deepcopy(orig_key, copies)] = VIPOrderManager:deepcopy(orig_value, copies)
+            end
+            setmetatable(copy, VIPOrderManager:deepcopy(getmetatable(orig), copies))
+        end
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
+end

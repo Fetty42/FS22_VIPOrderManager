@@ -1,6 +1,6 @@
 -- Author: Fetty42
--- Date: 08.05.2022
--- Version: 1.1.0.0
+-- Date: 08.04.2023
+-- Version: 1.3.0.0
 
 
 local dbPrintfOn = false
@@ -18,7 +18,8 @@ OrderFrame = {
 		DIALOG_TITLE = "dialogTitleElement",
         TABLE = "orderTable",
         TABLE_TEMPLATE = "orderRowTemplate",
-		BUTTON_ABORT = "buttonAbort"
+		BUTTON_ABORT = "buttonAbort",
+		BUTTON_TAG = "buttonTag"
 	}
 }
 local OrderFrame_mt = Class(OrderFrame, MessageDialog)
@@ -41,7 +42,6 @@ end
 function OrderFrame:onCreate()
 	-- dbPrintf("OrderFrame:onCreate()")
 	OrderFrame:superClass().onCreate(self)    
-	self.buttonAbort.inputActionName = InputAction.MENU_EXTRA_1
 end
 
 
@@ -55,7 +55,7 @@ end
 function OrderFrame:setVIPOrders(VIPOrders)   
 	-- dbPrintf("OrderFrame:setVIPOrders()")
 
-	-- fill table data (fillTypeName, quantity, fillLevel, payout, targetStation, isCompleted)
+	-- fill table data (title, quantity, fillLevel, payout, targetStationTitle, isCompleted, mapHotspot)
 	self.VIPOrdersData = {}
 
 	-- hudOverlayFilename :: dataS/menu/hud/fillTypes/hud_fill_grass.png
@@ -77,13 +77,22 @@ function OrderFrame:setVIPOrders(VIPOrders)
 			orderEntry.isCompleted =  math.ceil(vipOrderEntry.fillLevel) >= vipOrderEntry.quantity
 			orderEntry.title = vipOrderEntry.title
 			
+			orderEntry.mapHotspot = nil
 			if vipOrderEntry.targetStation ~= nil then
-				orderEntry.targetStation = vipOrderEntry.targetStation.owningPlaceable:getName()
+				orderEntry.targetStationTitle = vipOrderEntry.targetStation.owningPlaceable:getName()
+				if vipOrderEntry.targetStation.owningPlaceable.spec_hotspots ~= nil  and vipOrderEntry.targetStation.owningPlaceable.spec_hotspots.mapHotspots ~= nil then
+
+					for _, mapHotspot in ipairs(vipOrderEntry.targetStation.owningPlaceable.spec_hotspots.mapHotspots) do
+						if not p and mapHotspot.worldX ~= nil and mapHotspot.worldZ ~= nil then
+							orderEntry.mapHotspot = mapHotspot
+						end
+					end
+				end
 			else
 				if vipOrderEntry.isAnimal then
-				orderEntry.targetStation = g_i18n:getText("VIPOrderManager_Automatic")
+				orderEntry.targetStationTitle = g_i18n:getText("VIPOrderManager_Automatic")
 				else
-					orderEntry.targetStation = g_i18n:getText("VIPOrderManager_FreeChoise")
+					orderEntry.targetStationTitle = g_i18n:getText("VIPOrderManager_FreeChoise")
 				end
 			end
 			
@@ -126,7 +135,7 @@ function OrderFrame:populateCellForItemInSection(list, section, index, cell)
  	cell:getAttribute("quantity"):setText(orderEntry.quantity)
 	cell:getAttribute("fillLevel"):setText(orderEntry.fillLevel)
 	cell:getAttribute("payout"):setText(orderEntry.payout)
-	cell:getAttribute("targetStation"):setText(orderEntry.targetStation)
+	cell:getAttribute("targetStationTitle"):setText(orderEntry.targetStationTitle)
 
 	local bold = section == 1 -- only the active order
 	local color = {1, 1, 1, 1}
@@ -144,7 +153,7 @@ function OrderFrame:populateCellForItemInSection(list, section, index, cell)
 	cell:getAttribute("quantity").textBold = bold
 	cell:getAttribute("fillLevel").textBold = bold
 	cell:getAttribute("payout").textBold = bold
-	cell:getAttribute("targetStation").textBold = bold
+	cell:getAttribute("targetStationTitle").textBold = bold
 
 	cell:getAttribute("ftTitle"):setTextColor(unpack(color))
 	cell:getAttribute("ftTitle"):setTextSelectedColor(unpack(colorSelected))
@@ -154,11 +163,11 @@ function OrderFrame:populateCellForItemInSection(list, section, index, cell)
 	cell:getAttribute("fillLevel"):setTextSelectedColor(unpack(colorSelected))
 	cell:getAttribute("payout").textColor = color
 	cell:getAttribute("payout"):setTextSelectedColor(unpack(colorSelected))
-	cell:getAttribute("targetStation").textColor = color
-	cell:getAttribute("targetStation"):setTextSelectedColor(unpack(colorSelected))
+	cell:getAttribute("targetStationTitle").textColor = color
+	cell:getAttribute("targetStationTitle"):setTextSelectedColor(unpack(colorSelected))
 
 	-- dbPrintf("** Start DebugUtil.printTableRecursively() ************************************************************")
-	-- DebugUtil.printTableRecursively(cell:getAttribute("targetStation"), ".", 0, 2)
+	-- DebugUtil.printTableRecursively(cell:getAttribute("targetStationTitle"), ".", 0, 2)
 	-- dbPrintf("** End DebugUtil.printTableRecursively() **************************************************************\n")
 end
 
@@ -180,3 +189,32 @@ function OrderFrame:onClickAbort()
 	VIPOrderManager:AbortCurrentVIPOrder()
 end
 
+
+function OrderFrame:onListSelectionChanged(list, section, index)
+	local orderEntry = self.VIPOrdersData[section].orders[index]
+
+	self.mapHotspot = orderEntry.mapHotspot
+    if self.mapHotspot ~= nil then
+        self.buttonTag.disabled = false
+        if self.mapHotspot == g_currentMission.currentMapTargetHotspot then
+            self.buttonTag.text = g_i18n:getText("ui_orderDlg_btnUntagSellPoint")
+        else
+            self.buttonTag.text = g_i18n:getText("ui_orderDlg_btnTagSellPoint")
+        end
+    else
+        self.buttonTag.disabled = true
+    end
+end
+
+
+function OrderFrame:onTagLocation(m)
+    if self.mapHotspot ~= nil then
+        if self.mapHotspot == g_currentMission.currentMapTargetHotspot then
+            self.buttonTag.text = g_i18n:getText("ui_orderDlg_btnTagSellPoint")
+            g_currentMission:setMapTargetHotspot()
+        else
+            self.buttonTag.text = g_i18n:getText("ui_orderDlg_btnUntagSellPoint")
+            g_currentMission:setMapTargetHotspot(self.mapHotspot)
+        end
+    end
+end

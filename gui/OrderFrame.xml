@@ -27,7 +27,7 @@
                     <GuiElement type="text" profile="ingameMenuRowCellRight" position="400px 0px" size="150px 40.77px" name="quantity" textAlignment="right"/>
                     <GuiElement type="text" profile="ingameMenuRowCellRight" position="550px 0px" size="150px 40.77px" name="fillLevel" textAlignment="right"/>
                     <GuiElement type="text" profile="ingameMenuRowCellRight" position="700px 0px" size="150px 40.77px" name="payout" textAlignment="right"/>
-                    <GuiElement type="text" profile="ingameMenuRowCellLeft" position="890px 0px" size="360px 40.77px" name="targetStation"/>
+                    <GuiElement type="text" profile="ingameMenuRowCellLeft" position="890px 0px" size="360px 40.77px" name="targetStationTitle"/>
                 </GuiElement>
             </GuiElement>
             <GuiElement type="listItem" profile="ingameMenuContractsListCategory" name="section">
@@ -39,9 +39,10 @@
         </GuiElement>  
 
         <!-- Buttons -->
-        <GuiElement type="flowLayout" profile="buttonBoxDialog">
+        <GuiElement type="flowLayout" profile="buttonBoxDialog" size="1350px 60px">
             <GuiElement type="button" profile="buttonBack" text="$l10n_ui_orderDlg_btnClose" onClick="onClickBack" />
-            <GuiElement type="button" profile="buttonBack" text="$l10n_ui_orderDlg_btnAbort" onClick="onClickAbort" id="buttonAbort" />
+            <GuiElement type="button" profile="buttonExtra1" text="$l10n_ui_orderDlg_btnAbort" onClick="onClickAbort" id="buttonAbort" />
+            <GuiElement type="button" profile="buttonOK" text="$l10n_ui_orderDlg_btnTagSellPoint" onClick="onTagLocation" id="buttonTag" />
         </GuiElement>
     </GuiElement>
 </GUI>

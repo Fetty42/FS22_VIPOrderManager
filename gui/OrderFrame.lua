@@ -197,9 +197,9 @@ function OrderFrame:onListSelectionChanged(list, section, index)
     if self.mapHotspot ~= nil then
         self.buttonTag.disabled = false
         if self.mapHotspot == g_currentMission.currentMapTargetHotspot then
-            self.buttonTag.text = g_i18n:getText("ui_orderDlg_btnUntagSellPoint")
+            self.buttonTag.text = string.upper(g_i18n:getText("ui_orderDlg_btnUntagSellPoint"))
         else
-            self.buttonTag.text = g_i18n:getText("ui_orderDlg_btnTagSellPoint")
+            self.buttonTag.text = string.upper(g_i18n:getText("ui_orderDlg_btnTagSellPoint"))
         end
     else
         self.buttonTag.disabled = true
@@ -210,10 +210,10 @@ end
 function OrderFrame:onTagLocation(m)
     if self.mapHotspot ~= nil then
         if self.mapHotspot == g_currentMission.currentMapTargetHotspot then
-            self.buttonTag.text = g_i18n:getText("ui_orderDlg_btnTagSellPoint")
+            self.buttonTag.text = string.upper(g_i18n:getText("ui_orderDlg_btnTagSellPoint"))
             g_currentMission:setMapTargetHotspot()
         else
-            self.buttonTag.text = g_i18n:getText("ui_orderDlg_btnUntagSellPoint")
+            self.buttonTag.text = string.upper(g_i18n:getText("ui_orderDlg_btnUntagSellPoint"))
             g_currentMission:setMapTargetHotspot(self.mapHotspot)
         end
     end

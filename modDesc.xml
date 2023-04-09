@@ -2,8 +2,9 @@
 	<author>Fetty42</author>
 	<version>1.3.0.0</version>
 	<title>
-        <en>VIP Order Manager</en>
+		<en>VIP Order Manager</en>
 		<de>VIP Auftrags Manager</de>
+		<fr>Gestionnaire De Commandes VIP</fr>
 		<ru>Менеджер VIP-заказов</ru>
     </title>
     <description>
@@ -30,6 +31,7 @@ Für Fehlermeldungen oder Anregungen besucht bitte: https://github.com/Fetty42/F
 Update 1.3.0
 - Ein Zielstandort kann jetzt markiert werden (Hotspot)
 - Tieraufträge werden jetzt unterstützt (Verkauf erfolgt um 8 Uhr morgens automatisch, wenn das angeforderte Alter erreicht ist; Gesundheit der Tiere muss bei mindestens 75% liegen)
+- Französische Übersetzung vervollständigt (Danke an BOB51160)
 
 Update 1.2.0
 - Unterstützung für MaizePlus
@@ -66,6 +68,7 @@ For any error messages or suggestions, please visit: https://github.com/Fetty42/
 Update 1.3.0
 - A target location can now be marked (hotspot)
 - Animal orders are now supported (sale takes place automatically at 8 a.m. when the requested age is reached; health of the animals must be at least 75%)
+- French translation completed (thanks to BOB51160)
 
 Update 1.2.0
 - Support for MaizePlus
@@ -102,6 +105,7 @@ Pour les messages d'erreur ou les suggestions, veuillez visiter : https://github
 Update 1.3.0
 - Il est désormais possible de marquer un site cible (hotspot)
 - Les commandes d'animaux sont désormais prises en charge (la vente a lieu automatiquement à 8 heures du matin lorsque l'âge demandé est atteint ; la santé des animaux doit être d'au moins 75%)
+- Traduction française complétée (merci à BOB51160)
 
 Update 1.2.0
 - Prise en charge de MaizePlus
@@ -138,6 +142,7 @@ Per eventuali messaggi di errore o suggerimenti, visitare: https://github.com/Fe
 Update 1.3.0
 - È ora possibile contrassegnare un luogo di destinazione (hotspot)
 - Gli ordini di animali sono ora supportati (la vendita avviene automaticamente alle 8 del mattino al raggiungimento dell'età richiesta; lo stato di salute degli animali deve essere almeno del 75%)
+- Traduzione francese completata (grazie a BOB51160)
 
 Update 1.2.0
 - Supporto per MaizePlus
@@ -173,6 +178,7 @@ Update 1.1.0
 Обновление 1.3.0
 - Теперь можно отметить местоположение цели (Hotspot)
 - Теперь поддерживается заказ животных (продажа происходит автоматически в 8 часов утра при достижении требуемого возраста; здоровье животных должно быть не менее 75%)
+- Перевод на французский язык завершен (спасибо BOB51160)
 
 Обновление 1.2.0
 - Поддержка MaizePlus
@@ -208,12 +214,14 @@ Update 1.1.0
 		<text name="input_ShowCurrentVIPOrder">
 			<de>Durchblättern VIP Aufträge</de>
 			<en>Flip VIP Orders</en>
+			<fr>Inverser les commandes VIP</fr>
 			<it>Vedi Ordini VIP correnti</it>
 			<ru>Взглянуть VIP-заказы</ru>
 		</text>		
 		<text name="input_ShowVIPOrderDlg">
 			<de>Anzeige des VIP Auftragsdialogs</de>
 			<en>Shows VIP Orders Dialog</en>
+			<fr>Affiche la boîte de dialogue des commandes VIP</fr>
 			<it>Mostra la panoramnica degli Ordini VIP</it>
 			<ru>Обзор VIP-заказов</ru>
 		</text>
@@ -222,12 +230,14 @@ Update 1.1.0
 		<text name="VIPOrderManager_DlgTitel_AbortCurrentVIPOrder">
 			<de>Abbruch aktuellen VIP Auftrag</de>
 			<en>Aborting current VIP Orders</en>
+			<fr>Annulation des commandes VIP en cours</fr>
 			<it>Annulla gli Ordini VIP correnti</it>
 			<ru>Отказаться от текущих VIP-заказов</ru>
 		</text>
 		<text name="VIPOrderManager_DlgMsg_AbortCurrentVIPOrder">
 			<de>Du musst eine Abbruchgebühr von %s bezahlen. Für die bereits abgeschlossenen Teilaufträge erhältst du %s.</de>
 			<en>You have to pay a aborting fee of %s. For the already completed partial orders you will receive %s.</en>
+			<fr>Vous devez payer des frais d'abandon de %s. Pour les commandes partielles déjà terminées, vous recevrez %s.</fr>
 			<it>Devi pagare una commissione di %s per l'annullamento. Per gli ordini parziali già consegnati ricevi una somma di %s.</it>
 			<ru>За отказ вам необходимо возместить убытки в размере %s. За уже выполненную часть заказов вы получите %s.</ru>
 		</text>
@@ -236,54 +246,63 @@ Update 1.1.0
 		<text name="VIPOrderManager_CurrentVIPOrder">
 			<de>Aktueller VIP Auftrag</de>
 			<en>Current VIP Order</en>
+			<fr>Commande VIP en cours</fr>
 			<it>Ordine VIP corrente</it>
 			<ru>Текущий VIP-заказ</ru>
 		</text>
 		<text name="VIPOrderManager_NextVIPOrder">
 			<de>Nächster VIP Auftrag</de>
 			<en>Next VIP Order</en>
+			<fr>Prochaine commande VIP</fr>
 			<it>Prossimo Ordine VIP</it>
 			<ru>Следующий VIP-заказ</ru>
 		</text>
 		<text name="VIPOrderManager_Payout">
 			<de>Auszahlung: %s</de>
 			<en>Payout: %s</en>
+			<fr>Paiement: %s</fr>
 			<it>Pagamento: %s</it>
 			<ru>Выплата: %s</ru>
 		</text>
 		<text name="VIPOrderManager_OrderCompleted">
 			<de>Der aktuelle VIP-Auftrag wurde abgeschlossen.</de>
 			<en>Current VIP order was completed.</en>
+			<fr>La commande VIP actuelle a été complétée.</fr>
 			<it>Ordine VIP corrente completato.</it>
 			<ru>Текущий VIP-заказ был завершён.</ru>
 		</text>
         <text name="VIPOrderManager_Months">
 			<de>Monate</de>	
 			<en>months</en>
+			<fr>Mois</fr>	
 			<it>mesi</it>
 			<ru>мес.</ru>
 		</text>		
         <text name="VIPOrderManager_FreeChoise">
 			<de>** Freie Wahl **</de>	
 			<en>** Free choice **</en>
+			<fr>** Libre choix **</fr>	
 			<it>** Scelta libera **</it>
 			<ru>** Свободный выбор **</ru>
 		</text>		
         <text name="VIPOrderManager_Automatic">
 			<de>** Automatisch **</de>	
 			<en>** Automatic **</en>
+			<fr>** Automatique **</fr>	
 			<it>** Automatico **</it>
 			<ru>** Автоматический **</ru>
 		</text>		
         <text name="VIPOrderManager_Piece">
 			<de>Stk.</de>	
 			<en>pcs.</en>
+			<fr>pcs.</fr>	
 			<it>pz.</it>
 			<ru>шт.</ru>
 		</text>		
         <text name="VIPOrderManager_AnimalsDelivered">
 			<de>%s "%s" geliefert für den aktuellen VIP-Auftrag</de>	
 			<en>%s "%s" delivered for the current VIP order</en>
+			<fr>%s "%s" livrées pour la commande VIP en cours</fr>	
 			<it>%s "%s" consegnate per l'ordine VIP in corso</it>
 			<ru>%s "%s" доставленных для текущего VIP-заказа</ru>
 		</text>		
@@ -292,72 +311,84 @@ Update 1.1.0
         <text name="ui_orderDlg_title">
 			<de>Übersicht der VIP-Aufträge</de>
 			<en>Overview VIP Orders</en>
+			<fr>Aperçu des commandes VIP</fr>
 			<it>Panoramica Ordini VIP</it>
 			<ru>Обзор VIP-заказов</ru>
 		</text>		
         <text name="ui_orderDlg_header_product">
 			<de>Produkt</de>	
 			<en>Product</en>
+			<fr>Produit</fr>
 			<it>Prodotto</it>
 			<ru>Продукция</ru>
         </text>		
         <text name="ui_orderDlg_header_requested">
 			<de>Angefordert</de>	
 			<en>Requested</en>
+			<fr>Demandé</fr>
 			<it>Richiesto</it>
 			<ru>Запрошено</ru>
         </text>		
         <text name="ui_orderDlg_header_delivered">
 			<de>Geliefert</de>
 			<en>Delivered</en>
+			<fr>Livré</fr>
 			<it>Consegnato</it>
 			<ru>Доставлено</ru>
         </text>		
         <text name="ui_orderDlg_header_payout">
 			<de>Auszahlung</de>	
 			<en>Payout</en>
+			<fr>Paiement</fr>
 			<it>Pagamento</it>
 			<ru>Выплата</ru>
         </text>		
         <text name="ui_orderDlg_header_station">
 			<de>Lieferstation</de>	
 			<en>Delivery station</en>
+			<fr>Poste de livraison</fr>
 			<it>Luogo di Consegna</it>
 			<ru>Станция доставки</ru>
         </text>		
         <text name="ui_orderDlg_btnClose">
 			<de>Schließen</de>	
 			<en>Close</en>
+			<fr>Fermer</fr>
 			<it>Chiuso</it>
 			<ru>Закрыть</ru>
 		</text>		
         <text name="ui_orderDlg_btnAbort">
 			<de>Abbruch des aktuellen VIP Auftrags</de>	
 			<en>Abort current VIP Order</en>
+			<fr>Annuler la commande VIP en cours</fr>
 			<it>Annulla l'Ordine VIP corrente</it>
 			<ru>Отказаться от текущего VIP-заказа</ru>
 		</text>		
         <text name="ui_orderDlg_btnTagSellPoint">
 			<de>Markierung setzen</de>	
-			<en>MARKIERUNG SETZEN</en>
-			<it>MARKIERUNG SETZEN</it>
-			<ru>MARKIERUNG SETZEN</ru>
+			<en>Tag place</en>
+			<fr>Mettre un marqueur</fr>
+			<it>Impostare il marcatore</it>
+			<ru>Установить маркер</ru>
 		</text>		
         <text name="ui_orderDlg_btnUntagSellPoint">
 			<de>Markierung löschen</de>	
-			<en>MARKIERUNG LÖSCHEN</en>
-			<it>MARKIERUNG LÖSCHEN</it>
-			<ru>MARKIERUNG LÖSCHEN</ru>
+			<en>Untag place</en>
+			<fr>Supprimer la marque</fr>
+			<it>Cancellare il marcatore</it>
+			<ru>Удалить маркер</ru>
 		</text>		
         <text name="ui_orderDlg_section_active">
 			<de>Level %s - Auszahlung: %s (Aktiv)</de>	
 			<en>Level %s - Payout: %s (Active)</en>
+			<fr>Niveau %s - Paiement: %s (Actif)</fr>
 			<it>Livello %s - Pagamento: %s (Attivo)</it>
 			<ru>Уровень %s - Выплата: %s (активный)</ru>
 		</text>		
         <text name="ui_orderDlg_section_notactive">
 			<de>Level %s - Auszahlung: %s</de>	
 			<en>Level %s - Payout: %s</en>
+			<fr>Niveau %s - Paiement: %s</fr>
 			<it>Livello %s - Pagamento: %s</it>
 			<ru>Уровень %s - Выплата: %s</ru>
 		</text>		

@@ -49,7 +49,7 @@ VIPOrderManager.ftConfigs =
 	GRASS_WINDROW 		= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.4, isLimited=false, probability=50},		-- Gras
 	DRYGRASS_WINDROW 	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=50},		-- Heu
 	SILAGE 				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.5, isLimited=false, probability=70, quantityCorrectionFactorMaizePlus=0.1, probabilityMaizePlus=50},		-- Silage
-	CHAFF 				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=70, quantityCorrectionFactorMaizePlus=0.1, probabilityMaizePlus=40},		-- Häckselgut
+	CHAFF 				= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false, probability=70, probabilityMaizePlus=0},		-- Häckselgut
 
 	-- Tree products
 	WOOD 		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=1.0, isLimited=false, probability=50},		-- Holz
@@ -136,19 +136,19 @@ VIPOrderManager.ftConfigs =
 	EMPTYPALLET				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
 
 	-- standard Animals
-	CHICKEN					= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.01, isLimited=false, probability=50},
-	CHICKEN_ROOSTER			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.01, isLimited=false, probability=30},
-	SHEEP_BLACK_WELSH		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.3, isLimited=false, probability=30},
-	SHEEP_SWISS_MOUNTAIN	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.3, isLimited=false, probability=30},
-	SHEEP_LANDRACE			= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.3, isLimited=false, probability=30},
-	SHEEP_STEINSCHAF		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.3, isLimited=false, probability=30},
-	COW_HOLSTEIN			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, probability=20},
-	COW_LIMOUSIN			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, probability=20},
-	COW_SWISS_BROWN			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, probability=20},
-	COW_ANGUS				= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, probability=20},
-	PIG_BLACK_PIED			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, probability=25},
-	PIG_LANDRACE			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, probability=25},
-	PIG_BERKSHIRE			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, probability=25},
+	CHICKEN					= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.03, isLimited=false, probability=50},
+	CHICKEN_ROOSTER			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.03, isLimited=false, probability=40},
+	SHEEP_BLACK_WELSH		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.6, isLimited=false, probability=30},
+	SHEEP_SWISS_MOUNTAIN	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.6, isLimited=false, probability=30},
+	SHEEP_LANDRACE			= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.6, isLimited=false, probability=30},
+	SHEEP_STEINSCHAF		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.6, isLimited=false, probability=30},
+	COW_HOLSTEIN			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.5, isLimited=false, probability=20},
+	COW_LIMOUSIN			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.5, isLimited=false, probability=20},
+	COW_SWISS_BROWN			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.5, isLimited=false, probability=20},
+	COW_ANGUS				= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.5, isLimited=false, probability=20},
+	PIG_BLACK_PIED			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.5, isLimited=false, probability=25},
+	PIG_LANDRACE			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.5, isLimited=false, probability=25},
+	PIG_BERKSHIRE			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.5, isLimited=false, probability=25},
 	HORSE_BAY				= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, probability=20},
 	HORSE_PALOMINO			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, probability=20},
 	HORSE_CHESTNUT			= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, probability=20},
@@ -184,7 +184,7 @@ VIPOrderManager.abortFeeInPercent = 35
 VIPOrderManager.allowSumQuantitySameFT = false	-- Summarize quantity of same filetypes
 VIPOrderManager.ownFieldArea = 1	-- min field area
 VIPOrderManager.rangeAnimalCheckTime = {min=8, max=17}
-VIPOrderManager.rangeAnimalAgeDifInMonths = {min=4, max=12}
+VIPOrderManager.rangeAnimalAgeDifInMonths = {min=5, max=12}
 VIPOrderManager.minOrderLevelDecreaseIfProductionOrAnimalHusbandryExists = 2
 VIPOrderManager.probabilityMultiplierIfProductionOrAnimalHusbandryExists = 2
 

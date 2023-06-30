@@ -10,7 +10,7 @@
         <GuiElement type="text" profile="dialogTitle" text="$l10n_ui_orderDlg_title" id="dialogTitleElement" position="0px -30px" />
 
         <!-- Main list -->
-        <GuiElement type="bitmap" profile="ingameMenuHeaderBox" id="tableHeaderBox" position="50px 650px" size="1250px 50px" imageColor="$preset_colorBlack2">
+        <GuiElement type="bitmap" profile="ingameMenuHeaderBox" id="tableHeaderBox" position="50px -100px" size="1250px 50px" imageColor="$preset_colorBlack2">
             <GuiElement type="text" profile="ingameMenuHeaderCellLeft" position="10px -0px" size="390px 40.77px" text="$l10n_ui_orderDlg_header_product"/>
             <GuiElement type="text" profile="ingameMenuHeaderCellRight" position="400px -0px" size="150px 40.77px" text="$l10n_ui_orderDlg_header_requested"/>
             <GuiElement type="text" profile="ingameMenuHeaderCellRight" position="550px -0px" size="150px 40.77px" text="$l10n_ui_orderDlg_header_delivered"/>

@@ -1,6 +1,6 @@
-<modDesc descVersion="73">
+<modDesc descVersion="75">
 	<author>Fetty42</author>
-	<version>1.3.0.0</version>
+	<version>1.3.1.0</version>
 	<title>
 		<en>VIP Order Manager</en>
 		<de>VIP Auftrags Manager</de>
@@ -27,6 +27,10 @@ Multiplayer wird derzeit nicht unterstützt.
 Ich möchte auch noch all den anderen Moddern danken, aus deren Mods ich mir im Laufe der Zeit viele Anregungen und Lösungsansätze holen konnte.
 
 Für Fehlermeldungen oder Anregungen besucht bitte: https://github.com/Fetty42/FS22_VIPOrderManager
+
+Update 1.3.1
+- Korrektur der nicht sichtbaren Spaltenüberschriften
+- kleinere Anpassungen an der Konfiguration
 
 Update 1.3.0
 - Ein Zielstandort kann jetzt markiert werden (Hotspot)
@@ -65,6 +69,10 @@ I would also like to thank all the other modders whose mods have given me many i
 
 For any error messages or suggestions, please visit: https://github.com/Fetty42/FS22_VIPOrderManager
 
+Update 1.3.1
+- Correction of the invisible column headers
+- Minor adjustments to the configuration
+
 Update 1.3.0
 - A target location can now be marked (hotspot)
 - Animal orders are now supported (sale takes place automatically at 8 a.m. when the requested age is reached; health of the animals must be at least 75%)
@@ -101,6 +109,10 @@ Je n'ai pas testé la compatibilité multijoueur.
 Je voudrais aussi remercier tous les autres moddeurs, dont les mods m'ont donné beaucoup d'idées et de solutions au fil du temps.
 
 Pour les messages d'erreur ou les suggestions, veuillez visiter : https://github.com/Fetty42/FS22_VIPOrderManager
+
+Update 1.3.1
+- correction des en-têtes de colonnes non visibles
+- ajustements mineurs de la configuration
 
 Update 1.3.0
 - Il est désormais possible de marquer un site cible (hotspot)
@@ -139,6 +151,10 @@ Vorrei anche ringraziare tutti gli altri modder le cui mod mi hanno dato molte i
 
 Per eventuali messaggi di errore o suggerimenti, visitare: https://github.com/Fetty42/FS22_VIPOrderManager
 
+Update 1.3.1
+- Correzione delle intestazioni invisibili delle colonne
+- Piccole modifiche alla configurazione
+
 Update 1.3.0
 - È ora possibile contrassegnare un luogo di destinazione (hotspot)
 - Gli ordini di animali sono ora supportati (la vendita avviene automaticamente alle 8 del mattino al raggiungimento dell'età richiesta; lo stato di salute degli animali deve essere almeno del 75%)
@@ -175,6 +191,10 @@ Update 1.1.0
 
 Для любых сообщений об ошибках или предложениях, пожалуйста, посетите: https://github.com/Fetty42/FS22_VIPOrderManager
 
+Обновление 1.3.1
+- Исправление невидимых заголовков столбцов
+- Незначительные изменения в конфигурации
+
 Обновление 1.3.0
 - Теперь можно отметить местоположение цели (Hotspot)
 - Теперь поддерживается заказ животных (продажа происходит автоматически в 8 часов утра при достижении требуемого возраста; здоровье животных должно быть не менее 75%)
@@ -193,7 +213,7 @@ Update 1.1.0
 - Первые небольшие корректировки для многопользовательской игры (ещё не совместим с многопользовательской игрой)]]></ru>
     </description>
 	
-	<iconFilename>icon.dds</iconFilename>
+	<iconFilename>icon_VIPOM.dds</iconFilename>
 	<multiplayer supported="false" />
 	<extraSourceFiles>
 		<sourceFile filename="VIPOrderManager.lua" />

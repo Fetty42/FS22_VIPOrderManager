@@ -3,7 +3,7 @@
 -- Version: 1.3.0.0
 
 local dbPrintfOn = false
-local dbInfoPrintfOn = true
+local dbInfoPrintfOn = false
 
 local function dbInfoPrintf(...)
 	if dbInfoPrintfOn then
@@ -640,6 +640,10 @@ function VIPOrderManager:GetFillTypeConfig(ftName, isAnimal)
 
 	local ftConfigCopy = VIPOrderManager:deepcopy(ftConfig)
 
+	if ftConfigCopy.probability == nil then
+		ftConfigCopy.probability = 100
+	end
+
 	-- ftconfig overwrite for minOrderLevel and probability if fitting Production or AnimalHusbandry already exists
 	if VIPOrderManager.existingProductionAndAnimalHusbandryOutputs[ftName] then
 		if ftConfig.minOrderLevel ~= nil then
@@ -668,7 +672,7 @@ function VIPOrderManager:GetFillTypeConfig(ftName, isAnimal)
 	end
 
 	-- dbPrintf("GetFillTypeConfig: ftName=%s --> ftConfig=%s (isUnknown=%s)", ftName, tostring(ftConfig), tostring(ftConfig.isUnknown))
-	
+
 	return ftConfigCopy
 end
 
@@ -712,6 +716,11 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
 		-- not allowed
 		if notUsableWarning == nil and not ftConfig.isAllowed then
 			notUsableWarning = "Not usable, because is not allowed"
+        end
+
+		-- not allowed because probability == 0
+		if notUsableWarning == nil and ftConfig.probability == 0 then
+			notUsableWarning = "Not usable, because probability = 0"
         end
 
 

@@ -1,6 +1,37 @@
 -- Author: Fetty42
--- Date: 08.04.2023
--- Version: 1.3.0.0
+-- Date: 22.10.2023
+-- Version: 1.3.1.0
+
+VIPOrderManager.isAnimalOrdersWished= true
+
+-- orders definition for order level 1 and own field area of 1 ha
+VIPOrderManager.countOrderItemsRange = {min=2, max=4}
+VIPOrderManager.quantityFactor = {min=7, max=9}
+VIPOrderManager.payoutFactor = {min=3, max=5}
+
+VIPOrderManager.isLimitedPercentage = 20 -- Max share of limited products
+
+-- Depending on the OrderLeven, special correction factors for count, quantity and payout
+VIPOrderManager.orderLevelCorrectionFactors = {}
+VIPOrderManager.orderLevelCorrectionFactors[1] = {0.40, 0.60, 1.00}
+VIPOrderManager.orderLevelCorrectionFactors[2] = {0.65, 0.80, 1.00}
+VIPOrderManager.orderLevelCorrectionFactors[3] = {0.90, 1.00, 1.00}
+
+
+-- Constants for filltype selection
+-- VIPOrderManager.fillTypesNeededFruitType = {ALFALFA_WINDROW="ALFALFA", DRYALFALFA_WINDROW="ALFALFA", ALFALFA_FERMENTED="ALFALFA", CLOVER_WINDROW="CLOVER", DRYCLOVER_WINDROW="CLOVER", CLOVER_FERMENTED="CLOVER", Carrot="CARROT"} -- filltype check for maps who not support MaizePlus
+VIPOrderManager.fillTypesNoPriceList = {}
+
+-- constants
+VIPOrderManager.maxVIPOrdersCount	= 4		-- Count of already calculated orders (preview)
+VIPOrderManager.abortFeeInPercent = 35
+VIPOrderManager.allowSumQuantitySameFT = false	-- Summarize quantity of same filetypes
+VIPOrderManager.ownFieldArea = 1	-- min field area
+VIPOrderManager.rangeAnimalCheckTime = {min=8, max=17}
+VIPOrderManager.rangeAnimalAgeDifInMonths = {min=5, max=12}
+VIPOrderManager.rangeAnimalDummyPrice = {min=500, max=800}
+VIPOrderManager.minOrderLevelDecreaseIfProductionOrAnimalHusbandryExists = 2
+VIPOrderManager.probabilityMultiplierIfProductionOrAnimalHusbandryExists = 2
 
 
 -- isAllowed (true, false) - whether the fill type is offered 
@@ -12,9 +43,15 @@
 VIPOrderManager.ftConfigs = 
 {
 	-- Defaults
-	DEFAULT_FRUITTYPE	= {isUnknown=true, isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.4, isLimited=false, probability=40},		-- for unknown fruittypes
-	DEFAULT_ANIMALTYPE	= {isUnknown=true, isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=0.3, isLimited=false, probability=30},		-- for unknown animals
-	DEFAULT_FILLTYPE	= {isUnknown=true, isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.4, isLimited=true, probability=30},		-- for unknown filltypes
+	DEFAULT_FILLTYPE	= {isUnknown=true, isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.6, isLimited=true, probability=30},		-- for unknown filltypes
+	DEFAULT_FRUITTYPE	= {isUnknown=true, isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.5, isLimited=false, probability=40},		-- for unknown fruittypes
+	DEFAULT_ANIMALTYPE_COW		= {isUnknown=true, isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.5, isLimited=false, probability=30},		-- for unknown animals
+	DEFAULT_ANIMALTYPE_SHEEP	= {isUnknown=true, isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.6, isLimited=false, probability=30},		-- for unknown animals
+	DEFAULT_ANIMALTYPE_PIG		= {isUnknown=true, isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.5, isLimited=false, probability=30},		-- for unknown animals
+	DEFAULT_ANIMALTYPE_HORSE	= {isUnknown=true, isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, probability=30},		-- for unknown animals
+	DEFAULT_ANIMALTYPE_CHICKEN	= {isUnknown=true, isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=1.5, isLimited=false, probability=30},		-- for unknown animals
+	DEFAULT_ANIMALTYPE			= {isUnknown=true, isAllowed=true, minOrderLevel=5, quantityCorrectionFactor=0.6, isLimited=false, probability=30},		-- for unknown animals
+
 		
 	-- Not Allowed
 	STONE 			= {isAllowed=false, minOrderLevel=1, quantityCorrectionFactor=1.0, isLimited=false},		-- Steine
@@ -70,23 +107,23 @@ VIPOrderManager.ftConfigs =
 
 	-- Factory products
 	DIESEL 			= {isAllowed=false, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true},		-- Diesel
-	GRAPEJUICE 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Traubensaft
-	OLIVE_OIL 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Olivenöl
-	RAISINS 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Rosinen
-	SUGAR 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Zucker
-	SUNFLOWER_OIL 	= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Sonnenblumenöl
-	BUTTER 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Butter
-	CANOLA_OIL 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Rapsöl
-	FLOUR 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Mehl
-	BOARDS 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Bretter
-	BREAD 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Brot
-	CHEESE 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Käse
-	CLOTHES 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Kleidung
-	FABRIC			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Stoff
-	CAKE 			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Kuchen
-	CEREAL 			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Müsli
-	CHOCOLATE 		= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Schokolade
-	FURNITURE 		= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.5, isLimited=true, probability=20},		-- Möbel
+	GRAPEJUICE 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Traubensaft
+	OLIVE_OIL 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Olivenöl
+	RAISINS 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Rosinen
+	SUGAR 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Zucker
+	SUNFLOWER_OIL 	= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Sonnenblumenöl
+	BUTTER 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Butter
+	CANOLA_OIL 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Rapsöl
+	FLOUR 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Mehl
+	BOARDS 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Bretter
+	BREAD 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Brot
+	CHEESE 			= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Käse
+	CLOTHES 		= {isAllowed=true, minOrderLevel=6, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Kleidung
+	FABRIC			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Stoff
+	CAKE 			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Kuchen
+	CEREAL 			= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Müsli
+	CHOCOLATE 		= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Schokolade
+	FURNITURE 		= {isAllowed=true, minOrderLevel=7, quantityCorrectionFactor=0.7, isLimited=true, probability=20},		-- Möbel
 
 	-- MaizePlus
 	CHOPPEDMAIZE			= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.7, isLimited=false, probability=50},
@@ -136,8 +173,8 @@ VIPOrderManager.ftConfigs =
 	EMPTYPALLET				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
 
 	-- standard Animals
-	CHICKEN					= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.03, isLimited=false, probability=50},
-	CHICKEN_ROOSTER			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=0.03, isLimited=false, probability=40},
+	CHICKEN					= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=1.5, isLimited=false, probability=50},
+	CHICKEN_ROOSTER			= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=1.5, isLimited=false, probability=40},
 	SHEEP_BLACK_WELSH		= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.6, isLimited=false, probability=30},
 	SHEEP_SWISS_MOUNTAIN	= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.6, isLimited=false, probability=30},
 	SHEEP_LANDRACE			= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.6, isLimited=false, probability=30},
@@ -158,35 +195,3 @@ VIPOrderManager.ftConfigs =
 	HORSE_GRAY				= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, probability=20},
 	HORSE_SEAL_BROWN		= {isAllowed=true, minOrderLevel=4, quantityCorrectionFactor=0.3, isLimited=false, probability=20}
 }
-
-
--- orders definition for order level 1 and own field area of 1 ha
-VIPOrderManager.countOrderItemsRange = {min=3, max=5}
-VIPOrderManager.quantityFactor = {min=7, max=9}
-VIPOrderManager.payoutFactor = {min=3, max=5}
-
-VIPOrderManager.isLimitedPercentage = 20 -- Max share of limited products
-
--- Depending on the OrderLeven, special correction factors for count, quantity and payout
-VIPOrderManager.orderLevelCorrectionFactors = {}
-VIPOrderManager.orderLevelCorrectionFactors[1] = {0.40, 0.60, 1.00}
-VIPOrderManager.orderLevelCorrectionFactors[2] = {0.65, 0.80, 1.00}
-VIPOrderManager.orderLevelCorrectionFactors[3] = {0.90, 1.00, 1.00}
-
-
--- Constants for filltype selection
--- VIPOrderManager.fillTypesNeededFruitType = {ALFALFA_WINDROW="ALFALFA", DRYALFALFA_WINDROW="ALFALFA", ALFALFA_FERMENTED="ALFALFA", CLOVER_WINDROW="CLOVER", DRYCLOVER_WINDROW="CLOVER", CLOVER_FERMENTED="CLOVER", Carrot="CARROT"} -- filltype check for maps who not support MaizePlus
-VIPOrderManager.fillTypesNoPriceList = {}
-
--- constants
-VIPOrderManager.maxVIPOrdersCount	= 4		-- Count of already calculated orders (preview)
-VIPOrderManager.abortFeeInPercent = 35
-VIPOrderManager.allowSumQuantitySameFT = false	-- Summarize quantity of same filetypes
-VIPOrderManager.ownFieldArea = 1	-- min field area
-VIPOrderManager.rangeAnimalCheckTime = {min=8, max=17}
-VIPOrderManager.rangeAnimalAgeDifInMonths = {min=5, max=12}
-VIPOrderManager.minOrderLevelDecreaseIfProductionOrAnimalHusbandryExists = 2
-VIPOrderManager.probabilityMultiplierIfProductionOrAnimalHusbandryExists = 2
-
-
-

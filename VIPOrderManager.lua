@@ -1,6 +1,6 @@
 -- Author: Fetty42
--- Date: 08.04.2023
--- Version: 1.3.0.0
+-- Date: 22.10.2023
+-- Version: 1.3.1.0
 
 local dbPrintfOn = false
 local dbInfoPrintfOn = false
@@ -468,7 +468,13 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 		repeat
 			isNextTry = false
 			usableFillType = usableFillTypes[math.random(1, countFillTypes)]
-			ftConfig = VIPOrderManager:GetFillTypeConfig(usableFillType.name, usableFillType.isAnimal)
+			ftConfig = VIPOrderManager:GetFillTypeConfig(usableFillType.name, usableFillType.isAnimal, usableFillType.animalTypeIndex)
+
+			-- animal orders wished?
+			if not isNextTry and not VIPOrderManager.isAnimalOrdersWished and usableFillType.isAnimal then
+				isNextTry = true
+				dbPrintf("    - ft  %s (%s) is animal but animals are not wished --> isNextTry=%s", usableFillType.name, usableFillType.title, isNextTry)	
+			end
 
 			-- Limited?
 			if not isNextTry and ftConfig.isLimited ~= nil and ftConfig.isLimited then
@@ -623,7 +629,7 @@ function VIPOrderManager:CalculateOwnFieldArea()
 end
 
 
-function VIPOrderManager:GetFillTypeConfig(ftName, isAnimal)
+function VIPOrderManager:GetFillTypeConfig(ftName, isAnimal, animalTypeIndex)
     -- dbPrintHeader("VIPOrderManager:GetFillTypeConfig()")
 
 	local ftConfig = VIPOrderManager.ftConfigs[ftName]
@@ -631,7 +637,14 @@ function VIPOrderManager:GetFillTypeConfig(ftName, isAnimal)
 		if g_fruitTypeManager:getFruitTypeByName(ftName) ~= nil then
 			ftConfig = VIPOrderManager.ftConfigs["DEFAULT_FRUITTYPE"]
 		elseif isAnimal then
-			ftConfig = VIPOrderManager.ftConfigs["DEFAULT_ANIMALTYPE"]
+			local configName = "DEFAULT_ANIMALTYPE"
+			if animalTypeIndex == AnimalType.COW then configName = "DEFAULT_ANIMALTYPE_COW"
+			elseif animalTypeIndex == AnimalType.SHEEP then configName = "DEFAULT_ANIMALTYPE_SHEEP"
+			elseif animalTypeIndex == AnimalType.PIG then configName = "DEFAULT_ANIMALTYPE_PIG"
+			elseif animalTypeIndex == AnimalType.HORSE then configName = "DEFAULT_ANIMALTYPE_HORSE"
+			elseif animalTypeIndex == AnimalType.CHICKEN then configName = "DEFAULT_ANIMALTYPE_CHICKEN"
+			end
+			ftConfig = VIPOrderManager.ftConfigs[configName]
 		else
 			ftConfig = VIPOrderManager.ftConfigs["DEFAULT_FILLTYPE"]
 		end
@@ -710,7 +723,7 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
 		local defaultWarningText = string.format("  - %-50s | pricePerLiterMax=%f | ", tempNameOutput, possibleFT.priceMax)
 		local takeTheFillTypeExplicitly = false
 		local ftConfig = nil
-		ftConfig = VIPOrderManager:GetFillTypeConfig(possibleFT.name, possibleFT.isAnimal)
+		ftConfig = VIPOrderManager:GetFillTypeConfig(possibleFT.name, possibleFT.isAnimal, possibleFT.animalTypeIndex)
 
 
 		-- not allowed
@@ -891,7 +904,8 @@ function VIPOrderManager:addAllAnimalFillTypes(possibleFillTypes)
 			end
 			
 			dbPrintf("  - filltype: %s-%s (%s) %s", fillTypeIdx, fillType.name, animalStoreTitle, extraMsg)
-			local price = animalSubType.buyPrice.keyframes[1][1]
+			-- local price = animalSubType.buyPrice.keyframes[1][1]
+			local price = math.floor(math.random(VIPOrderManager.rangeAnimalDummyPrice.min, VIPOrderManager.rangeAnimalDummyPrice.max))
 
 			if possibleFillTypes[fillTypeIdx] == nil then
 				possibleFillTypes[fillTypeIdx] = {}
@@ -907,6 +921,7 @@ function VIPOrderManager:addAllAnimalFillTypes(possibleFillTypes)
 			possibleFillTypes[fillTypeIdx].literPerSqm = 0
 			-- only for animals
 			possibleFillTypes[fillTypeIdx].isAnimal = true
+			possibleFillTypes[fillTypeIdx].animalTypeIndex = animalSubType.typeIndex
 		end
 	end
 end
@@ -1118,7 +1133,8 @@ function VIPOrderManager:saveSettings()
 
 	local settingKey = string.format("%s.Settings", key)
 	-- setXMLInt(xmlFile, key.."#orderLevel", VIPOrderManager.currentOrderLevel);
-	setXMLInt(xmlFile, settingKey..".maxVIPOrdersCount", VIPOrderManager.maxVIPOrdersCount);
+	setXMLInt(xmlFile, settingKey..".maxVIPOrdersCount", VIPOrderManager.maxVIPOrdersCount)
+	setXMLBool(xmlFile, settingKey..".isAnimalOrdersWished", VIPOrderManager.isAnimalOrdersWished)
 	setXMLInt(xmlFile, settingKey..".countOrderItemsRange#Min", VIPOrderManager.countOrderItemsRange.min)
 	setXMLInt(xmlFile, settingKey..".countOrderItemsRange#Max", VIPOrderManager.countOrderItemsRange.max)
 	setXMLInt(xmlFile, settingKey..".quantityFactor#Min", VIPOrderManager.quantityFactor.min)
@@ -1177,6 +1193,7 @@ function VIPOrderManager:loadSettings()
 		if XMLFileVersion == "2.0" then
 			local settingKey = string.format("%s.Settings", key)
 			VIPOrderManager.maxVIPOrdersCount = Utils.getNoNil(getXMLInt(xmlFile, settingKey..".maxVIPOrdersCount"), VIPOrderManager.maxVIPOrdersCount)
+			VIPOrderManager.isAnimalOrdersWished = Utils.getNoNil(getXMLBool(xmlFile, settingKey..".isAnimalOrdersWished"), VIPOrderManager.isAnimalOrdersWished)
 
 			VIPOrderManager.countOrderItemsRange.min = Utils.getNoNil(getXMLInt(xmlFile, settingKey..".countOrderItemsRange#Min"), VIPOrderManager.countOrderItemsRange.min)
 			VIPOrderManager.countOrderItemsRange.max = Utils.getNoNil(getXMLInt(xmlFile, settingKey..".countOrderItemsRange#Max"), VIPOrderManager.countOrderItemsRange.max)

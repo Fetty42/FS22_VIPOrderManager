@@ -1,6 +1,6 @@
 -- Author: Fetty42
--- Date: 22.10.2023
--- Version: 1.3.2.0
+-- Date: 29.03.2024
+-- Version: 1.3.3.0
 
 VIPOrderManager.isAnimalOrdersWished= true
 
@@ -161,7 +161,6 @@ VIPOrderManager.ftConfigs =
 	BEETPULP_FERMENTED		= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
 	MOLASSES				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
 	CLEAREDWATER			= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
-	FEEDPELLETS				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
 	HAYPELLETS				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
 	CHICKENFOOD				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
 	FEEDPELLETS				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
@@ -170,7 +169,6 @@ VIPOrderManager.ftConfigs =
 	PIGFOOD2				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
 	POWERFOOD				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
 	SHEEPFOOD				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
-	EMPTYPALLET				= {isAllowed=false, minOrderLevel=3, quantityCorrectionFactor=0.4, isLimited=false},
 
 	-- standard Animals
 	CHICKEN					= {isAllowed=true, minOrderLevel=2, quantityCorrectionFactor=1.5, isLimited=false, probability=50},

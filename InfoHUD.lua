@@ -1,6 +1,6 @@
 -- Author: Fetty42
--- Date: 08.04.2023
--- Version: 1.3.0.0
+-- Date: 29.03.2024
+-- Version: 1.3.3.0
 
 InfoHUD = {}
 
@@ -20,13 +20,13 @@ end
 
 function InfoHUD.createBackground(hudAtlasPath)
 	-- print("InfoHUD.createBackground")
-	local width, height = getNormalizedScreenValues(unpack(InfoHUD.SIZE.BACKGROUND))
+	local width, height = getNormalizedScreenValues(table.unpack(InfoHUD.SIZE.BACKGROUND))
 	-- local backgroundOverlay = Overlay.new('dataS/menu/blank.png', 0.5, 0.5, width, height)
 	local backgroundOverlay = Overlay.new(hudAtlasPath, 0.5, 0.5, width, height)
 
 	backgroundOverlay:setAlignment(Overlay.ALIGN_VERTICAL_TOP, Overlay.ALIGN_HORIZONTAL_LEFT)
 	backgroundOverlay:setUVs(GuiUtils.getUVs(HUDElement.UV.FILL))
-	backgroundOverlay:setColor(unpack(InfoHUD.COLOR.FRAME))
+	backgroundOverlay:setColor(table.unpack(InfoHUD.COLOR.FRAME))
 
 	return backgroundOverlay
 end

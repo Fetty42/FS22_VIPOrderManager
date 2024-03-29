@@ -1,6 +1,6 @@
 -- Author: Fetty42
--- Date: 22.10.2023
--- Version: 1.3.2.0
+-- Date: 29.03.2024
+-- Version: 1.3.3.0
 
 local dbPrintfOn = false
 local dbInfoPrintfOn = false
@@ -70,6 +70,7 @@ loadSample(VIPOrderManager.failSound, "data/sounds/ui/uiFail.ogg", false)
 
 
 
+source(Utils.getFilename("MyTools.lua", VIPOrderManager.dir))
 source(Utils.getFilename("VIPOrderManagerDefaults.lua", VIPOrderManager.dir))
 source(Utils.getFilename("InfoHUD.lua", VIPOrderManager.dir))
 source(VIPOrderManager.dir .. "gui/OrderFrame.lua")
@@ -462,11 +463,11 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 		i = i + 1
 		dbPrintf(string.format("  %s. Order Item:", i))
 		
-		local fillType = nil
+		local usableFillType = nil
 		local ftConfig = nil
 		local isLimitedFillType = nil
 		repeat
-			isNextTry = false
+			local isNextTry = false
 			usableFillType = usableFillTypes[math.random(1, countFillTypes)]
 			ftConfig = VIPOrderManager:GetFillTypeConfig(usableFillType.name, usableFillType.isAnimal, usableFillType.animalTypeIndex)
 
@@ -488,8 +489,8 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 
 			-- Exists probability
 			if not isNextTry and ftConfig.probability ~= nil and ftConfig.probability < 100 then
-				probability = ftConfig.probability
-				random = math.random() * 100
+				local probability = ftConfig.probability
+				local random = math.random() * 100
 				isNextTry = random > probability
 				dbPrintf("    - ft  %s (%s) has probability: probability=%s, random=%s --> isNextTry=%s", usableFillType.name, usableFillType.title, probability, random, isNextTry)	
 			end
@@ -594,7 +595,7 @@ function VIPOrderManager:CalculateOwnFieldArea()
 	
 	local fieldAreaOverall = 0.0
 	for i, id in pairs(farmlands) do
-		farmland = g_farmlandManager:getFarmlandById(id)
+		local farmland = g_farmlandManager:getFarmlandById(id)
 
 		-- Fields area
 		local fieldCount = 0
@@ -625,7 +626,7 @@ function VIPOrderManager:CalculateOwnFieldArea()
 	-- 	return 0
 	-- end
 
-	return VIPOrderManager:round(fieldAreaOverall, 2)
+	return MyTools:round(fieldAreaOverall, 2)
 end
 
 
@@ -651,7 +652,7 @@ function VIPOrderManager:GetFillTypeConfig(ftName, isAnimal, animalTypeIndex)
 		VIPOrderManager.ftConfigs[ftName] = ftConfig
 	end
 
-	local ftConfigCopy = VIPOrderManager:deepcopy(ftConfig)
+	local ftConfigCopy = MyTools:deepcopy(ftConfig)
 
 	if ftConfigCopy.probability == nil then
 		ftConfigCopy.probability = 100
@@ -728,7 +729,7 @@ function VIPOrderManager:GetUsableFillTypes(usableFillTypes, orderLevel)
 
 		-- not allowed
 		if notUsableWarning == nil and not ftConfig.isAllowed then
-			notUsableWarning = "Not usable, because is not allowed"
+			notUsableWarning = "Not usable, because is not allowed per definition"
         end
 
 		-- not allowed because probability == 0
@@ -844,7 +845,6 @@ function VIPOrderManager:addAllSellableFillTypes(possibleFillTypes)
 
 					if possibleFillTypes[fillTypeIndex] == nil then
                         possibleFillTypes[fillTypeIndex] = {}
-						-- possibleFillTypes[fillTypeIndex].priceMin = price
 						possibleFillTypes[fillTypeIndex].priceMax = price
 						possibleFillTypes[fillTypeIndex].acceptingStations = {}
 						possibleFillTypes[fillTypeIndex].name = fillType.name
@@ -878,7 +878,7 @@ function VIPOrderManager:addAllAnimalFillTypes(possibleFillTypes)
         local fillType = g_fillTypeManager:getFillTypeByIndex(fillTypeIdx)
         local animalSubType = g_currentMission.animalSystem.fillTypeIndexToSubType[fillTypeIdx]
 		if animalSubType == nil then
-			printf("VIPOrderManager:addAllAnimalFillTypes warning: animal filltype without animalSubType: %s-%s (%s)",fillTypeIdx, fillType.name, fillType.title)
+			dbPrintf("VIPOrderManager:addAllAnimalFillTypes warning: animal filltype without animalSubType: %s-%s (%s)",fillTypeIdx, fillType.name, fillType.title)
 		else
 			local animalStoreTitle = VIPOrderManager:GetAnimalTitleByFillTypeIdx(fillTypeIdx)
 
@@ -1033,7 +1033,7 @@ function VIPOrderManager:UpdateOutputLines()
 		infoHud:setDimension(maxTextWidth + 0.01, VIPOrderManager.outputStartPoint.y - posY + fontSize)
 	end
 
-	return isOrderCompleted and VIPOrderManager:getCountElements(VIPOrder.entries) > 0
+	return isOrderCompleted and MyTools:getCountElements(VIPOrder.entries) > 0
 end
 
 
@@ -1106,14 +1106,14 @@ end
 function VIPOrderManager:renderText(x, y, size, text, bold, colorId, align)
     -- dbPrintHeader("VIPOrderManager:renderText()")
 
-	setTextColor(unpack(VIPOrderManager.colors[colorId][2]))
+	setTextColor(table.unpack(VIPOrderManager.colors[colorId][2]))
 	setTextBold(bold)
 	setTextAlignment(align)
 	renderText(x, y, size, text)
 	
 	-- Back to defaults
 	setTextBold(false)
-	setTextColor(unpack(VIPOrderManager.colors[1][2])) --Back to default color which is white
+	setTextColor(table.unpack(VIPOrderManager.colors[1][2])) --Back to default color which is white
 	setTextAlignment(RenderText.ALIGN_LEFT)
 end
 
@@ -1231,16 +1231,14 @@ function VIPOrderManager:loadSettings()
 							
 							-- check if target station still exists
 							if targetStationName ~= nil and targetStation == nil then								
-								dbInfoPrintf("VIPOrderManager: Warning, the target station \"%s\" no longer exists", targetStationName)
+								print(string.format("VIPOrderManager: Warning, the target station \"%s\" no longer exists", targetStationName))
 							end
 							-- check if filltype still exists
 							local fillType = g_fillTypeManager:getFillTypeByName(fillTypeName)
 							if fillType == nil then
 								error = true
-								dbInfoPrintf("VIPOrderManager: Warning, the filltype \"%s\" no longer exists", fillTypeName)
-							end
-
-							if not error then
+								print(string.format("VIPOrderManager: Warning, the filltype \"%s\" no longer exists", fillTypeName))
+							else
 								local ftTitle
 								if isAnimal then
 									ftTitle = VIPOrderManager:GetAnimalTitleByFillTypeIdx(fillType.index, neededAgeInMonths)
@@ -1317,7 +1315,7 @@ function VIPOrderManager.sellingStation_addFillLevelFromTool(station, superFunc,
 
 	if moved > 0 and VIPOrderManager.VIPOrders ~= nil and VIPOrderManager.VIPOrders[1] ~= nil then
         local orderEntry = VIPOrderManager.VIPOrders[1].entries[ft.name]
-        -- dbPrintf("  Anzahl Order Items=%s", VIPOrderManager:getCountElements(VIPOrderManager.currentVIPOrder))
+        -- dbPrintf("  Anzahl Order Items=%s", TyTools:getCountElements(VIPOrderManager.currentVIPOrder))
 		if orderEntry ~= nil then
 			if orderEntry.targetStation == nil or orderEntry.targetStation == station then
 				orderEntry.fillLevel = math.min(orderEntry.fillLevel + moved, orderEntry.quantity)
@@ -1340,42 +1338,3 @@ function VIPOrderManager:mouseEvent(posX, posY, isDown, isUp, button)end;
 addModEventListener(VIPOrderManager);
 
 
--- ************************************************************************************************
--- Utilities
--- ************************************************************************************************
-
-function VIPOrderManager:getCountElements(myTable)
-	local i = 0
-	for _, _ in pairs(myTable) do
-		i = i + 1
-	end
-	return i	
-end
-
-function VIPOrderManager:round(num, numDecimalPlaces)
-	local mult = 10^(numDecimalPlaces or 0)
-	return math.floor(num * mult + 0.5) / mult
-end
-
--- Save copied tables in `copies`, indexed by original table.
--- http://lua-users.org/wiki/CopyTable
-function VIPOrderManager:deepcopy(orig, copies)
-    copies = copies or {}
-    local orig_type = type(orig)
-    local copy
-    if orig_type == 'table' then
-        if copies[orig] then
-            copy = copies[orig]
-        else
-            copy = {}
-            copies[orig] = copy
-            for orig_key, orig_value in next, orig, nil do
-                copy[VIPOrderManager:deepcopy(orig_key, copies)] = VIPOrderManager:deepcopy(orig_value, copies)
-            end
-            setmetatable(copy, VIPOrderManager:deepcopy(getmetatable(orig), copies))
-        end
-    else -- number, string, boolean, etc
-        copy = orig
-    end
-    return copy
-end

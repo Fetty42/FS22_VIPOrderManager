@@ -1,6 +1,6 @@
 -- Author: Fetty42
--- Date: 08.04.2023
--- Version: 1.3.0.0
+-- Date: 29.03.2024
+-- Version: 1.3.3.0
 
 
 local dbPrintfOn = false
@@ -22,6 +22,7 @@ OrderFrame = {
 		BUTTON_TAG = "buttonTag"
 	}
 }
+source(VIPOrderManager.dir .. "MyTools.lua")
 local OrderFrame_mt = Class(OrderFrame, MessageDialog)
 
 function OrderFrame.new(target, custom_mt)
@@ -83,7 +84,7 @@ function OrderFrame:setVIPOrders(VIPOrders)
 				if vipOrderEntry.targetStation.owningPlaceable.spec_hotspots ~= nil  and vipOrderEntry.targetStation.owningPlaceable.spec_hotspots.mapHotspots ~= nil then
 
 					for _, mapHotspot in ipairs(vipOrderEntry.targetStation.owningPlaceable.spec_hotspots.mapHotspots) do
-						if not p and mapHotspot.worldX ~= nil and mapHotspot.worldZ ~= nil then
+						if mapHotspot.worldX ~= nil and mapHotspot.worldZ ~= nil then
 							orderEntry.mapHotspot = mapHotspot
 						end
 					end
@@ -155,16 +156,16 @@ function OrderFrame:populateCellForItemInSection(list, section, index, cell)
 	cell:getAttribute("payout").textBold = bold
 	cell:getAttribute("targetStationTitle").textBold = bold
 
-	cell:getAttribute("ftTitle"):setTextColor(unpack(color))
-	cell:getAttribute("ftTitle"):setTextSelectedColor(unpack(colorSelected))
+	cell:getAttribute("ftTitle"):setTextColor(table.unpack(color))
+	cell:getAttribute("ftTitle"):setTextSelectedColor(table.unpack(colorSelected))
 	cell:getAttribute("quantity").textColor = color
-	cell:getAttribute("quantity"):setTextSelectedColor(unpack(colorSelected))
+	cell:getAttribute("quantity"):setTextSelectedColor(table.unpack(colorSelected))
 	cell:getAttribute("fillLevel").textColor = color
-	cell:getAttribute("fillLevel"):setTextSelectedColor(unpack(colorSelected))
+	cell:getAttribute("fillLevel"):setTextSelectedColor(table.unpack(colorSelected))
 	cell:getAttribute("payout").textColor = color
-	cell:getAttribute("payout"):setTextSelectedColor(unpack(colorSelected))
+	cell:getAttribute("payout"):setTextSelectedColor(table.unpack(colorSelected))
 	cell:getAttribute("targetStationTitle").textColor = color
-	cell:getAttribute("targetStationTitle"):setTextSelectedColor(unpack(colorSelected))
+	cell:getAttribute("targetStationTitle"):setTextSelectedColor(table.unpack(colorSelected))
 
 	-- dbPrintf("** Start DebugUtil.printTableRecursively() ************************************************************")
 	-- DebugUtil.printTableRecursively(cell:getAttribute("targetStationTitle"), ".", 0, 2)

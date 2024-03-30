@@ -30,6 +30,7 @@ Für Fehlermeldungen oder Anregungen besucht bitte: https://github.com/Fetty42/F
 
 Update 1.3.3
 - kleinere Codekorrekturen
+- in seltenen Fällen waren die Tastenaktionen nicht verfügbar
 
 Update 1.3.2
 - Implementierung des Schalters "isAnimalOrdersWished"
@@ -270,8 +271,8 @@ Update 1.1.0
 		<sourceFile filename="VIPOrderManager.lua" />
 	</extraSourceFiles>    
 	<actions>
-    	<action name="ShowCurrentVIPOrder" category="PLAYER VEHICLE" />
-      	<action name="ShowVIPOrderDlg" category="PLAYER VEHICLE" />
+    	<action name="ShowCurrentVIPOrder" category="SYSTEM" />
+      	<action name="ShowVIPOrderDlg" category="SYSTEM" />
   	</actions>	
   	<inputBinding>
       	<actionBinding action="ShowCurrentVIPOrder">

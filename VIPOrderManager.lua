@@ -910,7 +910,7 @@ function VIPOrderManager:addAllAnimalFillTypes(possibleFillTypes)
 			if possibleFillTypes[fillTypeIdx] == nil then
 				possibleFillTypes[fillTypeIdx] = {}
 			else
-				printf("VIPOrderManager:addAllAnimalFillTypes warning: animal filltype already exists: %s-%s (%s)", fillTypeIdx, fillType.name, animalStoreTitle)
+				dbPrintf("VIPOrderManager:addAllAnimalFillTypes warning: animal filltype already exists: %s-%s (%s)", fillTypeIdx, fillType.name, animalStoreTitle)
 			end
 			possibleFillTypes[fillTypeIdx].priceMax = price
 			possibleFillTypes[fillTypeIdx].acceptingStations = {}

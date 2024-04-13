@@ -27,7 +27,6 @@ VIPOrderManager.maxVIPOrdersCount	= 4		-- Count of already calculated orders (pr
 VIPOrderManager.abortFeeInPercent = 35
 VIPOrderManager.allowSumQuantitySameFT = false	-- Summarize quantity of same filetypes
 VIPOrderManager.ownFieldArea = 1	-- min field area
-VIPOrderManager.rangeAnimalCheckTime = {min=8, max=17}
 VIPOrderManager.rangeAnimalAgeDifInMonths = {min=5, max=12}
 VIPOrderManager.rangeAnimalDummyPrice = {min=500, max=800}
 VIPOrderManager.minOrderLevelDecreaseIfProductionOrAnimalHusbandryExists = 2

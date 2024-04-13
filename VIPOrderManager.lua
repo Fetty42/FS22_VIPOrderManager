@@ -97,7 +97,7 @@ end;
 function VIPOrderManager:onHourChanged(hour)
     dbPrintHeader("VIPOrderManager:onHourChanged()")
 
-	if hour >= VIPOrderManager.rangeAnimalCheckTime.min and hour <= VIPOrderManager.rangeAnimalCheckTime.max  and VIPOrderManager.VIPOrders ~= nil and VIPOrderManager.VIPOrders[1] ~= nil then
+	if VIPOrderManager.VIPOrders ~= nil and VIPOrderManager.VIPOrders[1] ~= nil then
 		local farmId = g_currentMission.player.farmId;
 		local isWarning = false
 		local currentVipOrder = VIPOrderManager.VIPOrders[1]

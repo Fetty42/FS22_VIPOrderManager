@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<GUI onOpen="onOpen" onClose="onClose" onCreate="onCreate">
+    <GuiElement type="empty" profile="newLayer" />
+    <GuiElement type="bitmap" profile="dialogFullscreenBg" />
+    <GuiElement type="bitmap" profile="bgVignette"/>
+    <GuiElement type="bitmap" profile="bgGlowDialog" />
+    <GuiElement type="bitmap" profile="dialogBg" id="dialogElement" size="1700px 650px" imageColor="0.118 0.116 0.115 0.50">        
+        <GuiElement type="text" profile="dialogTitle" text="$l10n_ui_AvaliableTypesDlg_title" id="dialogTitleElement" position="0px -30px" />
+    
+        <!-- Main list -->
+        <GuiElement type="bitmap" profile="ingameMenuHeaderBox" id="tableHeaderBox" position="50px -100px" size="1600px 50px" imageColor="$preset_colorBlack2">
+            <GuiElement type="text" profile="ingameMenuHeaderCellLeft" position="20px -0px" size="350px 40.77px" text="$l10n_ui_AvaliableTypesDlg_title_title"/>
+            <GuiElement type="text" profile="ingameMenuHeaderCellRight" position="380px -0px" size="100px 40.77px" text="$l10n_ui_AvaliableTypesDlg_title_minOrderLevel"/>
+            <GuiElement type="text" profile="ingameMenuHeaderCellRight" position="490px -0px" size="130px 40.77px" text="$l10n_ui_AvaliableTypesDlg_title_probability"/>
+            <GuiElement type="text" profile="ingameMenuHeaderCellRight" position="640px -0px" size="150px 40.77px" text="$l10n_ui_AvaliableTypesDlg_title_quantityCorrectionFactor"/>
+            <GuiElement type="text" profile="ingameMenuHeaderCellLeft" position="810px -0px" size="980px 40.77px" text="$l10n_ui_AvaliableTypesDlg_title_msg"/>
+        </GuiElement>
+
+        <GuiElement type="smoothList" profile="ingameMenuContractsList" id="typesTable" listSectionHeader="section" position="50px -150px" size="1600px 450px" focusInit="onOpen" focusChangeTop="nil" focusChangeBottom="nil">
+            <GuiElement type="listItem" profile="ingameMenuContractsListItem" name="orderRowTemplate" size="1600px 40.77px">
+                <GuiElement type="bitmap" profile="emptyPanel">
+                    <GuiElement type="bitmap" profile="ingameMenuFillTypeImage" position="5px 5px" name="ftIcon" />
+                    <GuiElement type="text" profile="ingameMenuRowCellLeft" position="40px 0px" size="350px 40.77px" name="ftTitle"/>
+                    <GuiElement type="text" profile="ingameMenuRowCellRight" position="380px 0px" size="100px 40.77px" name="minOrderLevel" textAlignment="right"/>
+                    <GuiElement type="text" profile="ingameMenuRowCellRight" position="490px 0px" size="130px 40.77px" name="probability" textAlignment="right"/>
+                    <GuiElement type="text" profile="ingameMenuRowCellRight" position="640px 0px" size="150px 40.77px" name="quantityCorrectionFactor"/>
+                    <GuiElement type="text" profile="ingameMenuRowCellLeft" position="810px 0px" size="800px 40.77px" name="msg" textSize="14px" textMaxNumLines="2"/>
+                </GuiElement>
+            </GuiElement>
+            <GuiElement type="listItem" profile="ingameMenuContractsListCategory" name="section">
+                <GuiElement type="text" profile="ingameMenuContractsListCategoryTitle" name="title" textSize="18px"/>
+            </GuiElement>
+        </GuiElement>
+        <GuiElement type="threePartBitmap" profile="verticalListSliderRightDocked" position="-25px -150px" size="12px 450px">
+            <GuiElement type="slider" profile="verticalListSliderBar" size="6px 442px" dataElementId="typesTable" id="tableSlider"/>
+        </GuiElement>  
+
+        <!-- Buttons -->
+        <GuiElement type="flowLayout" profile="buttonBoxDialog">
+            <GuiElement type="button" profile="buttonBack" text="$l10n_ui_orderDlg_btnClose" onClick="onClickClose" />
+        </GuiElement>
+    </GuiElement>
+</GUI>

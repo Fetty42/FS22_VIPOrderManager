@@ -9,18 +9,18 @@
     </title>
     <description>
         <de><![CDATA[Der VIP Order Manager bietet dem Landwirt VIP Aufträge an, die aus mehreren zu liefernden Produkten bestehen. 
-Pro Produkt mit expliziter Vorgabe der zu liefernden Menge und des Zielortes. Zusätzlich zum aktuellen VIP Auftrag kann man auch bereits die nächsten drei folgenden VIP Aufträge sehen.
+Pro Produkt mit expliziter Vorgabe der zu liefernden Menge und des Zielortes. Zusätzlich zum aktuellen VIP Auftrag kann man auch bereits die nächsten folgenden VIP Aufträge sehen.
 Es kann aber nur der aktuelle Auftrag beliefert werden.
+Auch Tier-Aufträge werden generiert. Hierbei ist zu beachten, dass die Lieferung automatisch erfolgt. Es wird stündlich überprüft, ob Tiere mit dem exakten angeforderten Alter existieren und diese mindestens eine Gesundheit von 75% haben.
 
 Mit STRG rechts + O wird der aktuelle Auftrag für einige Sekunden eingeblendet. Mit ALT rechts + O wird die Übersicht über alle VIP Aufträge angezeigt.
 In dieser Ansicht kann man auch den aktuellen VIP Auftrag gegen eine Gebühr, für die noch nicht erfüllten Teilaufträge, abbrechen.
 
 Mit jedem VIP Auftrag wird der aktuelle Level erhöht und damit auch die Anzahl der enthaltenen Einzelaufträge und die zu liefernden Mengen erhöht und die Erlöse verringert. 
 Auch die im Besitz befindliche Fläche wird bei der Berechnung berücksichtigt. Mit steigendem Level werden auch weitere Produkte berücksichtigt. 
-Da ich selbst lieber mit kleinen Feldern spiele, ist die Berechnung hierauf optimiert.
 
 Bereits mit dem LS19 hatte ich angefangen den VIP Order Manager zu entwickeln, um so etwas wie Kampagnen abzubilden. Ich wollte das Spiel etwas interessanter gestalten, 
-in dem mir Vorgegeben wird, was ich anbauen muss.
+in dem mir vorgegeben wird, was ich anbauen muss.
 
 Multiplayer wird derzeit nicht unterstützt. 
 
@@ -31,6 +31,7 @@ Für Fehlermeldungen oder Anregungen besucht bitte: https://github.com/Fetty42/F
 Update 1.3.3
 - kleinere Codekorrekturen
 - in seltenen Fällen waren die Tastenaktionen nicht verfügbar
+- Die automatische Überprüfung und Belieferung der Tieraufträge erfolgt jetzt nicht mehr nur im Zeitraum von 08:00 bis 17:00 Uhr
 
 Update 1.3.2
 - Implementierung des Schalters "isAnimalOrdersWished"
@@ -61,15 +62,15 @@ Update 1.1.0
 - erste kleine Multiplayer-Anpassungen (noch nicht multiplayerkompatibel)]]></de>
 
 		<en><![CDATA[The VIP Order Manager offers the farmer VIP orders consisting of several products to be delivered. 
-For each product with explicit specification of the quantity to be delivered and the destination. In addition to the current VIP order, the next three VIP orders to follow can also be seen.
+For each product with explicit specification of the quantity to be delivered and the destination. In addition to the current VIP order, the next VIP orders to follow can also be seen.
 However, only the current order can be delivered.
+Animal orders are also generated. Please note that delivery is automatic. It is checked every hour whether animals exist with the exact requested age and whether they have at least 75% health.
 
 With CTRL right + O the current order is displayed for a few seconds. ALT right + O displays the overview of all VIP Orders.
 In this view, you can also cancel the current VIP Order for a fee for the partial orders that have not yet been fulfilled.
 
 With each VIP Order, the current level is increased and thus also the number of individual orders contained and the quantities to be delivered are increased and the revenues are reduced. 
 The area owned is also taken into account in the calculation. As the level increases, more products are also taken into account. 
-Since I prefer to play with small fields myself, the calculation is optimised for this.
 
 Already with FS19, I had started to develop the VIP Order Manager to represent something like campaigns. I wanted to make the game a little more interesting, 
 by telling me what I have to grow.
@@ -83,6 +84,7 @@ For any error messages or suggestions, please visit: https://github.com/Fetty42/
 Update 1.3.3
 - small code corrections
 - in rare cases the key actions were not available
+- The automatic checking and delivery of animal orders no longer only takes place between 08:00 and 17:00
 
 Update 1.3.2
 - Implementation of the switch "isAnimalOrdersWished"
@@ -116,13 +118,13 @@ Update 1.1.0
 		<fr><![CDATA[Le VIP Order Manager propose à l'agriculteur des commandes VIP composées de plusieurs produits à livrer. 
 Pour chaque produit, la quantité à livrer et le lieu de destination sont explicitement indiqués. En plus de l'ordre VIP actuel, on peut déjà voir les trois prochains ordres VIP.
 Mais seule la commande actuelle peut être livrée.
+Des commandes d'animaux sont également générées. Il convient de noter que la livraison est automatique. Il est vérifié toutes les heures s'il existe des animaux ayant l'âge exact demandé et s'ils ont une santé d'au moins 75%.
 
 Avec CTRL droite + O, la commande actuelle est affichée pendant quelques secondes. ALT droite + O permet d'afficher la vue d'ensemble de toutes les commandes VIP.
 Dans cette vue, il est également possible d'annuler la commande VIP actuelle moyennant une taxe pour les commandes partielles non encore exécutées.
 
 Avec chaque commande VIP, le niveau actuel est augmenté et donc le nombre de commandes individuelles contenues et les quantités à livrer augmentent et les recettes diminuent. 
 La surface détenue est également prise en compte dans le calcul. Au fur et à mesure que le niveau augmente, d'autres produits sont également pris en compte. 
-Comme je préfère jouer avec de petites parcelles, le calcul est optimisé à cet effet.
 
 Avec LS19, j'avais déjà commencé à développer le VIP Order Manager pour représenter quelque chose comme des campagnes. Je voulais rendre le jeu un peu plus intéressant, 
 en me donnant des indications sur ce que je dois cultiver.
@@ -136,6 +138,7 @@ Pour les messages d'erreur ou les suggestions, veuillez visiter : https://github
 Update 1.3.3
 - corrections mineures du code
 - dans de rares cas, les actions des touches n'étaient pas disponibles
+- Le contrôle et la livraison automatiques des commandes d'animaux ne s'effectuent plus uniquement entre 08h00 et 17h00
 
 Update 1.3.2
 - Implémentation du commutateur "isAnimalOrdersWished"
@@ -168,13 +171,13 @@ Update 1.1.0
 	    	<it><![CDATA[Il VIP Order Manager offre all'agricoltore ordini VIP composti da diversi prodotti da consegnare. 
 Per ogni prodotto sono esplicitamente indicati la quantità da consegnare e il luogo di destinazione. Oltre all'ordine VIP corrente, puoi già vedere i successivi tre ordini.
 Tuttavia, solo l'ordine corrente può essere consegnato.
+Vengono generati anche ordini di animali. Si noti che la consegna è automatica. Il sistema controlla ogni ora se esistono animali dell'età esatta richiesta e se sono sani almeno al 75%.
 
 Con CTRL destro + O viene visualizzato per alcuni secondi l'ordine corrente. ALT destra + O mostra la panoramica di tutti gli ordini VIP.
 In questa visualizzazione, puoi anche annullare l'Ordine VIP in corso pagando una commissione per gli ordini parziali che non sono ancora stati evasi.
 
 Con ogni ordine VIP si aumenta il livello attuale e quindi si aumenta anche il numero dei singoli ordini contenuti e le quantità da consegnare e si riducono i ricavi. 
 Nel calcolo si tiene conto anche dell'area di proprietà. All'aumentare del livello, vengono presi in considerazione anche più prodotti. 
-Since I prefer to play with small fields myself, the calculation is optimised for this.
 
 Già con FS19, avevo iniziato a sviluppare il VIP Order Manager per rappresentare qualcosa di simile alle campagne. Volevo rendere il gioco un po' più interessante,
 dicendomi cosa devo coltivare.
@@ -188,6 +191,7 @@ Per eventuali messaggi di errore o suggerimenti, visitare: https://github.com/Fe
 Update 1.3.3
 - Correzioni minori del codice
 - in rari casi le azioni chiave non erano disponibili
+- Il controllo automatico e la consegna degli ordini di animali non avviene più solo tra le 08:00 e le 17:00
 
 Update 1.3.2
 - Implementazione dell'interruttore "isAnimalOrdersWished
@@ -220,13 +224,13 @@ Update 1.1.0
 		<ru><![CDATA[Менеджер VIP-заказов предлагает фермеру VIP-заказы, состоящие из нескольких продуктов, которые необходимо доставить. 
 Для каждой продукции указано количество, которое необходимо доставить, и пункт назначения. В дополнение к активному VIP-заказу, также можно увидеть следующие три VIP-заказа.
 Однако доставка будет производится только для текущего заказа.
+Также формируются заказы на животных. Обратите внимание, что доставка осуществляется автоматически. Система каждый час проверяет наличие животных требуемого возраста и их здоровье не менее чем на 75%.
 
 Нажав CTRL Right + O - в течение нескольких секунд будет отображается текущий заказ. Alt Right + O  - обзор всех VIP-заказов.
 Здесь вы также можете отменить текущий VIP-заказ возместив ущерб за часть заказов, которые еще не выполнены.
 
 С каждым VIP-заказом увеличивается текущий уровень, и, следовательно, количество отдельных заказов и объём, который необходимо доставить, а доходы уменьшаются.
 В рамках расчета также учитывается площадь полей в собственности. По мере увеличения уровня также учитывается больше продуктов.
-Поскольку я предпочитаю играть с небольшими полями, расчет оптимизирован именно для этого.
 
 Уже с FS19 я начал разрабатывать менеджера VIP-заказов, чтобы представлять что-то вроде кампаний. Я хотел сделать игру немного более интересной, намекая мне, что я должен расти.
 
@@ -239,6 +243,7 @@ Update 1.1.0
 Update 1.3.3
 - Незначительные исправления кода
 - в редких случаях ключевые действия были недоступны
+- Автоматическая проверка и доставка заказов на животных теперь осуществляется не только с 08:00 до 17:00
 
 Update 1.3.2
 - Реализация переключателя "isAnimalOrdersWished"
@@ -298,7 +303,7 @@ Update 1.1.0
 			<de>Anzeige des VIP Auftragsdialogs</de>
 			<en>Shows VIP Orders Dialog</en>
 			<fr>Affiche la boîte de dialogue des commandes VIP</fr>
-			<it>Mostra la panoramnica degli Ordini VIP</it>
+			<it>Mostra la panoramica degli Ordini VIP</it>
 			<ru>Обзор VIP-заказов</ru>
 		</text>
 
@@ -454,19 +459,107 @@ Update 1.1.0
 			<it>Cancellare il marcatore</it>
 			<ru>Удалить маркер</ru>
 		</text>		
+        <text name="ui_orderDlg_btnAvailableTypes">
+			<de>Verfügbare Lieferprodukte anzeigen</de>	
+			<en>Show available delivery products</en>
+			<fr>Afficher les produits de livraison disponibles</fr>
+			<it>Mostra i prodotti di consegna disponibili</it>
+			<ru>Показать доступные товары для доставки</ru>
+		</text>		
         <text name="ui_orderDlg_section_active">
 			<de>Level %s - Auszahlung: %s (Aktiv)</de>	
 			<en>Level %s - Payout: %s (Active)</en>
-			<fr>Niveau %s - Paiement: %s (Actif)</fr>
+			<fr>Level %s - Paiement: %s (Actif)</fr>
 			<it>Livello %s - Pagamento: %s (Attivo)</it>
 			<ru>Уровень %s - Выплата: %s (активный)</ru>
 		</text>		
         <text name="ui_orderDlg_section_notactive">
 			<de>Level %s - Auszahlung: %s</de>	
 			<en>Level %s - Payout: %s</en>
-			<fr>Niveau %s - Paiement: %s</fr>
+			<fr>Level %s - Paiement: %s</fr>
 			<it>Livello %s - Pagamento: %s</it>
 			<ru>Уровень %s - Выплата: %s</ru>
 		</text>		
+        <text name="ui_AvaliableTypesDlg_title">
+			<de>Verfügbare Lieferprodukte</de>	
+			<en>Available delivery products</en>
+			<fr>Produits de livraison disponibles</fr>
+			<it>Prodotti di consegna disponibili</it>
+			<ru>Доступные товары для доставки</ru>
+		</text>		
+		<text name="ui_AvaliableTypesDlg_title_title">
+			<de>Lieferprodukt</de>	
+			<en>Delivery product</en>
+			<fr>Produit livré</fr>
+			<it>Consegna prodotto</it>
+			<ru>Продукт доставки</ru>
+		</text>
+		<text name="ui_AvaliableTypesDlg_title_minOrderLevel">
+			<de>min. Level</de>	
+			<en>min. level</en>
+			<fr>min. Level</fr>
+			<it>min. livello</it>
+			<ru>мин. уровень</ru>
+		</text>
+		<text name="ui_AvaliableTypesDlg_title_probability">
+			<de>Wahrscheinlichkeit</de>	
+			<en>Probability</en>
+			<fr>Probabilité</fr>
+			<it>Probabilità</it>
+			<ru>Вероятность</ru>
+		</text>
+		<text name="ui_AvaliableTypesDlg_title_msg">
+			<de>Kommentar</de>	
+			<en>Comment</en>
+			<fr>Commentaire</fr>
+			<it>Commento</it>
+			<ru>Комментарий</ru>
+		</text>
+		<text name="ui_AvaliableTypesDlg_title_quantityCorrectionFactor">
+			<de>Korr. Menge</de>	
+			<en>Corr. Quantity</en>
+			<fr>Corr. Quantité</fr>
+			<it>Corr. Quantità</it>
+			<ru>Корр. Количество</ru>
+		</text>
+
+
+
+
+
+		<text name="ui_AvailableTypesDlg_sectionTitle_fruitTypes">
+			<de>Fruchttypen</de>	
+			<en>Fruit Types</en>
+			<fr>Types de remplissage disponibles</fr>
+			<it>Tipi di riempimento disponibili</it>
+			<ru>Доступные типы наполнения</ru>
+		</text>
+		<text name="ui_AvailableTypesDlg_sectionTitle_fillTypes">
+			<de>Fülltypen</de>	
+			<en>Fill Types</en>
+			<fr>Types de remplissage disponibles</fr>
+			<it>Tipi di riempimento disponibili</it>
+			<ru>Доступные типы наполнения</ru>
+		</text>
+		<text name="ui_AvailableTypesDlg_sectionTitle_animals">
+			<de>Tiere</de>	
+			<en>Animals</en>
+			<fr>Types de remplissage disponibles</fr>
+			<it>Tipi di riempimento disponibili</it>
+			<ru>Доступные типы наполнения</ru>
+		</text>
+		<text name="ui_AvailableTypesDlg_sectionTitle_notUseable">
+			<de>Nicht verwendbar</de>	
+			<en>Not Useable</en>
+			<fr>Types de remplissage disponibles</fr>
+			<it>Tipi di riempimento disponibili</it>
+			<ru>Доступные типы наполнения</ru>
+		</text>
+
+
+
+
+
+
 	</l10n>
 </modDesc>

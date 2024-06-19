@@ -19,10 +19,16 @@ OrderFrame = {
         TABLE = "orderTable",
         TABLE_TEMPLATE = "orderRowTemplate",
 		BUTTON_ABORT = "buttonAbort",
-		BUTTON_TAG = "buttonTag"
+		BUTTON_TAG = "buttonTag",
+		BUTTON_SHOWTYPES = "buttonShowTypes"
 	}
 }
+
+OrderFrame.availableTypesDlg	= nil
 source(VIPOrderManager.dir .. "MyTools.lua")
+source(VIPOrderManager.dir .. "gui/AvailableTypesDlgFrame.lua")
+
+
 local OrderFrame_mt = Class(OrderFrame, MessageDialog)
 
 function OrderFrame.new(target, custom_mt)
@@ -218,4 +224,109 @@ function OrderFrame:onTagLocation(m)
             g_currentMission:setMapTargetHotspot(self.mapHotspot)
         end
     end
+end
+
+
+function OrderFrame:onShowAvailableTypes(m)
+	dbPrintf("OrderFrame:onShowAvailableTypes()")
+
+	-- fill table
+	local data = {}
+	
+	local groupNameSections = {}
+
+	local sectionNotUseable = {}
+	sectionNotUseable.sectionTitle = g_i18n:getText("ui_AvailableTypesDlg_sectionTitle_notUseable")
+	sectionNotUseable.sectionOrder = 99
+	sectionNotUseable.items = {}
+	table.insert(data, sectionNotUseable)
+
+	-- create table for groupName --> idx searching
+	local groupNameSettingsByGroupNameToIdx = {}
+	for idx, gns in pairs(VIPOrderManager.groupNameSettings) do
+		groupNameSettingsByGroupNameToIdx[gns.groupName] = idx
+	end
+
+	local relevantFillTypes = {};
+	VIPOrderManager:GetRelevantFillTypes(relevantFillTypes)
+	for index, ft in pairs(relevantFillTypes) do
+		local ftConfig = ft.ftConfig
+
+		local item = {}
+		item.title = string.format("%s (%s)", ft.title, ft.name)
+		item.hudOverlayFilename = g_fillTypeManager:getFillTypeByName(ft.name).hudOverlayFilename
+		item.minOrderLevel = ftConfig.minOrderLevel
+		item.probability = ftConfig.probability
+		item.quantityCorrectionFactor = ft.ftConfig.quantityCorrectionFactor
+		item.sortAttribut = Utils.getNoNil(ft.animalTypeName, "")
+
+		-- item.acceptingStationsString = ft.acceptingStationsString
+
+		if ft.isUsable ~= nil and not ft.isUsable then
+			item.msg = ft.notUsableMsg
+			table.insert(sectionNotUseable.items, item)
+		else
+			item.msg = MyTools:tableToString(ftConfig.msg, "; ")
+
+			-- add food consumtion for animals
+			if ft.isAnimal then
+				local strFoodConsumption = VIPOrderManager:GetAnimalFoodConsumptionPerMonthStringByFillTypeIdx(g_fillTypeManager:getFillTypeIndexByName(ft.name))
+				item.msg = item.msg .. "; " .. strFoodConsumption
+			end
+
+
+			if groupNameSections[ftConfig.groupName] == nil then
+				local newSection = {}
+				newSection.sectionTitle = g_i18n:getText("ui_AvailableTypesDlg_sectionTitle_" .. ftConfig.groupName)
+				newSection.sectionOrder = groupNameSettingsByGroupNameToIdx[ftConfig.groupName]
+				if newSection.sectionTitle == nil or newSection.sectionTitle == "" or string.find(newSection.sectionTitle, "Missing '") then	-- "Missing 'ui_AvailableTypesDlg_sectionTitle_fruit' in l10n_de.xml"
+					newSection.sectionTitle = "** " .. ftConfig.groupName .. " **"
+				end
+				
+				newSection.items = {}
+				table.insert(data, newSection)
+				groupNameSections[ftConfig.groupName] = newSection
+			end
+
+			table.insert(groupNameSections[ftConfig.groupName].items, item)
+		end
+	end
+	
+	-- order section items
+	-- table.sort(sectionAnimal.items, function(a,b) return a.title < b.title end)
+	table.sort(sectionNotUseable.items, CompItem)
+	
+	for index, section in pairs(groupNameSections) do
+		table.sort(section.items, CompItem)
+	end
+
+	-- order sections
+	table.sort(data, CompSection)
+
+	-- create and show dialog
+	OrderFrame.availableTypesDlg	= nil
+    local modDir = VIPOrderManager.dir
+	g_gui:loadProfiles(modDir .. "gui/guiProfiles.xml")
+	local availableTypesDlgFrame = AvailableTypesDlgFrame.new(g_i18n)
+	g_gui:loadGui(modDir .. "gui/AvailableTypesDlgFrame.xml", "AvailableTypesDlgFrame", availableTypesDlgFrame)
+	OrderFrame.availableTypesDlg = g_gui:showDialog("AvailableTypesDlgFrame")
+
+	if OrderFrame.availableTypesDlg ~= nil then
+		OrderFrame.availableTypesDlg.target:InitData(data)
+    end
+	dbPrintf("OrderFrame:onShowAvailableTypes() --> End function")
+end
+
+function CompItem(a,b)
+	-- if a.minOrderLevel ~= b.minOrderLevel then
+	-- 	return a.minOrderLevel < b.minOrderLevel
+	if a.probability ~= b.probability then
+		return a.probability > b.probability
+	else
+			return a.sortAttribut .. a.title < b.sortAttribut .. b.title
+	end
+end
+
+function CompSection(a,b)
+	return a.sectionOrder < b.sectionOrder
 end

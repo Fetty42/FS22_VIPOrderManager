@@ -43,6 +43,10 @@
             <GuiElement type="button" profile="buttonBack" text="$l10n_ui_orderDlg_btnClose" onClick="onClickBack" />
             <GuiElement type="button" profile="buttonExtra1" text="$l10n_ui_orderDlg_btnAbort" onClick="onClickAbort" id="buttonAbort" />
             <GuiElement type="button" profile="buttonOK" text="$l10n_ui_orderDlg_btnTagSellPoint" onClick="onTagLocation" id="buttonTag" />
+            <GuiElement type="button" profile="buttonActivate" text="$l10n_ui_orderDlg_btnAvailableTypes" onClick="onShowAvailableTypes" id="buttonShowTypes" />
+            <!-- buttonActivate -->
+            <!-- buttonSelect -->
+
         </GuiElement>
     </GuiElement>
 </GUI>

@@ -1,12 +1,13 @@
 -- Author: Fetty42
--- Date: 29.03.2024
--- Version: 1.3.3.0
+-- Date: 20.10.2024
+-- Version: 1.4.0.0
 
 VIPOrderManager.isAnimalOrdersWished= true
 
 -- orders definition for order level 1 and own field area of 1 ha
 VIPOrderManager.countOrderItemsRange = {min=3, max=5}
-VIPOrderManager.quantityFactor = {min=5, max=7}
+VIPOrderManager.quantityFactor = {min=6, max=6}
+-- VIPOrderManager.quantityFactor = {min=5, max=7}
 VIPOrderManager.payoutFactor = {min=4, max=6}
 
 -- Depending on the OrderLeven, special correction factors for count, quantity and payout
@@ -36,10 +37,10 @@ VIPOrderManager.limitedGroupsPercent = {} -- Max share of limited groups
 VIPOrderManager.numPrioTrysForGroup = 100
 
 VIPOrderManager.groupNameSettings = {}
-table.insert(VIPOrderManager.groupNameSettings, {groupName="basic crop", 					sectionOrder=1, probability=60})
-table.insert(VIPOrderManager.groupNameSettings, {groupName="windrowed, silaged, chopped", 	sectionOrder=2, probability=30})
-table.insert(VIPOrderManager.groupNameSettings, {groupName="animal", 						sectionOrder=3, probability=60})
-table.insert(VIPOrderManager.groupNameSettings, {groupName="production easy", 				sectionOrder=4, probability=40})
+table.insert(VIPOrderManager.groupNameSettings, {groupName="basic crop", 					sectionOrder=1, probability=55})
+table.insert(VIPOrderManager.groupNameSettings, {groupName="windrowed, silaged, chopped", 	sectionOrder=2, probability=25})
+table.insert(VIPOrderManager.groupNameSettings, {groupName="animal", 						sectionOrder=3, probability=65})
+table.insert(VIPOrderManager.groupNameSettings, {groupName="production easy", 				sectionOrder=4, probability=25})
 table.insert(VIPOrderManager.groupNameSettings, {groupName="production", 					sectionOrder=5, probability=20})
 
 
@@ -49,26 +50,10 @@ VIPOrderManager.defaultGroupNameOverwriting["GOATMILK"] = "production easy"
 VIPOrderManager.defaultGroupNameOverwriting["FORAGE"] = "production easy"
 
 
--- Base values per animaltyp to correct num of animals for orders
--- VIPOrderManager.animalFoodConsumptionPerMonthBase["CHICKEN"]= 5		-- 4
--- VIPOrderManager.animalFoodConsumptionPerMonthBase["SHEEP"]= 15		-- 72
--- VIPOrderManager.animalFoodConsumptionPerMonthBase["PIG"]= 20		-- 150
--- VIPOrderManager.animalFoodConsumptionPerMonthBase["HORSE"]= 400		-- 400
--- VIPOrderManager.animalFoodConsumptionPerMonthBase["COW"]= 450		-- 650
-
--- -- for farm "Hof Bergmann"
--- VIPOrderManager.animalFoodConsumptionPerMonthBase["CAT"]= 2
--- VIPOrderManager.animalFoodConsumptionPerMonthBase["PULLET"]= 5
--- VIPOrderManager.animalFoodConsumptionPerMonthBase["RABBIT"]= 8		-- 10
--- VIPOrderManager.animalFoodConsumptionPerMonthBase["BULL"]= 450
-
-
 -- groupName="<group name>"
 -- isAllowed (true, false) - whether the fill type is offered 
 -- minOrderLevel {(1-n)(, (1-n), (1-n))} - from which level the fill type is offered (1:default, 2:existing, 3:self owned)
 -- quantityCorrectionFactor (> 0) - Factor for the correction of the quantity calculation
--- isLimited (true, false) - whether the fill type is limted to x prozent of the order items --> depricated
--- minOrderLevelIfProductionOrAnimalHusbandryExists	- Korrection of needed minOrderLevel if production allready exists
 -- probability {(1-n)(, (1-n), (1-n))} - The probability with which this filltype is taken when selected. (1:default, 2:existing, 3:sef owned)
 VIPOrderManager.ftConfigs = 
 {
@@ -83,28 +68,30 @@ VIPOrderManager.ftConfigs =
 	EMPTYPALLET		= {isAllowed=false, minOrderLevel={1}, quantityCorrectionFactor=1.0, probability={0}},		-- leere Paletten
 
 	-- defaults
-	DEFAULT_FRUITTYPE			= {groupName="basic crop", isUnknown=true, isAllowed=true, minOrderLevel={3}, quantityCorrectionFactor=0.5, probability={30}},						-- for unknown fruittypes
-	DEFAULT_FILLTYPE			= {groupName="production", isUnknown=true, isAllowed=true, minOrderLevel={5,4,2}, quantityCorrectionFactor=1.0, probability={2, 5, 15}},			-- for unknown filltypes (booster possible)
-	DEFAULT_ANIMALTYPE			= {groupName="animal", isUnknown=true, isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=0.5, probability={40, 60, 70}, animalFoodConsumptionBase=10},	-- for unknown animals (booster possible)
+	DEFAULT_FRUITTYPE			= {groupName="basic crop", isUnknown=true, isAllowed=true, minOrderLevel={3}, quantityCorrectionFactor=0.5, probability={30}},					-- for unknown fruittypes
+	DEFAULT_FILLTYPE			= {groupName="production", isUnknown=true, isAllowed=true, minOrderLevel={5,4,2}, quantityCorrectionFactor=1.0, probability={2, 5, 15}},		-- for unknown filltypes (booster possible)
+	DEFAULT_ANIMALTYPE			= {groupName="animal", isUnknown=true, isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=2.0, probability={40, 60, 70}},			-- for unknown animals (booster possible)
 
 	-- standard animals (booster possible)
-	ANIMALTYPE_CHICKEN	= {groupName="animal", isAllowed=true, minOrderLevel={2,1,1}, quantityCorrectionFactor=2.5, probability={30, 40, 50}, animalFoodConsumptionBase=5},		-- max consumption: 5 (Maize+: 4)
-	ANIMALTYPE_SHEEP	= {groupName="animal", isAllowed=true, minOrderLevel={3,2,1}, quantityCorrectionFactor=4.0, probability={30, 35, 50}, animalFoodConsumptionBase=30},		-- max consumption: 15 (Maize+: 72)
-	ANIMALTYPE_COW		= {groupName="animal", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=1.5, probability={20, 30, 50}, animalFoodConsumptionBase=400},	-- max consumption: 450 (Maize+: 650)
-	ANIMALTYPE_PIG		= {groupName="animal", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=7.0, probability={20, 30, 50}, animalFoodConsumptionBase=20},		-- max consumption: 20 (Maize+: 150)
-	ANIMALTYPE_HORSE	= {groupName="animal", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=0.5, probability={20, 30, 50}, animalFoodConsumptionBase=200},	-- max consumption: 400 (Maize+: 400)
+	ANIMALTYPE_CHICKEN	= {groupName="animal", isAllowed=true, minOrderLevel={2,1,1}, quantityCorrectionFactor=3.0, probability={30, 40, 50}, quantityCorrectionFactorMaizePlus=1.5},
+	ANIMALTYPE_SHEEP	= {groupName="animal", isAllowed=true, minOrderLevel={3,2,1}, quantityCorrectionFactor=3.5, probability={30, 35, 50}, quantityCorrectionFactorMaizePlus=1.5},
+	ANIMALTYPE_COW		= {groupName="animal", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=2.0, probability={20, 30, 50}, quantityCorrectionFactorMaizePlus=1.0},
+	ANIMALTYPE_PIG		= {groupName="animal", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=5.0, probability={20, 30, 50}, quantityCorrectionFactorMaizePlus=2.5},
+	ANIMALTYPE_HORSE	= {groupName="animal", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=0.7, probability={20, 30, 50}, quantityCorrectionFactorMaizePlus=0.7},
 
 	-- other animals (booster possible)
-	ANIMALTYPE_BULL		= {groupName="animal", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=0.4, probability={5, 7, 20}, animalFoodConsumptionBase=400},	-- Hof Bergmann, max consumption: 450
-	ANIMALTYPE_CAT		= {groupName="animal", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=0.2, probability={5, 7, 10}, animalFoodConsumptionBase=2},		-- Hof Bergmann, max consumption: 2
-	ANIMALTYPE_RABBIT	= {groupName="animal", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=1.0, probability={10, 15, 30}, animalFoodConsumptionBase=8},		-- Hof Bergmann, max consumption: 8
-	ANIMALTYPE_PULLET	= {groupName="animal", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=2.0, probability={20, 30, 50}, animalFoodConsumptionBase=5},		-- Hof Bergmann, max consumption: 5
+	ANIMALTYPE_BULL		= {groupName="animal", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=0.4, probability={5, 7, 20}},		-- Hof Bergmann
+	ANIMALTYPE_CAT		= {groupName="animal", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=0.2, probability={5, 7, 10}},		-- Hof Bergmann
+	ANIMALTYPE_RABBIT	= {groupName="animal", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=1.0, probability={10, 15, 30}},		-- Hof Bergmann
+	ANIMALTYPE_PULLET	= {groupName="animal", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=2.0, probability={20, 30, 50}},		-- Hof Bergmann
+	ANIMALTYPE_GOAT		= {groupName="animal", isAllowed=true, minOrderLevel={3,2,1}, quantityCorrectionFactor=2.0, probability={30, 35, 50}, quantityCorrectionFactorMaizePlus=1.5},		-- TerraLifePlus
 
 	-- Animal products (booster possible)
 	HONEY 				= {groupName="production easy", isAllowed=true, minOrderLevel={2}, quantityCorrectionFactor=0.3, probability={25}},				-- Honig
 	EGG 				= {groupName="production easy", isAllowed=true, minOrderLevel={2,1,1}, quantityCorrectionFactor=0.7, probability={15, 20, 25}},	-- Eier
 	WOOL 				= {groupName="production easy", isAllowed=true, minOrderLevel={3,2,1}, quantityCorrectionFactor=0.7, probability={15, 17, 25}},	-- Wolle
 	MILK 				= {groupName="production easy", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=1.0, probability={10, 15, 25}},	-- Milch
+	GOATMILK 			= {groupName="production easy", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=1.0, probability={10, 15, 25}},	-- Ziegenmilch
 	LIQUIDMANURE 		= {groupName="production easy", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=0.1, probability={10, 15, 25}},	-- Gülle
 	MANURE 				= {groupName="production easy", isAllowed=true, minOrderLevel={4,3,2}, quantityCorrectionFactor=0.1, probability={10, 15, 25}},	-- Mist
 
@@ -157,6 +144,23 @@ VIPOrderManager.ftConfigs =
 	CCM						= {groupName="production easy", isAllowed=true, minOrderLevel={3}, quantityCorrectionFactor=0.4, probability={20}},
 	CCMRAW					= {groupName="production easy", isAllowed=true, minOrderLevel={3}, quantityCorrectionFactor=0.4, probability={20}},
 	GRAINGRIST				= {groupName="production easy", isAllowed=true, minOrderLevel={3}, quantityCorrectionFactor=0.4, probability={20}},
+
+	-- TerraLifePlus
+	WINTERWHEAT 		= {groupName="basic crop", isAllowed=true, minOrderLevel={1}, quantityCorrectionFactor=1.0, probability={30}},
+	WINTERBARLEY 		= {groupName="basic crop", isAllowed=true, minOrderLevel={1}, quantityCorrectionFactor=1.0, probability={30}},
+	TRITICALE 			= {groupName="basic crop", isAllowed=true, minOrderLevel={1}, quantityCorrectionFactor=1.0, probability={30}},
+	SPELT 				= {groupName="basic crop", isAllowed=true, minOrderLevel={1}, quantityCorrectionFactor=1.0, probability={30}},
+	RYE 				= {groupName="basic crop", isAllowed=true, minOrderLevel={1}, quantityCorrectionFactor=1.0, probability={30}},
+	VETCHRYE 			= {groupName="basic crop", isAllowed=true, minOrderLevel={1}, quantityCorrectionFactor=1.0, probability={30}},
+	MUSTARD 			= {groupName="basic crop", isAllowed=true, minOrderLevel={1}, quantityCorrectionFactor=1.0, probability={30}},
+	LINSEED 			= {groupName="basic crop", isAllowed=true, minOrderLevel={1}, quantityCorrectionFactor=1.0, probability={30}},
+	SILAGEMAIZE 		= {groupName="basic crop", isAllowed=true, minOrderLevel={2}, quantityCorrectionFactor=1.0, probability={30}},
+	SILAGESORGHUM 		= {groupName="basic crop", isAllowed=true, minOrderLevel={2}, quantityCorrectionFactor=1.0, probability={30}},
+	STARCHPOTATO 		= {groupName="basic crop", isAllowed=true, minOrderLevel={3}, quantityCorrectionFactor=1.0, probability={30}},
+	FODDERBEET 			= {groupName="basic crop", isAllowed=true, minOrderLevel={3}, quantityCorrectionFactor=1.0, probability={30}},
+	FODDERCARROT 		= {groupName="basic crop", isAllowed=true, minOrderLevel={3}, quantityCorrectionFactor=0.6, probability={30}},
+	ONION 				= {groupName="basic crop", isAllowed=true, minOrderLevel={3}, quantityCorrectionFactor=0.6, probability={30}},
+
 
 	-- MaizePlus - only allowed if fruittype exists
 	-- CARROT					= {isAllowed=true, minOrderLevel=3, quantityCorrectionFactor=0.4, probability=70, neededFruittype="CARROT"},

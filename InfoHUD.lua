@@ -1,6 +1,6 @@
 -- Author: Fetty42
--- Date: 29.03.2024
--- Version: 1.3.3.0
+-- Date: 20.10.2024
+-- Version: 1.4.0.0
 
 InfoHUD = {}
 

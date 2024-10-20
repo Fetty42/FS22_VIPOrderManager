@@ -1,6 +1,6 @@
 -- Author: Fetty42
--- Date: 29.03.2024
--- Version: 1.3.3.0
+-- Date: 20.10.2024
+-- Version: 1.4.0.0
 
 local dbPrintfOn = false
 local dbInfoPrintfOn = false
@@ -315,28 +315,23 @@ function VIPOrderManager:GetExistingProductionAndAnimalHusbandryOutputs()
 		local placeable = husbandry:getPlaceable()
 		local selfOwned = placeable.ownerFarmId == farmId
 
-		if selfOwned or 1==1 then
-			local name = placeable:getName()
-			local specHusbandryLiquidManure = placeable.spec_husbandryLiquidManure
-			local specHusbandryMilk = placeable.spec_husbandryMilk
-			local specHusbandryStraw = placeable.spec_husbandryStraw
-			local isManureActive = false
-			if specHusbandryStraw ~= nil then
-				isManureActive = specHusbandryStraw.isManureActive
-			end
-
-			dbPrintf("  - husbandry placeables:  Name=%s | selfOwned=%s | AnimalType=%s | specMilk=%s | specLiquidManure=%s | specStraw=%s | isManureActive=%s", name, selfOwned, husbandry.animalTypeName, tostring(specHusbandryMilk), tostring(specHusbandryLiquidManure), tostring(specHusbandryStraw), isManureActive)
-			local fillType = g_fillTypeManager:getFillTypeByIndex(106)
-			local animalSubType = g_currentMission.animalSystem.fillTypeIndexToSubType[106]
-            local animalSystem = g_currentMission.animalSystem
-
-			-- remember for later to list all animal subtypes
-			foundAnimalTypeNames[husbandry.animalTypeName] = selfOwned and 2 or 1
-
-			isMilk = specHusbandryMilk ~= nil and math.max(isMilk, selfOwned and 2 or 1) or isMilk
-			isLiquidManure = specHusbandryLiquidManure ~= nil and math.max(isLiquidManure, selfOwned and 2 or 1) or isLiquidManure
-			isManure = isManureActive and math.max(isManure, selfOwned and 2 or 1) or isManure
+		local name = placeable:getName()
+		local specHusbandryLiquidManure = placeable.spec_husbandryLiquidManure
+		local specHusbandryMilk = placeable.spec_husbandryMilk
+		local specHusbandryStraw = placeable.spec_husbandryStraw
+		local isManureActive = false
+		if specHusbandryStraw ~= nil then
+			isManureActive = specHusbandryStraw.isManureActive
 		end
+
+		dbPrintf("  - husbandry placeables:  Name=%s | selfOwned=%s | AnimalType=%s | specMilk=%s | specLiquidManure=%s | specStraw=%s | isManureActive=%s", name, selfOwned, husbandry.animalTypeName, tostring(specHusbandryMilk), tostring(specHusbandryLiquidManure), tostring(specHusbandryStraw), isManureActive)
+
+		-- remember for later to list all animal subtypes
+		foundAnimalTypeNames[husbandry.animalTypeName] = math.max(foundAnimalTypeNames[husbandry.animalTypeName] or 0, selfOwned and 2 or 1)
+
+		isMilk = specHusbandryMilk ~= nil and math.max(isMilk, selfOwned and 2 or 1) or isMilk
+		isLiquidManure = specHusbandryLiquidManure ~= nil and math.max(isLiquidManure, selfOwned and 2 or 1) or isLiquidManure
+		isManure = isManureActive and math.max(isManure, selfOwned and 2 or 1) or isManure
 	end
 
 	-- insert animal output products
@@ -354,6 +349,9 @@ function VIPOrderManager:GetExistingProductionAndAnimalHusbandryOutputs()
 	end
 	if foundAnimalTypeNames["SHEEP"] ~= nil then
 		VIPOrderManager.existingAnimalHusbandryOutputs.WOOL = foundAnimalTypeNames["SHEEP"]
+	end
+	if foundAnimalTypeNames["GOAT"] ~= nil then
+		VIPOrderManager.existingAnimalHusbandryOutputs.GOATMILK = foundAnimalTypeNames["GOAT"]
 	end
 
 	-- insert animal fill types
@@ -402,20 +400,16 @@ function VIPOrderManager:GetExistingProductionAndAnimalHusbandryOutputs()
 				end
 				if not isInput then
 					dbPrintf("    - fillTypeName=%s | fillTypeTitle=%s | isInput=%s", fillTypeName, fillTypeTitle, isInput)
-					if VIPOrderManager.existingProductionOutputs[fillTypeName] == nil then
-						VIPOrderManager.existingProductionOutputs[fillTypeName] = selfOwned and 2 or 1
-					else
-						VIPOrderManager.existingProductionOutputs[fillTypeName] = math.max(VIPOrderManager.existingProductionOutputs[fillTypeName], selfOwned and 2 or 1)
-					end
+					VIPOrderManager.existingProductionOutputs[fillTypeName] = math.max(VIPOrderManager.existingProductionOutputs[fillTypeName] or 0, selfOwned and 2 or 1)
 				end
 			end
 		end
 	end
 
-	if dbPrintfOn then
-		DebugUtil.printTableRecursively(VIPOrderManager.existingAnimalHusbandryOutputs, ".", 0, 3)
-		DebugUtil.printTableRecursively(VIPOrderManager.existingProductionOutputs, ".", 0, 3)
-	end
+	-- if dbPrintfOn then
+	-- 	DebugUtil.printTableRecursively(VIPOrderManager.existingAnimalHusbandryOutputs, ".", 0, 3)
+	-- 	DebugUtil.printTableRecursively(VIPOrderManager.existingProductionOutputs, ".", 0, 3)
+	-- end
 end
 
 
@@ -493,7 +487,7 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 	
 		until(not isNextTryForGroup)
 
-		Printf("  - diced group: %s", groupNameSetting.groupName)
+		dbPrintf("  - diced group: %s", groupNameSetting.groupName)
 
 
 		-- dice fill type
@@ -515,7 +509,7 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 					until(relevantFillType.isAnimal == nil or not relevantFillType.isAnimal or relevantFillType.animalTypeIndex ~= searchAnimalTypeIndex)
 					ftConfig = relevantFillType.ftConfig
 				else					
-					Printf("    - animal %s (%s) is not first subtype of '%s '(Count=%s)", relevantFillType.name, relevantFillType.title, relevantFillType.animalTypeName, relevantFillType.animalTypeCount)
+					dbPrintf("    - animal %s (%s) is not first subtype of '%s '(Count=%s)", relevantFillType.name, relevantFillType.title, relevantFillType.animalTypeName, relevantFillType.animalTypeCount)
 					isNextTry = true
 				end
 			end
@@ -565,10 +559,10 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 			if not isNextTry and groupNameSetting.groupName ~= ftConfig.groupName then
 				if numPrioTrysForGroup > 0 then
 				numPrioTrysForGroup = numPrioTrysForGroup - 1
-				Printf("  -> Searching for '%s', diced %s (%s) = '%s' -> try again", groupNameSetting.groupName, relevantFillType.name, relevantFillType.title, ftConfig.groupName)
+				dbPrintf("  -> Searching for '%s', diced %s (%s) = '%s' -> try again", groupNameSetting.groupName, relevantFillType.name, relevantFillType.title, ftConfig.groupName)
 				isNextTry = true
 				else
-					Printf("  -> Last searching for '%s' failed!", groupNameSetting.groupName)
+					dbPrintf("  -> Last searching for '%s' failed!", groupNameSetting.groupName)
 				end
 			end
 
@@ -631,15 +625,6 @@ function VIPOrderManager:calculateAndFillOrder(VIPOrder, orderLevel)
 			local orderItemTitle = relevantFillType.title
 			if relevantFillType.isAnimal then
 				orderItemTitle = VIPOrderManager:GetAnimalTitleByFillTypeIdx(g_fillTypeManager:getFillTypeIndexByName(relevantFillType.name), orderItemNeededAgeInMonths)
-
-				-- Adjust the number of animals depending on food consumption
-				local animalFoodConsumptionPerMonth = VIPOrderManager:GetAnimalFoodConsumptionPerMonthByFillTypeIdxAndAge(g_fillTypeManager:getFillTypeIndexByName(relevantFillType.name), orderItemNeededAgeInMonths)
-				if animalFoodConsumptionPerMonth ~= nil and animalFoodConsumptionPerMonth > 0 then
-					print(string.format("Animal type=%s | animalFoodConsumptionPerMonth=%s", orderItemTitle, animalFoodConsumptionPerMonth))
-					local foodCorrectionFactor = relevantFillType.ftConfig.animalFoodConsumptionBase / animalFoodConsumptionPerMonth
-					foodCorrectionFactor = foodCorrectionFactor^(1/7)
-					orderItemQuantity = math.ceil(orderItemQuantity * foodCorrectionFactor)
-				end
 			end
 			
 			VIPOrder[relevantFillType.name] = {fillTypeName=relevantFillType.name, title=orderItemTitle, quantity=orderItemQuantity, fillLevel=0, payout=orderItemPayout, targetStation=orderItemTargetStation, isAnimal=relevantFillType.isAnimal, neededAgeInMonths=orderItemNeededAgeInMonths}
@@ -865,17 +850,18 @@ function VIPOrderManager:GetFillTypeConfig(possibleFT)
 	end
 
 	-- ftconfig overwrite for quantityCorrectionFactor if FS22_MaizePlus mod is present and loaded
-	local mod = g_modManager:getModByName("FS22_MaizePlus")
-	if mod ~= nil and g_modIsLoaded["FS22_MaizePlus"] then
+	local isMaizePlus = g_modManager:getModByName("FS22_MaizePlus") ~= nil and g_modIsLoaded["FS22_MaizePlus"]
+	local isTerraLifePlus = g_modManager:getModByName("FS22_TerraLifePlus") ~= nil and g_modIsLoaded["FS22_TerraLifePlus"] and VIPOrderManager:isTerraLife()
+	if isMaizePlus or isTerraLifePlus then
 		if ftConfig.quantityCorrectionFactorMaizePlus ~= nil then
 			ftConfigCopy.quantityCorrectionFactor = ftConfig.quantityCorrectionFactorMaizePlus
-			local msg = string.format("Overwrite 'quantityCorrectionFactor' as MOD MaizePlus is in use: %s --> %s", ftConfig.quantityCorrectionFactor, ftConfigCopy.quantityCorrectionFactor)
+			local msg = string.format("Overwrite 'quantityCorrectionFactor' as MOD MaizePlus/TerraLifePlus is in use: %s --> %s", ftConfig.quantityCorrectionFactor, ftConfigCopy.quantityCorrectionFactor)
 			dbPrintf("    - " .. msg)
 			table.insert(ftConfigCopy.msg, msg)
 		end
 
 		if ftConfig.probabilityMaizePlus ~= nil then
-			local msg = string.format("Overwrite 'probability' as MOD MaizePlus is in use: %s --> %s", ftConfigCopy.probability, ftConfig.probabilityMaizePlus)
+			local msg = string.format("Overwrite 'probability' as MOD MaizePlus/TerraLifePlus is in use: %s --> %s", ftConfigCopy.probability, ftConfig.probabilityMaizePlus)
 			ftConfigCopy.probability = ftConfig.probabilityMaizePlus
 			dbPrintf("    - " .. msg)
 			table.insert(ftConfigCopy.msg, msg)
@@ -1516,6 +1502,28 @@ function VIPOrderManager.sellingStation_addFillLevelFromTool(station, superFunc,
 
     return moved
 end
+
+
+function VIPOrderManager:isTerraLife()
+	local mapDirectory = g_mpLoadingScreen.missionInfo.map.baseDirectory
+	if mapDirectory == "" then
+		--wenn mapDirectory leer ist, handelt es sich um die Basemaps
+		return false
+	elseif fileExists(mapDirectory .. "dlcDesc.xml") then
+		--wenn dlcDesc existiert, handelt es sich um DLC-Map
+		return false
+	else
+		local path = mapDirectory .. "modDesc.xml"
+		local xmlFile = XMLFile.load("TempDesc", path)
+		if xmlFile:hasProperty("moddesc.terraLife") then
+			return true
+		else
+			return false
+		end
+		xmlFile:delete()
+	end
+end
+
 
 function VIPOrderManager:onLoad(savegame)end;
 function VIPOrderManager:onUpdate(dt)end;

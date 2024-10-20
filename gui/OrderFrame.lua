@@ -1,6 +1,6 @@
 -- Author: Fetty42
--- Date: 29.03.2024
--- Version: 1.3.3.0
+-- Date: 20.10.2024
+-- Version: 1.4.0.0
 
 
 local dbPrintfOn = false
@@ -269,10 +269,10 @@ function OrderFrame:onShowAvailableTypes(m)
 			item.msg = MyTools:tableToString(ftConfig.msg, "; ")
 
 			-- add food consumtion for animals
-			if ft.isAnimal then
-				local strFoodConsumption = VIPOrderManager:GetAnimalFoodConsumptionPerMonthStringByFillTypeIdx(g_fillTypeManager:getFillTypeIndexByName(ft.name))
-				item.msg = item.msg .. "; " .. strFoodConsumption
-			end
+			-- if ft.isAnimal then
+			-- 	local strFoodConsumption = VIPOrderManager:GetAnimalFoodConsumptionPerMonthStringByFillTypeIdx(g_fillTypeManager:getFillTypeIndexByName(ft.name))
+			-- 	item.msg = item.msg .. "; " .. strFoodConsumption
+			-- end
 
 
 			if groupNameSections[ftConfig.groupName] == nil then

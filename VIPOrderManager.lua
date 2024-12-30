@@ -123,7 +123,7 @@ function VIPOrderManager:onHourChanged(hour)
 					local orderEntry = currentVipOrder.entries[g_currentMission.animalSystem.subTypes[cluster.subTypeIndex].name]
 					if orderEntry ~= nil then
                         dbPrintf("    --> fitting order entry exists with:  quantity=%s | fillLevel=%s | neededAgeInMonths=%s", orderEntry.quantity, orderEntry.fillLevel, orderEntry.neededAgeInMonths)
-						if cluster.age == orderEntry.neededAgeInMonths and cluster.health >= 75 then
+						if cluster.age >= orderEntry.neededAgeInMonths and cluster.health >= 75 then
 							local numAninmalsToSell = math.min(orderEntry.quantity - orderEntry.fillLevel, cluster.numAnimals)
 
 							if numAninmalsToSell > 0 then
@@ -683,29 +683,10 @@ end
 
 function VIPOrderManager:getRandomNeededAgeInMonth(fillTypeName)
 	local animalSubType = g_currentMission.animalSystem.nameToSubType[fillTypeName]
-    local possibleAges = {}
+	local maxMinAge = animalSubType.visuals[#animalSubType.visuals].minAge
 
-	while #possibleAges == 0 do
-		local desiredDiff = math.random(VIPOrderManager.rangeAnimalAgeDifInMonths.min, VIPOrderManager.rangeAnimalAgeDifInMonths.max)
-		for i, visual in pairs(animalSubType.visuals) do
-			if visual.store.canBeBought then
-                local minAge = visual.minAge
-                if #animalSubType.visuals > i then
-                    local nextMinAge = animalSubType.visuals[i+1].minAge
-                    local possibleMaxDiff = nextMinAge - minAge - 1
-
-                    if possibleMaxDiff >= desiredDiff then
-                        table.insert(possibleAges, minAge + desiredDiff)
-                    end
-                else
-                    table.insert(possibleAges, minAge + desiredDiff)
-                end
-            end
-		end
-	end
-
-	local neededAge = possibleAges[math.random(1, #possibleAges)]
-	return neededAge
+	local desiredDiff = math.random(VIPOrderManager.rangeAnimalAgeDifInMonths.min, VIPOrderManager.rangeAnimalAgeDifInMonths.max)
+	return maxMinAge + desiredDiff
 end
 
 
